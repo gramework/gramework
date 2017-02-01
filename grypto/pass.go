@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	cost = 18
+	cost = 10
 )
 
 // PasswordHashString returns hash of plain password in the given string
