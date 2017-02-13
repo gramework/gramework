@@ -3,6 +3,8 @@ package grypto
 import (
 	"testing"
 
+	"golang.org/x/crypto/bcrypt"
+
 	"github.com/gramework/utils/grand"
 )
 
@@ -37,6 +39,49 @@ func TestPasswordSanity(t *testing.T) {
 		}
 		if PasswordValid(hash2, pw) {
 			t.Error("PasswordValid is giving false positive")
+			t.FailNow()
+		}
+	}
+}
+
+// TestPasswordStringSanity makes sure PasswordHashString and ComparePassword work well together
+func TestPasswordStringSanity(t *testing.T) {
+	pw := make([]byte, 12)
+	pw2 := make([]byte, 12)
+	var hash []byte
+	var hash2 []byte
+
+	for i := 0; i < 32; i++ {
+		grand.Read(pw)
+		grand.Read(pw2)
+		hash = PasswordHashString(string(pw))
+		hash2 = PasswordHashString(string(pw2))
+
+		if !PasswordValid(hash, pw) {
+			t.Errorf("PasswordValid should return true for the pair: %s and %s", hash, pw)
+			t.FailNow()
+		}
+		if PasswordValid(hash2, pw) {
+			t.Error("PasswordValid is giving false positive")
+			t.FailNow()
+		}
+	}
+}
+
+// TestPasswordNeedsRehash makes sure TestPasswordNeedsRehash works well
+func TestPasswordNeedsRehash(t *testing.T) {
+	pw := make([]byte, 12)
+	for i := 0; i < 32; i++ {
+		grand.Read(pw)
+		hash, _ := bcrypt.GenerateFromPassword(pw, 3)
+		if !PasswordNeedsRehash(hash) {
+			t.FailNow()
+		}
+	}
+	for i := 0; i < 32; i++ {
+		grand.Read(pw)
+		hash, _ := bcrypt.GenerateFromPassword(pw, cost)
+		if PasswordNeedsRehash(hash) {
 			t.FailNow()
 		}
 	}
