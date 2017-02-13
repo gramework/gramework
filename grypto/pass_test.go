@@ -73,8 +73,9 @@ func TestPasswordNeedsRehash(t *testing.T) {
 	pw := make([]byte, 12)
 	for i := 0; i < 32; i++ {
 		grand.Read(pw)
-		hash, _ := bcrypt.GenerateFromPassword(pw, 3)
+		hash, _ := bcrypt.GenerateFromPassword(pw, cost-1)
 		if !PasswordNeedsRehash(hash) {
+			t.Errorf("PasswordNeedsRehash returned false, expected true")
 			t.FailNow()
 		}
 	}
@@ -82,7 +83,7 @@ func TestPasswordNeedsRehash(t *testing.T) {
 		grand.Read(pw)
 		hash, _ := bcrypt.GenerateFromPassword(pw, cost)
 		if PasswordNeedsRehash(hash) {
-			t.FailNow()
+			t.Errorf("PasswordNeedsRehash returned true, expected false")
 		}
 	}
 }
