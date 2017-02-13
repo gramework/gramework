@@ -41,7 +41,6 @@ func (fw *firewall) isBlocked(remoteAddr string) bool {
 }
 
 func (fw *firewall) addRequest(remoteAddr string) {
-	// Lock the mutex
 	fw.requestCounterMutex.Lock()
 	defer fw.requestCounterMutex.Unlock()
 
