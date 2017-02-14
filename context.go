@@ -1,14 +1,13 @@
 package gramework
 
 import (
-	"errors"
+	"encoding/json"
 	"fmt"
+
+	"github.com/valyala/bytebufferpool"
 )
 
-var (
-	// ErrArgNotFound used when no route argument is found
-	ErrArgNotFound = errors.New("undefined argument")
-)
+var buffer bytebufferpool.Pool
 
 // Writef is a fmt.Fprintf(context, format, a...) shortcut
 func (c *Context) Writef(format string, a ...interface{}) {
@@ -48,4 +47,33 @@ func (c *Context) RouteArgErr(argName string) (string, error) {
 func (c *Context) HTML() *Context {
 	c.SetContentType(htmlCT)
 	return c
+}
+
+const (
+	corsAccessControlAllowOrigin      = "Access-Control-Allow-Origin"
+	corsAccessControlAllowMethods     = "Access-Control-Allow-Methods"
+	corsAccessControlAllowHeaders     = "Access-Control-Allow-Headers"
+	corsAccessControlAllowCredentials = "Access-Control-Allow-Credentials"
+	methods                           = "GET,PUT,POST,DELETE"
+	corsCType                         = "Content-Type, *"
+	trueStr                           = "true"
+)
+
+// CORS enables CORS in the current context
+func (c *Context) CORS() *Context {
+	c.Response.Header.Set(corsAccessControlAllowOrigin, string(c.URI().Host()))
+	c.Response.Header.Set(corsAccessControlAllowMethods, methods)
+	c.Response.Header.Set(corsAccessControlAllowHeaders, corsCType)
+	c.Response.Header.Set(corsAccessControlAllowCredentials, trueStr)
+
+	return c
+}
+
+// JSON serializes and writes a json-formatted response to user
+func (c *Context) JSON(v interface{}) error {
+	w := buffer.Get()
+	err := json.NewEncoder(w).Encode(v)
+	c.Write(w.Bytes())
+	buffer.Put(w)
+	return err
 }
