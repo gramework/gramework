@@ -4,7 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"bytes"
+
 	"github.com/valyala/bytebufferpool"
+	"github.com/valyala/fasthttp"
 )
 
 var buffer bytebufferpool.Pool
@@ -57,6 +60,7 @@ const (
 	methods                           = "GET,PUT,POST,DELETE"
 	corsCType                         = "Content-Type, *"
 	trueStr                           = "true"
+	jsonCT                            = "application/json"
 )
 
 // CORS enables CORS in the current context
@@ -71,9 +75,31 @@ func (c *Context) CORS() *Context {
 
 // JSON serializes and writes a json-formatted response to user
 func (c *Context) JSON(v interface{}) error {
+	c.SetContentType(jsonCT)
 	w := buffer.Get()
 	err := json.NewEncoder(w).Encode(v)
 	c.Write(w.Bytes())
 	buffer.Put(w)
 	return err
+}
+
+// UnJSONBytes serializes and writes a json-formatted response to user
+func (c *Context) UnJSONBytes(b []byte, v interface{}) (interface{}, error) {
+	var res interface{}
+	err := json.NewDecoder(bytes.NewReader(b)).Decode(&res)
+	return res, err
+}
+
+// Err500 sets Internal Server Error status
+func (c *Context) Err500() *Context {
+	c.SetStatusCode(fasthttp.StatusInternalServerError)
+
+	return c
+}
+
+// JSONError sets Internal Server Error status,
+// serializes and writes a json-formatted response to user
+func (c *Context) JSONError(v interface{}) error {
+	c.Err500()
+	return c.JSON(v)
 }

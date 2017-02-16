@@ -53,6 +53,8 @@ func (app *App) Handle(method, route string, handler interface{}) {
 		app.router.Handle(method, route, app.getGrameErrorHandler(h))
 	case func(*fasthttp.RequestCtx) error:
 		app.router.Handle(method, route, app.getErrorHandler(h))
+	default:
+		app.Logger.Fatalf("Unsupported handler type: %T", h)
 	}
 }
 
