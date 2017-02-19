@@ -24,8 +24,8 @@ type (
 	// Context is a gramework request context
 	Context struct {
 		*fasthttp.RequestCtx
-		Logger log.Interface
 		nocopy nocopy.NoCopy
+		Logger log.Interface
 	}
 
 	// Settings for an App instance
