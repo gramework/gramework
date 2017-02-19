@@ -7,6 +7,8 @@ import (
 )
 
 func (client *Instance) getHostClient(addr *url.URL) (*fasthttp.HostClient, error) {
+	client.clientsMu.RLock()
+	defer client.clientsMu.RUnlock()
 	if hostClient, ok := client.clients[addr.Host]; ok {
 		return hostClient, nil
 	}
