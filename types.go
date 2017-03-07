@@ -19,6 +19,10 @@ type (
 		Logger    log.Interface
 		TLSEmails []string
 		Settings  Settings
+
+		Flags           *Flags
+		flagsRegistered bool
+		flagsQueue      []Flag
 	}
 
 	// Context is a gramework request context
@@ -53,5 +57,16 @@ type (
 
 		requestCounter      map[string]int64
 		requestCounterMutex sync.Mutex
+	}
+
+	Flags struct {
+		values map[string]Flag
+	}
+
+	Flag struct {
+		Name        string
+		Description string
+		Value       *string
+		Default     string
 	}
 )
