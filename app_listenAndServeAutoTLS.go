@@ -2,15 +2,21 @@ package gramework
 
 import (
 	"crypto/tls"
+	"math/rand"
 	"net"
 	"strings"
+	"time"
 
 	"github.com/valyala/fasthttp"
 	"golang.org/x/crypto/acme/autocert"
 	"rsc.io/letsencrypt"
 )
 
+// ListenAndServeAutoTLS serves TLS requests
 func (app *App) ListenAndServeAutoTLS(addr string, cachePath ...string) error {
+	if len(app.TLSEmails) == 0 {
+		return ErrTLSNoEmails
+	}
 	if portIdx := strings.IndexByte(addr, ':'); portIdx == -1 {
 		addr += ":443"
 	}
@@ -25,9 +31,11 @@ func (app *App) ListenAndServeAutoTLS(addr string, cachePath ...string) error {
 	if len(cachePath) > 0 {
 		letscache = cachePath[0]
 	}
-
+	s := rand.NewSource(time.Now().Unix())
+	r := rand.New(s)
 	m := autocert.Manager{
 		Prompt: autocert.AcceptTOS,
+		Email:  app.TLSEmails[r.Intn(len(app.TLSEmails))],
 	}
 
 	if letscache != "" {
@@ -46,7 +54,11 @@ func (app *App) ListenAndServeAutoTLS(addr string, cachePath ...string) error {
 	return err
 }
 
+// ListenAndServeAutoTLSDev serves non-production grade TLS requests. Supports localhost.localdomain.
 func (app *App) ListenAndServeAutoTLSDev(addr string, cachePath ...string) error {
+	if len(app.TLSEmails) == 0 {
+		return ErrTLSNoEmails
+	}
 	if portIdx := strings.IndexByte(addr, ':'); portIdx == -1 {
 		addr += ":443"
 	}
@@ -63,7 +75,9 @@ func (app *App) ListenAndServeAutoTLSDev(addr string, cachePath ...string) error
 	}
 
 	var m letsencrypt.Manager
-	m.Register("k@guava.by", func(string) bool { return true })
+	s := rand.NewSource(time.Now().Unix())
+	r := rand.New(s)
+	m.Register(app.TLSEmails[r.Intn(len(app.TLSEmails))], func(string) bool { return true })
 
 	if letscache != "" {
 		if err = m.CacheFile(letscache); err != nil {

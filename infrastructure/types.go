@@ -12,6 +12,7 @@ type Infrastructure struct {
 
 // Service defines an abstract service in infrastructure
 type Service struct {
+	Name      string      `json:"name"`
 	Addresses []Address   `json:"addresses"`
 	Type      ServiceType `json:"type"`
 }
@@ -19,7 +20,8 @@ type Service struct {
 // Address defines service addr
 type Address struct {
 	Host string `json:"host"`
-	Port int    `json:"post"`
+	Port int    `json:"port"`
+	URL  string `json:"url"`
 }
 
 // ServiceType defines a type of protocol that

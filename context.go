@@ -6,11 +6,8 @@ import (
 
 	"bytes"
 
-	"github.com/valyala/bytebufferpool"
 	"github.com/valyala/fasthttp"
 )
-
-var buffer bytebufferpool.Pool
 
 // Writef is a fmt.Fprintf(context, format, a...) shortcut
 func (c *Context) Writef(format string, a ...interface{}) {
@@ -76,18 +73,27 @@ func (c *Context) CORS() *Context {
 // JSON serializes and writes a json-formatted response to user
 func (c *Context) JSON(v interface{}) error {
 	c.SetContentType(jsonCT)
-	w := buffer.Get()
-	err := json.NewEncoder(w).Encode(v)
-	c.Write(w.Bytes())
-	buffer.Put(w)
+	b, err := c.ToJSON(v)
+	c.Write(b)
 	return err
 }
 
+// ToJSON serializes and returns the result
+func (c *Context) ToJSON(v interface{}) ([]byte, error) {
+	b := bytes.NewBuffer(nil)
+	err := json.NewEncoder(b).Encode(v)
+	return b.Bytes(), err
+}
+
 // UnJSONBytes serializes and writes a json-formatted response to user
-func (c *Context) UnJSONBytes(b []byte, v interface{}) (interface{}, error) {
-	var res interface{}
-	err := json.NewDecoder(bytes.NewReader(b)).Decode(&res)
-	return res, err
+func (c *Context) UnJSONBytes(b []byte, v ...interface{}) (interface{}, error) {
+	if len(v) == 0 {
+		var res interface{}
+		err := json.NewDecoder(bytes.NewReader(b)).Decode(&res)
+		return res, err
+	}
+	err := json.NewDecoder(bytes.NewReader(b)).Decode(&v[0])
+	return v[0], err
 }
 
 // Err500 sets Internal Server Error status
