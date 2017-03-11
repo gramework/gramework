@@ -62,7 +62,13 @@ const (
 
 // CORS enables CORS in the current context
 func (c *Context) CORS() *Context {
-	c.Response.Header.Set(corsAccessControlAllowOrigin, string(c.Request.URI().Host()))
+	origin := ""
+	if ref := c.Referer(); ref != nil && len(ref) > 0 {
+		origin = string(ref)
+	} else {
+		origin = string(c.Request.URI().Host())
+	}
+	c.Response.Header.Set(corsAccessControlAllowOrigin, origin)
 	c.Response.Header.Set(corsAccessControlAllowMethods, methods)
 	c.Response.Header.Set(corsAccessControlAllowHeaders, corsCType)
 	c.Response.Header.Set(corsAccessControlAllowCredentials, trueStr)
