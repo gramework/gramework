@@ -14,6 +14,7 @@ func (app *App) ServeInfrastructure(i *infrastructure.Infrastructure) {
 	app.GET("/infrastructure", func(ctx *Context) {
 		i.Lock.RLock()
 		i.CurrentTimestamp = time.Now().UnixNano()
+		ctx.CORS()
 		ctx.JSON(i)
 		i.Lock.RUnlock()
 	})
