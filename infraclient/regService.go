@@ -6,7 +6,7 @@ import (
 )
 
 type InfraAPI struct {
-	URL string
+	URL    string
 	client *apiClient.Instance
 }
 
@@ -15,7 +15,7 @@ func New(url string) *InfraAPI {
 		URL: url,
 		client: apiClient.New(apiClient.Config{
 			Addresses: []string{url},
-		})
+		}),
 	}
 }
 
