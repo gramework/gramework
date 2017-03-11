@@ -19,4 +19,4 @@ func New(url string) *InfraAPI {
 	}
 }
 
-func (i *InfraAPI) RegisterService(s infrastructure.Service) error {}
+func (i *InfraAPI) RegisterService(s infrastructure.Service) error { return nil }
