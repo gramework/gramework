@@ -2,14 +2,16 @@ package gramework
 
 import (
 	"os"
+	"sync"
 
 	"github.com/apex/log"
 	"github.com/apex/log/handlers/cli"
+	"github.com/buaazp/fasthttprouter"
 )
 
 // New App
 func New() *App {
-	return &App{
+	app := &App{
 		Flags: &Flags{
 			values: make(map[string]Flag, 0),
 		},
@@ -18,5 +20,14 @@ func New() *App {
 			Level:   log.InfoLevel,
 			Handler: cli.New(os.Stdout),
 		},
+		domainListLock: &sync.RWMutex{},
+		domains:        make(map[string]*Router, 0),
 	}
+
+	app.defaultRouter = &Router{
+		router: fasthttprouter.New(),
+		app:    app,
+	}
+
+	return app
 }

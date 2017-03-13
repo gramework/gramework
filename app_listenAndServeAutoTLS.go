@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/kirillDanshin/letsencrypt"
 	"github.com/valyala/fasthttp"
 	"golang.org/x/crypto/acme/autocert"
-	"rsc.io/letsencrypt"
 )
 
 // ListenAndServeAutoTLS serves TLS requests
@@ -47,7 +47,7 @@ func (app *App) ListenAndServeAutoTLS(addr string, cachePath ...string) error {
 	}
 	tlsLn := tls.NewListener(ln, tlsConfig)
 
-	err = fasthttp.Serve(tlsLn, app.router.Handler)
+	err = fasthttp.Serve(tlsLn, app.handler())
 	if err != nil {
 		app.Logger.Errorf("Can't serve: %s", err)
 	}
@@ -91,7 +91,7 @@ func (app *App) ListenAndServeAutoTLSDev(addr string, cachePath ...string) error
 	}
 	tlsLn := tls.NewListener(ln, tlsConfig)
 
-	err = fasthttp.Serve(tlsLn, app.router.Handler)
+	err = fasthttp.Serve(tlsLn, app.handler())
 	if err != nil {
 		app.Logger.Errorf("Can't serve: %s", err)
 	}

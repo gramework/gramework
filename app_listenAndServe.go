@@ -30,7 +30,7 @@ func (app *App) ListenAndServe(addr ...string) error {
 	}
 	l := app.Logger.WithField("bind", bind)
 	l.Info("Starting")
-	err := fasthttp.ListenAndServe(bind, app.router.Handler)
+	err := fasthttp.ListenAndServe(bind, app.handler())
 	l.Errorf("ListenAndServe failed: %s", err)
 	return err
 }

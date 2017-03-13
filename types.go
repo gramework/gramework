@@ -12,17 +12,22 @@ import (
 type (
 	// App represents a gramework app
 	App struct {
-		router       *fasthttprouter.Router
-		errorHandler func(func(*fasthttp.RequestCtx) error)
-		firewall     *firewall
+		defaultRouter *Router
+		errorHandler  func(func(*fasthttp.RequestCtx) error)
+		firewall      *firewall
 
 		Logger    log.Interface
 		TLSEmails []string
 		Settings  Settings
 
+		HandleUnknownDomains bool
+		domains              map[string]*Router
+
 		Flags           *Flags
 		flagsRegistered bool
 		flagsQueue      []Flag
+
+		domainListLock *sync.RWMutex
 	}
 
 	// Context is a gramework request context
@@ -68,5 +73,10 @@ type (
 		Description string
 		Value       *string
 		Default     string
+	}
+
+	Router struct {
+		router *fasthttprouter.Router
+		app    *App
 	}
 )
