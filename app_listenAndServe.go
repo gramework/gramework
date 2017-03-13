@@ -7,7 +7,9 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-// ListenAndServe on given addr
+// ListenAndServe HTTP on given addr.
+// runs flag.Parse() if !flag.Parsed() to support
+// --bind flag.
 func (app *App) ListenAndServe(addr ...string) error {
 	var bind string
 	if len(addr) > 0 {

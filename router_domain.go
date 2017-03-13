@@ -4,6 +4,7 @@ import (
 	"github.com/buaazp/fasthttprouter"
 )
 
+// Domain returns a domain router
 func (app *App) Domain(domain string) *Router {
 	app.domainListLock.Lock()
 	if app.domains[domain] == nil {

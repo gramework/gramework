@@ -10,6 +10,8 @@ var flagsToRegister = []Flag{
 	},
 }
 
+// AddFlag adds a Flag to flag queue that will be
+// parsed if flags wasn't parsed yet
 func (app *App) AddFlag(f Flag) {
 	if app.flagsQueue == nil {
 		app.flagsQueue = make([]Flag, 0)
@@ -17,6 +19,7 @@ func (app *App) AddFlag(f Flag) {
 	app.flagsQueue = append(app.flagsQueue, f)
 }
 
+// RegFlags registers current flag queue in flag parser
 func (app *App) RegFlags() {
 	if app.Flags.values == nil {
 		app.Flags.values = make(map[string]Flag)

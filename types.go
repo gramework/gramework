@@ -64,10 +64,12 @@ type (
 		requestCounterMutex sync.Mutex
 	}
 
+	// Flags is a flags storage
 	Flags struct {
 		values map[string]Flag
 	}
 
+	// Flag is a flag representation
 	Flag struct {
 		Name        string
 		Description string
@@ -75,6 +77,7 @@ type (
 		Default     string
 	}
 
+	// Router handles internal handler conversion etc.
 	Router struct {
 		router *fasthttprouter.Router
 		app    *App
