@@ -12,17 +12,11 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
-
-	"github.com/mholt/caddy"
 )
-
-func init() {
-	RegisterStorageProvider("file", NewFileStorage)
-}
 
 // storageBasePath is the root path in which all TLS/ACME assets are
 // stored. Do not change this value during the lifetime of the program.
-var storageBasePath = filepath.Join(caddy.AssetsPath(), "acme")
+var storageBasePath = "./grametls-cache.d"
 
 // NewFileStorage is a StorageConstructor function that creates a new
 // Storage instance backed by the local disk. The resulting Storage

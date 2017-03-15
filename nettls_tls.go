@@ -8,7 +8,6 @@ import (
 	"net"
 	"strings"
 
-	"github.com/mholt/caddy"
 	"github.com/xenolf/lego/acme"
 )
 
@@ -129,19 +128,6 @@ func QualifiesForManagedTLS(c ConfigHolder) bool {
 		(HostQualifies(c.Host()) || tlsConfig.OnDemand)
 }
 
-// DNSProviderConstructor is a function that takes credentials and
-// returns a type that can solve the ACME DNS challenges.
-type DNSProviderConstructor func(credentials ...string) (acme.ChallengeProvider, error)
-
-// dnsProviders is the list of DNS providers that have been plugged in.
-var dnsProviders = make(map[string]DNSProviderConstructor)
-
-// RegisterDNSProvider registers provider by name for solving the ACME DNS challenge.
-func RegisterDNSProvider(name string, provider DNSProviderConstructor) {
-	dnsProviders[name] = provider
-	caddy.RegisterPlugin("tls.dns."+name, caddy.Plugin{})
-}
-
 var (
 	// DefaultEmail represents the Let's Encrypt account email to use if none provided.
 	DefaultEmail string
@@ -163,11 +149,3 @@ var (
 	// DisableTLSSNIChallenge will disable all TLS-SNI challenges.
 	DisableTLSSNIChallenge bool
 )
-
-var storageProviders = make(map[string]StorageConstructor)
-
-// RegisterStorageProvider registers provider by name for storing tls data
-func RegisterStorageProvider(name string, provider StorageConstructor) {
-	storageProviders[name] = provider
-	caddy.RegisterPlugin("tls.storage."+name, caddy.Plugin{})
-}

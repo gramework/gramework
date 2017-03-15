@@ -10,8 +10,6 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/mholt/caddy"
-
 	"golang.org/x/crypto/ocsp"
 )
 
@@ -301,4 +299,4 @@ func freshOCSP(resp *ocsp.Response) bool {
 	return time.Now().Before(refreshTime)
 }
 
-var ocspFolder = filepath.Join(caddy.AssetsPath(), "ocsp")
+var ocspFolder = "./ocsp"

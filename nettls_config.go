@@ -12,9 +12,10 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/mholt/caddy"
 	"github.com/xenolf/lego/acme"
 )
+
+var caddy int
 
 // Config describes how TLS should be configured and used.
 type Config struct {
@@ -214,17 +215,7 @@ func (c *Config) StorageFor(caURL string) (Storage, error) {
 	}
 
 	// Create the storage based on the URL
-	var s Storage
-	if c.StorageProvider == "" {
-		c.StorageProvider = "file"
-	}
-
-	creator, ok := storageProviders[c.StorageProvider]
-	if !ok {
-		return nil, fmt.Errorf("%s: Unknown storage: %v", caURL, c.StorageProvider)
-	}
-
-	s, err = creator(u)
+	s, err := NewFileStorage(u)
 	if err != nil {
 		return nil, fmt.Errorf("%s: unable to create custom storage '%v': %v", caURL, c.StorageProvider, err)
 	}
@@ -364,17 +355,6 @@ func MakeTLSConfig(configs []*Config) (*tls.Config, error) {
 	return &tls.Config{
 		GetConfigForClient: configMap.GetConfigForClient,
 	}, nil
-}
-
-// ConfigGetter gets a Config keyed by key.
-type ConfigGetter func(c *caddy.Controller) *Config
-
-var configGetters = make(map[string]ConfigGetter)
-
-// RegisterConfigGetter registers fn as the way to get a
-// Config for server type serverType.
-func RegisterConfigGetter(serverType string, fn ConfigGetter) {
-	configGetters[serverType] = fn
 }
 
 // SetDefaultTLSParams sets the default TLS cipher suites, protocol versions,

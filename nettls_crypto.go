@@ -28,7 +28,6 @@ import (
 
 	"golang.org/x/crypto/ocsp"
 
-	"github.com/mholt/caddy"
 	"github.com/xenolf/lego/acme"
 )
 
@@ -142,7 +141,7 @@ func stapleOCSP(cert *Certificate, pemBundle []byte) error {
 		cert.Certificate.OCSPStaple = ocspBytes
 		cert.OCSP = ocspResp
 		if gotNewOCSP {
-			err := os.MkdirAll(filepath.Join(caddy.AssetsPath(), "ocsp"), 0700)
+			err := os.MkdirAll("./ocsp", 0700)
 			if err != nil {
 				return fmt.Errorf("unable to make OCSP staple path for %v: %v", cert.Names, err)
 			}
