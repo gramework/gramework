@@ -4,6 +4,8 @@ import (
 	"crypto/tls"
 	"math/rand"
 	"net"
+	"os"
+	"runtime"
 	"strings"
 	"time"
 
@@ -11,6 +13,21 @@ import (
 	"github.com/valyala/fasthttp"
 	"golang.org/x/crypto/acme/autocert"
 )
+
+func getDefaultTLSConfig() *tls.Config {
+	return &tls.Config{
+		DynamicRecordSizingDisabled: true,
+		ClientSessionCache:          tls.NewLRUClientSessionCache(1024 * runtime.GOMAXPROCS(0)),
+	}
+}
+
+func getCachePath(dev ...bool) string {
+	p := "./tls-gramecache-" + os.Args[0]
+	if len(dev) > 0 && dev[0] {
+		p += ".dev"
+	}
+	return p
+}
 
 // ListenAndServeAutoTLS serves TLS requests
 func (app *App) ListenAndServeAutoTLS(addr string, cachePath ...string) error {
@@ -27,7 +44,7 @@ func (app *App) ListenAndServeAutoTLS(addr string, cachePath ...string) error {
 		return err
 	}
 
-	letscache := "./letscache"
+	letscache := getCachePath()
 	if len(cachePath) > 0 {
 		letscache = cachePath[0]
 	}
@@ -42,9 +59,9 @@ func (app *App) ListenAndServeAutoTLS(addr string, cachePath ...string) error {
 		m.Cache = autocert.DirCache(letscache)
 	}
 
-	tlsConfig := &tls.Config{
-		GetCertificate: m.GetCertificate,
-	}
+	tlsConfig := getDefaultTLSConfig()
+	tlsConfig.GetCertificate = m.GetCertificate
+
 	tlsLn := tls.NewListener(ln, tlsConfig)
 
 	l := app.Logger.WithField("bind", addr)
@@ -71,7 +88,7 @@ func (app *App) ListenAndServeAutoTLSDev(addr string, cachePath ...string) error
 		return err
 	}
 
-	letscache := "./letscache.dev"
+	letscache := getCachePath(true)
 	if len(cachePath) > 0 {
 		letscache = cachePath[0]
 	}
@@ -79,7 +96,10 @@ func (app *App) ListenAndServeAutoTLSDev(addr string, cachePath ...string) error
 	var m letsencrypt.Manager
 	s := rand.NewSource(time.Now().Unix())
 	r := rand.New(s)
-	m.Register(app.TLSEmails[r.Intn(len(app.TLSEmails))], func(string) bool { return true })
+	m.Register(
+		app.TLSEmails[r.Intn(len(app.TLSEmails))],
+		autocert.AcceptTOS,
+	)
 
 	if letscache != "" {
 		if err = m.CacheFile(letscache); err != nil {
@@ -88,9 +108,9 @@ func (app *App) ListenAndServeAutoTLSDev(addr string, cachePath ...string) error
 		}
 	}
 
-	tlsConfig := &tls.Config{
-		GetCertificate: m.GetCertificate,
-	}
+	tlsConfig := getDefaultTLSConfig()
+	tlsConfig.GetCertificate = m.GetCertificate
+
 	tlsLn := tls.NewListener(ln, tlsConfig)
 
 	l := app.Logger.WithField("bind", addr)
