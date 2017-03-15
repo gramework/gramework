@@ -11,6 +11,8 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"strings"
+
+	"github.com/valyala/fasthttp"
 )
 
 const challengeBasePath = "/.well-known/acme-challenge"
@@ -19,19 +21,19 @@ const challengeBasePath = "/.well-known/acme-challenge"
 // request path starts with challengeBasePath. It returns true if it
 // handled the request and no more needs to be done; it returns false
 // if this call was a no-op and the request still needs handling.
-func HTTPChallengeHandler(w http.ResponseWriter, r *http.Request, listenHost, altPort string) bool {
-	if !strings.HasPrefix(r.URL.Path, challengeBasePath) {
+func HTTPChallengeHandler(ctx *Context, listenHost, altPort string) bool {
+	if !strings.HasPrefix(string(ctx.URI().Path()), challengeBasePath) {
 		return false
 	}
 	if DisableHTTPChallenge {
 		return false
 	}
-	if !namesObtaining.Has(r.Host) {
+	if !namesObtaining.Has(string(ctx.Host())) {
 		return false
 	}
 
 	scheme := "http"
-	if r.TLS != nil {
+	if ctx.IsTLS() {
 		scheme = "https"
 	}
 
@@ -41,7 +43,7 @@ func HTTPChallengeHandler(w http.ResponseWriter, r *http.Request, listenHost, al
 
 	upstream, err := url.Parse(fmt.Sprintf("%s://%s:%s", scheme, listenHost, altPort))
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		ctx.Err500()
 		log.Printf("[ERROR] ACME proxy handler: %v", err)
 		return true
 	}
@@ -50,7 +52,37 @@ func HTTPChallengeHandler(w http.ResponseWriter, r *http.Request, listenHost, al
 	proxy.Transport = &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
-	proxy.ServeHTTP(w, r)
+	ReverseProxyHandler(ctx, &fasthttp.HostClient{
+		Addr: upstream.String(),
+	}, upstream)
 
 	return true
+}
+
+func ReverseProxyHandler(ctx *Context, proxyClient *fasthttp.HostClient, upstream *url.URL) {
+	req := &ctx.Request
+	resp := &ctx.Response
+	prepareRequest(req, upstream)
+	if err := proxyClient.Do(req, resp); err != nil {
+		ctx.Logger.Errorf("error when proxying the request: %s", err)
+	}
+	postprocessResponse(resp)
+}
+
+func prepareRequest(req *fasthttp.Request, upstream *url.URL) {
+	// do not proxy "Connection" header.
+	req.Header.Del("Connection")
+	req.SetHost(upstream.Host)
+	// strip other unneeded headers.
+
+	// alter other request params before sending them to upstream host
+}
+
+func postprocessResponse(resp *fasthttp.Response) {
+	// do not proxy "Connection" header
+	resp.Header.Del("Connection")
+
+	// strip other unneeded headers
+
+	// alter other response data if needed
 }
