@@ -4,8 +4,8 @@ import (
 	"sync"
 
 	"github.com/apex/log"
-	"github.com/buaazp/fasthttprouter"
 	"github.com/gramework/utils/nocopy"
+	"github.com/kirillDanshin/fasthttprouter"
 	"github.com/valyala/fasthttp"
 )
 
@@ -79,7 +79,11 @@ type (
 
 	// Router handles internal handler conversion etc.
 	Router struct {
-		router *fasthttprouter.Router
-		app    *App
+		router      *fasthttprouter.Router
+		httprouter  *Router
+		httpsrouter *Router
+		root        *Router
+		app         *App
+		mu          sync.RWMutex
 	}
 )

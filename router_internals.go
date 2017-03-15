@@ -1,7 +1,7 @@
 package gramework
 
 import (
-	"github.com/buaazp/fasthttprouter"
+	"github.com/kirillDanshin/fasthttprouter"
 	"github.com/valyala/fasthttp"
 )
 

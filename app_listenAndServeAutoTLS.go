@@ -47,6 +47,8 @@ func (app *App) ListenAndServeAutoTLS(addr string, cachePath ...string) error {
 	}
 	tlsLn := tls.NewListener(ln, tlsConfig)
 
+	l := app.Logger.WithField("bind", addr)
+	l.Info("Starting HTTPS")
 	err = fasthttp.Serve(tlsLn, app.handler())
 	if err != nil {
 		app.Logger.Errorf("Can't serve: %s", err)
@@ -91,6 +93,8 @@ func (app *App) ListenAndServeAutoTLSDev(addr string, cachePath ...string) error
 	}
 	tlsLn := tls.NewListener(ln, tlsConfig)
 
+	l := app.Logger.WithField("bind", addr)
+	l.Info("Starting HTTPS")
 	err = fasthttp.Serve(tlsLn, app.handler())
 	if err != nil {
 		app.Logger.Errorf("Can't serve: %s", err)

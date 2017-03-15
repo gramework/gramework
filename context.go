@@ -1,10 +1,9 @@
 package gramework
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
-
-	"bytes"
 
 	"github.com/valyala/fasthttp"
 )
@@ -49,7 +48,19 @@ func (c *Context) HTML() *Context {
 	return c
 }
 
+// ToTLS redirects user to HTTPS scheme
+func (c *Context) ToTLS() {
+	u := c.URI()
+	u.SetScheme(https)
+	c.Redirect(u.String(), redirectCode)
+}
+
 const (
+	redirectCode                      = 301
+	temporaryRedirectCode             = 307
+	zero                              = 0
+	one                               = 1
+	https                             = "https"
 	corsAccessControlAllowOrigin      = "Access-Control-Allow-Origin"
 	corsAccessControlAllowMethods     = "Access-Control-Allow-Methods"
 	corsAccessControlAllowHeaders     = "Access-Control-Allow-Headers"
@@ -58,12 +69,13 @@ const (
 	corsCType                         = "Content-Type, *"
 	trueStr                           = "true"
 	jsonCT                            = "application/json"
+	hOrigin                           = "Origin"
 )
 
 // CORS enables CORS in the current context
 func (c *Context) CORS() *Context {
-	origin := ""
-	if headerOrigin := c.Request.Header.Peek("Origin"); headerOrigin != nil && len(headerOrigin) > 0 {
+	origin := emptyString
+	if headerOrigin := c.Request.Header.Peek(hOrigin); headerOrigin != nil && len(headerOrigin) > 0 {
 		origin = string(headerOrigin)
 	} else {
 		origin = string(c.Request.URI().Host())

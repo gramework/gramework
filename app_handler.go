@@ -11,7 +11,7 @@ func (app *App) handler() func(*fasthttp.RequestCtx) {
 			app.domainListLock.RLock()
 			if app.domains[d] != nil {
 				app.domainListLock.RUnlock()
-				app.domains[d].router.Handler(ctx)
+				app.domains[d].Handler()(ctx)
 				return
 			}
 			app.domainListLock.RUnlock()
@@ -20,6 +20,6 @@ func (app *App) handler() func(*fasthttp.RequestCtx) {
 				return
 			}
 		}
-		app.defaultRouter.router.Handler(ctx)
+		app.defaultRouter.Handler()(ctx)
 	}
 }

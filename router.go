@@ -5,6 +5,7 @@ import (
 
 	"time"
 
+	"github.com/kirillDanshin/fasthttprouter"
 	"github.com/valyala/fasthttp"
 )
 
@@ -170,4 +171,176 @@ func (r *Router) ServeDirCustom(path string, stripSlashes int, compress bool, ge
 	return func(ctx *fasthttp.RequestCtx) {
 		h(ctx)
 	}
+}
+
+// HTTP router returns a router instance that work only on HTTP requests
+func (r *Router) HTTP() *Router {
+	if r.root != nil {
+		return r.root.HTTP()
+	}
+	r.mu.Lock()
+	if r.httprouter == nil {
+		r.httprouter = &Router{
+			router: fasthttprouter.New(),
+			app:    r.app,
+			root:   r,
+		}
+	}
+	r.mu.Unlock()
+
+	return r.httprouter
+}
+
+// HTTPS router returns a router instance that work only on HTTPS requests
+func (r *Router) HTTPS() *Router {
+	if r.root != nil {
+		return r.root.HTTPS()
+	}
+	r.mu.Lock()
+	if r.httpsrouter == nil {
+		r.httpsrouter = &Router{
+			router: fasthttprouter.New(),
+			app:    r.app,
+			root:   r,
+		}
+	}
+	r.mu.Unlock()
+
+	return r.httpsrouter
+}
+
+// ServeFiles serves files from the given file system root.
+// The path must end with "/*filepath", files are then served from the local
+// path /defined/root/dir/*filepath.
+// For example if root is "/etc" and *filepath is "passwd", the local file
+// "/etc/passwd" would be served.
+// Internally a http.FileServer is used, therefore http.NotFound is used instead
+// of the Router's NotFound handler.
+//     router.ServeFiles("/src/*filepath", "/var/www")
+func (r *Router) ServeFiles(path string, rootPath string) {
+	r.router.ServeFiles(path, rootPath)
+}
+
+// Lookup allows the manual lookup of a method + path combo.
+// This is e.g. useful to build a framework around this router.
+// If the path was found, it returns the handle function and the path parameter
+// values. Otherwise the third return value indicates whether a redirection to
+// the same path with an extra / without the trailing slash should be performed.
+func (r *Router) Lookup(method, path string, ctx *fasthttp.RequestCtx) (fasthttp.RequestHandler, bool) {
+	return r.router.Lookup(method, path, ctx)
+}
+
+// Allowed returns Allow header's value used in OPTIONS responses
+func (r *Router) Allowed(path, reqMethod string) (allow string) {
+	return r.router.Allowed(path, reqMethod)
+}
+
+// Handler makes the router implement the fasthttp.ListenAndServe interface.
+func (r *Router) Handler() func(*fasthttp.RequestCtx) {
+	return func(ctx *fasthttp.RequestCtx) {
+		path := string(ctx.Path())
+		method := string(ctx.Method())
+		switch ctx.IsTLS() {
+		case true:
+			if r.httpsrouter != nil {
+				handler, rts := r.httpsrouter.router.Lookup(method, path, ctx)
+				if handler != nil && r.httpsrouter.handle(path, method, ctx, handler, rts, false) {
+					return
+				}
+			}
+		case false:
+			if r.httprouter != nil {
+				handler, rts := r.httprouter.router.Lookup(method, path, ctx)
+				if handler != nil && r.httprouter.handle(path, method, ctx, handler, rts, false) {
+					return
+				}
+			}
+		}
+		handler, rts := r.router.Lookup(method, path, ctx)
+		if r.handle(path, method, ctx, handler, rts, true) {
+			return
+		}
+		if r.router.NotFound != nil {
+			r.router.NotFound(ctx)
+			return
+		}
+		ctx.Error(fasthttp.StatusMessage(fasthttp.StatusNotFound), fasthttp.StatusNotFound)
+	}
+}
+
+func (r *Router) handle(path, method string, ctx *fasthttp.RequestCtx, handler func(ctx *fasthttp.RequestCtx), redirectTrailingSlashs bool, isRootRouter bool) (handlerFound bool) {
+	if root := r.router.Trees[method]; root != nil {
+		if f, tsr := root.GetValue(path, ctx); f != nil {
+			f(ctx)
+			return true
+		} else if method != fasthttprouter.CONNECT && path != fasthttprouter.PathSlash {
+			code := redirectCode // Permanent redirect, request with GET method
+			if method != fasthttprouter.GET {
+				// Temporary redirect, request with same method
+				// As of Go 1.3, Go does not support status code 308.
+				code = temporaryRedirectCode
+			}
+
+			if tsr && r.router.RedirectTrailingSlash {
+				var uri string
+				if len(path) > one && path[len(path)-one] == fasthttprouter.SlashByte {
+					uri = path[:len(path)-one]
+				} else {
+					uri = path + fasthttprouter.PathSlash
+				}
+				ctx.Redirect(uri, code)
+				return false
+			}
+
+			// Try to fix the request path
+			if r.router.RedirectFixedPath {
+				fixedPath, found := root.FindCaseInsensitivePath(
+					fasthttprouter.CleanPath(path),
+					r.router.RedirectTrailingSlash,
+				)
+
+				if found {
+					queryBuf := ctx.URI().QueryString()
+					if len(queryBuf) > zero {
+						fixedPath = append(fixedPath, fasthttprouter.QuestionMark...)
+						fixedPath = append(fixedPath, queryBuf...)
+					}
+					uri := string(fixedPath)
+					ctx.Redirect(uri, code)
+					return true
+				}
+			}
+		}
+	}
+
+	if !isRootRouter {
+		return false
+	}
+
+	if method == fasthttprouter.OPTIONS {
+		// Handle OPTIONS requests
+		if r.router.HandleOPTIONS {
+			if allow := r.router.Allowed(path, method); len(allow) > zero {
+				ctx.Response.Header.Set(fasthttprouter.HeaderAllow, allow)
+				return true
+			}
+		}
+	} else {
+		// Handle 405
+		if r.router.HandleMethodNotAllowed {
+			if allow := r.router.Allowed(path, method); len(allow) > zero {
+				ctx.Response.Header.Set(fasthttprouter.HeaderAllow, allow)
+				if r.router.MethodNotAllowed != nil {
+					r.router.MethodNotAllowed(ctx)
+				} else {
+					ctx.SetStatusCode(fasthttp.StatusMethodNotAllowed)
+					ctx.SetContentTypeBytes(fasthttprouter.DefaultContentType)
+					ctx.SetBodyString(fasthttp.StatusMessage(fasthttp.StatusMethodNotAllowed))
+				}
+				return true
+			}
+		}
+	}
+
+	return false
 }

@@ -6,7 +6,7 @@ import (
 
 	"github.com/apex/log"
 	"github.com/apex/log/handlers/cli"
-	"github.com/buaazp/fasthttprouter"
+	"github.com/kirillDanshin/fasthttprouter"
 )
 
 // New App

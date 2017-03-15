@@ -31,7 +31,8 @@ func (app *App) ListenAndServe(addr ...string) error {
 		return errors.New("No bind address provided")
 	}
 	l := app.Logger.WithField("bind", bind)
-	l.Info("Starting")
+
+	l.Info("Starting HTTP")
 	err := fasthttp.ListenAndServe(bind, app.handler())
 	l.Errorf("ListenAndServe failed: %s", err)
 	return err
