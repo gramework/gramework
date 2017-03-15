@@ -24,9 +24,4 @@ func TestNewShouldNeverReturnNil(t *testing.T) {
 		t.FailNow()
 		return
 	}
-	if app.firewall == nil {
-		t.Log("App firewall is nil!")
-		t.FailNow()
-		return
-	}
 }
