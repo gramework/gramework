@@ -15,8 +15,6 @@ import (
 	"github.com/xenolf/lego/acme"
 )
 
-var caddy int
-
 // Config describes how TLS should be configured and used.
 type Config struct {
 	// The hostname or class of hostnames this config is
