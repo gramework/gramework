@@ -25,6 +25,8 @@ func TestRouter(t *testing.T) {
 		t.FailNow()
 	}
 
+	app.GET("/redir", app.ToTLSHandler())
+
 	// POST
 
 	if h, _ := app.defaultRouter.Lookup("POST", "/", nil); h != nil {
