@@ -665,4 +665,5 @@ func TestDomainHTTPSRouter(t *testing.T) {
 	}
 
 	app.handler()(&fasthttp.RequestCtx{})
+	app.handler()(&fasthttp.RequestCtx{})
 }
