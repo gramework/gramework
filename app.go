@@ -6,3 +6,10 @@ func (app *App) ToTLSHandler() func(*Context) {
 		ctx.ToTLS()
 	}
 }
+
+func (app *App) HTTP() *Router {
+	return app.defaultRouter.HTTP()
+}
+func (app *App) HTTPS() *Router {
+	return app.defaultRouter.HTTPS()
+}

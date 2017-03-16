@@ -145,12 +145,12 @@ func (r *Router) HandleOPTIONS(newValue bool) (oldValue bool) {
 }
 
 // ServeDir from a given path
-func (r *Router) ServeDir(path string) func(*fasthttp.RequestCtx) {
-	return r.ServeDirCustom(path, 0, true, false, nil)
+func (app *App) ServeDir(path string) func(*fasthttp.RequestCtx) {
+	return app.ServeDirCustom(path, 0, true, false, nil)
 }
 
 // ServeDirCustom gives you ability to serve a dir with custom settings
-func (r *Router) ServeDirCustom(path string, stripSlashes int, compress bool, generateIndexPages bool, indexNames []string) func(*fasthttp.RequestCtx) {
+func (app *App) ServeDirCustom(path string, stripSlashes int, compress bool, generateIndexPages bool, indexNames []string) func(*fasthttp.RequestCtx) {
 	if indexNames == nil {
 		indexNames = []string{}
 	}
