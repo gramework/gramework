@@ -1,6 +1,7 @@
 package gramework
 
 import "testing"
+import "github.com/valyala/fasthttp"
 
 func TestRouter(t *testing.T) {
 	app := New()
@@ -506,6 +507,19 @@ func TestDomainHTTPSRouter(t *testing.T) {
 	}
 
 	r.GET("/redir", app.ToTLSHandler())
+
+	if h, _ := r.Lookup("GET", "/redir", nil); h == nil {
+		t.Log("GET /abc should return handler after registration")
+		t.FailNow()
+	} else {
+		defer func() {
+			e := recover()
+			if e != nil {
+				t.Log("panic handled when testing /redir")
+			}
+		}()
+		h(&fasthttp.RequestCtx{})
+	}
 
 	// POST
 
