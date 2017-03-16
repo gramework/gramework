@@ -1,7 +1,11 @@
 package gramework
 
-import "testing"
-import "github.com/valyala/fasthttp"
+import (
+	"errors"
+	"testing"
+
+	"github.com/valyala/fasthttp"
+)
 
 func TestRouter(t *testing.T) {
 	app := New()
@@ -658,6 +662,19 @@ func TestDomainHTTPSRouter(t *testing.T) {
 	}
 
 	r.PATCH("/abc", "abc")
+
+	if h, _ := r.Lookup("PATCH", "/abc", nil); h == nil {
+		t.Log("PATCH /abc should return handler after registration")
+		t.FailNow()
+	}
+
+	r.GET("/err", func(ctx *Context) error {
+		return errors.New("test")
+	})
+
+	r.GET("/fasterr", func(ctx *fasthttp.RequestCtx) error {
+		return errors.New("test")
+	})
 
 	if h, _ := r.Lookup("PATCH", "/abc", nil); h == nil {
 		t.Log("PATCH /abc should return handler after registration")
