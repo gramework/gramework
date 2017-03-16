@@ -161,6 +161,12 @@ func TestRouter(t *testing.T) {
 		t.FailNow()
 	}
 
+	app.Handle("CONNECT", "/ws", "")
+	app.PanicHandler(nil)
+	app.NotFound(nil)
+	app.HandleMethodNotAllowed(true)
+	app.HandleOPTIONS(true)
+
 	app.handler()(&fasthttp.RequestCtx{})
 }
 
