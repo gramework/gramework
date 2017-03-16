@@ -160,6 +160,8 @@ func TestRouter(t *testing.T) {
 		t.Log("PATCH /abc should return handler after registration")
 		t.FailNow()
 	}
+
+	app.handler()(&fasthttp.RequestCtx{})
 }
 
 func TestDomainRouter(t *testing.T) {
@@ -320,6 +322,8 @@ func TestDomainRouter(t *testing.T) {
 		t.Log("PATCH /abc should return handler after registration")
 		t.FailNow()
 	}
+
+	app.handler()(&fasthttp.RequestCtx{})
 }
 
 func TestDomainHTTPRouter(t *testing.T) {
@@ -653,4 +657,6 @@ func TestDomainHTTPSRouter(t *testing.T) {
 		t.Log("PATCH /abc should return handler after registration")
 		t.FailNow()
 	}
+
+	app.handler()(&fasthttp.RequestCtx{})
 }
