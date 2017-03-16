@@ -68,7 +68,7 @@ const (
 	methods                           = "GET,PUT,POST,DELETE"
 	corsCType                         = "Content-Type, *"
 	trueStr                           = "true"
-	jsonCT                            = "application/json"
+	jsonCT                            = "application/json;charset=utf8"
 	hOrigin                           = "Origin"
 )
 
