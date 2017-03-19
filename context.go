@@ -105,6 +105,11 @@ func (c *Context) ToJSON(v interface{}) ([]byte, error) {
 
 // UnJSONBytes serializes and writes a json-formatted response to user
 func (c *Context) UnJSONBytes(b []byte, v ...interface{}) (interface{}, error) {
+	return UnJSONBytes(b, v...)
+}
+
+// UnJSONBytes serializes and writes a json-formatted response to user
+func UnJSONBytes(b []byte, v ...interface{}) (interface{}, error) {
 	if len(v) == 0 {
 		var res interface{}
 		err := json.NewDecoder(bytes.NewReader(b)).Decode(&res)

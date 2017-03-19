@@ -32,6 +32,7 @@ func (r *Router) initGrameCtx(ctx *fasthttp.RequestCtx) *Context {
 	return &Context{
 		Logger:     r.app.Logger,
 		RequestCtx: ctx,
+		App:        r.app,
 	}
 }
 

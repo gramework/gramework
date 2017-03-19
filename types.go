@@ -35,6 +35,7 @@ type (
 		*fasthttp.RequestCtx
 		nocopy nocopy.NoCopy
 		Logger log.Interface
+		App    *App
 	}
 
 	// Settings for an App instance

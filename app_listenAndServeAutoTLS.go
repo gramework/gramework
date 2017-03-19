@@ -4,7 +4,6 @@ import (
 	"crypto/tls"
 	"math/rand"
 	"net"
-	"os"
 	"runtime"
 	"strings"
 	"time"
@@ -22,7 +21,7 @@ func getDefaultTLSConfig() *tls.Config {
 }
 
 func getCachePath(dev ...bool) string {
-	p := "./tls-gramecache-" + os.Args[0]
+	p := "./tls-gramecache"
 	if len(dev) > 0 && dev[0] {
 		p += ".dev"
 	}
