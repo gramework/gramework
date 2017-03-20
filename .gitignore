@@ -23,3 +23,7 @@ _testmain.go
 *.test
 *.prof
 coverage.txt
+profile.out
+tls-gramecache.dev
+tls-gramecache
+
