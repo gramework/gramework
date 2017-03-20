@@ -3,6 +3,9 @@ package gramework
 import (
 	"errors"
 	"flag"
+	"log"
+
+	"io/ioutil"
 
 	"github.com/valyala/fasthttp"
 )
@@ -33,7 +36,11 @@ func (app *App) ListenAndServe(addr ...string) error {
 	l := app.Logger.WithField("bind", bind)
 
 	l.Info("Starting HTTP")
-	err := fasthttp.ListenAndServe(bind, app.handler())
+	s := fasthttp.Server{
+		Handler: app.handler(),
+		Logger:  fasthttp.Logger(log.New(ioutil.Discard, "", log.LstdFlags)),
+	}
+	err := s.ListenAndServe(bind)
 	l.Errorf("ListenAndServe failed: %s", err)
 	return err
 }

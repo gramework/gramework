@@ -2,6 +2,8 @@ package gramework
 
 import (
 	"crypto/tls"
+	"io/ioutil"
+	"log"
 	"math/rand"
 	"net"
 	"runtime"
@@ -65,7 +67,11 @@ func (app *App) ListenAndServeAutoTLS(addr string, cachePath ...string) error {
 
 	l := app.Logger.WithField("bind", addr)
 	l.Info("Starting HTTPS")
-	err = fasthttp.Serve(tlsLn, app.handler())
+	server := fasthttp.Server{
+		Handler: app.handler(),
+		Logger:  fasthttp.Logger(log.New(ioutil.Discard, "", log.LstdFlags)),
+	}
+	err = server.Serve(tlsLn)
 	if err != nil {
 		app.Logger.Errorf("Can't serve: %s", err)
 	}
