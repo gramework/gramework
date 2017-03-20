@@ -5,7 +5,7 @@ echo "" > coverage.txt
 
 for d in $(go list ./... | grep -v vendor); do
 	# we're going to listen on :443, so we require sudo for testing purposes
-    sudo go test  -bench=. -benchmem -v -race -coverprofile=profile.out -covermode=atomic $d
+    sudo GOPATH=$GOPATH GOROOT=$GOROOT go test  -bench=. -benchmem -v -race -coverprofile=profile.out -covermode=atomic $d
     if [ -f profile.out ]; then
         cat profile.out >> coverage.txt
         rm profile.out
