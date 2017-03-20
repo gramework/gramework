@@ -36,11 +36,11 @@ func (c *cache) maintain() {
 	for {
 		runtime.Gosched()
 		time.Sleep(10 * time.Second)
+		c.mu.Lock()
 		for path := range c.v {
-			c.mu.Lock()
 			c.v[path].n.hits = 0
-			c.mu.Unlock()
 		}
+		c.mu.Unlock()
 		c.v = make(map[string]*cacheRecord, 0)
 	}
 }

@@ -253,7 +253,6 @@ func (r *Router) Handler() func(*Context) {
 					return
 				}
 				if r.httpsrouter.router.RedirectFixedPath {
-					Logger.Info("3")
 					if root, ok := r.httpsrouter.router.Trees[method]; ok && root != nil {
 						fixedPath, found := root.FindCaseInsensitivePath(
 							CleanPath(path),
@@ -285,7 +284,6 @@ func (r *Router) Handler() func(*Context) {
 				}
 
 				if r.httprouter.router.RedirectFixedPath {
-					Logger.Info("2")
 					if root, ok := r.httprouter.router.Trees[method]; ok && root != nil {
 						fixedPath, found := root.FindCaseInsensitivePath(
 							CleanPath(path),
@@ -320,7 +318,6 @@ func (r *Router) Handler() func(*Context) {
 					r.router.RedirectTrailingSlash,
 				)
 
-				Logger.Infof("1, %s, %v, %v", fixedPath, found, CleanPath(path))
 				if found && len(fixedPath) > 0 {
 					code := redirectCode
 					if method != GET {
@@ -351,7 +348,6 @@ func (r *Router) handle(path, method string, ctx *Context, handler func(ctx *Con
 		} else if method != CONNECT && path != PathSlash {
 			code := redirectCode // Permanent redirect, request with GET method
 			if method != GET {
-				Logger.Infof("not a get")
 				// Temporary redirect, request with same method
 				// As of Go 1.3, Go does not support status code 308.
 				code = temporaryRedirectCode
@@ -365,7 +361,6 @@ func (r *Router) handle(path, method string, ctx *Context, handler func(ctx *Con
 					uri = path + PathSlash
 				}
 				if uri != emptyString {
-					Logger.Infof("redir 1, %v, uri=[%v]", code, uri)
 					ctx.SetStatusCode(code)
 					ctx.Response.Header.Add("Location", uri)
 				}
@@ -386,7 +381,6 @@ func (r *Router) handle(path, method string, ctx *Context, handler func(ctx *Con
 						fixedPath = append(fixedPath, queryBuf...)
 					}
 					uri := string(fixedPath)
-					Logger.Infof("redir 2, %v", code)
 					ctx.SetStatusCode(code)
 					ctx.Response.Header.Add("Location", uri)
 					return true
