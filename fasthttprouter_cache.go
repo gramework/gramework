@@ -40,7 +40,7 @@ func (c *cache) maintain() {
 		for path := range c.v {
 			c.v[path].n.hits = 0
 		}
-		c.mu.Unlock()
 		c.v = make(map[string]*cacheRecord, 0)
+		c.mu.Unlock()
 	}
 }
