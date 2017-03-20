@@ -12,6 +12,16 @@ func TestGrameworkHTTP(t *testing.T) {
 	app := New()
 	const text = "test one two three"
 	app.GET("/", text)
+	var preCalled, mwCalled, postCalled bool
+	app.UsePre(func() {
+		preCalled = true
+	})
+	app.Use(func() {
+		mwCalled = true
+	})
+	app.UseAfterRequest(func() {
+		postCalled = true
+	})
 
 	go func() {
 		app.ListenAndServe(":9977")
@@ -34,6 +44,16 @@ func TestGrameworkHTTP(t *testing.T) {
 			string(body),
 			text,
 		)
+	}
+
+	if !preCalled {
+		t.Fatalf("pre wasn't called")
+	}
+	if !mwCalled {
+		t.Fatalf("middleware wasn't called")
+	}
+	if !postCalled {
+		t.Fatalf("post middleware wasn't called")
 	}
 }
 
