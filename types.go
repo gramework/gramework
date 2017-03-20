@@ -11,9 +11,11 @@ import (
 type (
 	// App represents a gramework app
 	App struct {
-		defaultRouter *Router
-		errorHandler  func(func(*fasthttp.RequestCtx) error)
-		firewall      *firewall
+		defaultRouter  *Router
+		errorHandler   func(func(*fasthttp.RequestCtx) error)
+		EnableFirewall bool
+		firewall       *firewall
+		firewallInit   *sync.Once
 
 		Logger    log.Interface
 		TLSEmails []string

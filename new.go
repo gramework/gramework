@@ -17,11 +17,20 @@ func New() *App {
 	flags := &Flags{
 		values: make(map[string]Flag, 0),
 	}
+	defFWLimit := int64(-1)
+	defBlockTimeout := int64(-1)
 	app := &App{
-		Flags:                     flags,
-		flagsQueue:                flagsToRegister,
-		Logger:                    logger,
-		domainListLock:            &sync.RWMutex{},
+		Flags:          flags,
+		flagsQueue:     flagsToRegister,
+		Logger:         logger,
+		domainListLock: &sync.RWMutex{},
+		firewall: &firewall{
+			blockList:      make(map[string]int64),
+			MaxReqPerMin:   &defFWLimit,
+			BlockTimeout:   &defBlockTimeout,
+			requestCounter: make(map[string]int64),
+		},
+		firewallInit:              &sync.Once{},
 		domains:                   make(map[string]*Router, 0),
 		middlewaresMu:             &sync.RWMutex{},
 		middlewaresAfterRequestMu: &sync.RWMutex{},

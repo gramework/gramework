@@ -6,7 +6,18 @@ import (
 
 func (app *App) handler() func(*fasthttp.RequestCtx) {
 	return func(fhctx *fasthttp.RequestCtx) {
+		if app.EnableFirewall {
+			app.firewallInit.Do(func() {
+				app.initFirewall()
+			})
+		}
 		ctx := app.defaultRouter.initGrameCtx(fhctx)
+		if app.EnableFirewall {
+			if shouldBeBlocked, _ := app.firewall.NewRequest(ctx); shouldBeBlocked {
+				ctx.SetConnectionClose()
+				return
+			}
+		}
 		if app.defaultRouter.router.PanicHandler != nil {
 			defer app.defaultRouter.router.Recv(ctx)
 		}

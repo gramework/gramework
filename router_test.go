@@ -2,6 +2,7 @@ package gramework
 
 import (
 	"errors"
+	"net/http"
 	"testing"
 
 	"github.com/valyala/fasthttp"
@@ -171,7 +172,8 @@ func TestGrameRouter(t *testing.T) {
 	app.HandleMethodNotAllowed(true)
 	app.HandleOPTIONS(true)
 
-	app.handler()(&fasthttp.RequestCtx{})
+	go app.ListenAndServe(":65023")
+	http.Get("http://127.0.0.1:65023") // just should not panic
 }
 
 func TestDomainRouter(t *testing.T) {
@@ -333,7 +335,8 @@ func TestDomainRouter(t *testing.T) {
 		t.FailNow()
 	}
 
-	app.handler()(&fasthttp.RequestCtx{})
+	go app.ListenAndServe(":65024")
+	http.Get("http://127.0.0.1:65024") // just should not panic
 }
 
 func TestDomainHTTPRouter(t *testing.T) {
@@ -683,8 +686,9 @@ func TestDomainHTTPSRouter(t *testing.T) {
 		t.FailNow()
 	}
 
-	app.handler()(&fasthttp.RequestCtx{})
-	app.handler()(&fasthttp.RequestCtx{})
+	go app.ListenAndServe(":65027")
+	http.Get("http://127.0.0.1:65027") // just should not panic
+	http.Get("http://127.0.0.1:65027") // just should not panic, twice
 }
 
 func TestHTTPRouter(t *testing.T) {
@@ -1034,6 +1038,7 @@ func TestHTTPSRouter(t *testing.T) {
 		t.FailNow()
 	}
 
-	app.handler()(&fasthttp.RequestCtx{})
-	app.handler()(&fasthttp.RequestCtx{})
+	go app.ListenAndServe(":65033")
+	http.Get("http://127.0.0.1:65033") // just should not panic
+	http.Get("http://127.0.0.1:65033") // just should not panic, twice
 }

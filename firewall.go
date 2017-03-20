@@ -15,6 +15,9 @@ func (app *App) initFirewall() {
 // because the IP is on the block list.
 // The remote address is always returned for logging purpose.
 func (fw *firewall) NewRequest(ctx *Context) (shouldBeBlocked bool, remoteAddr string) {
+	if ctx == nil || ctx.RemoteAddr().String() == "0.0.0.0" {
+		return false, ""
+	}
 	// Get the remote addresse of the request
 	remoteAddr = ctx.RemoteIP().String()
 
