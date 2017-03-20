@@ -7,9 +7,12 @@ func (app *App) ToTLSHandler() func(*Context) {
 	}
 }
 
+// HTTP returns HTTP-only router
 func (app *App) HTTP() *Router {
 	return app.defaultRouter.HTTP()
 }
+
+// HTTPS returns HTTPS-only router
 func (app *App) HTTPS() *Router {
 	return app.defaultRouter.HTTPS()
 }

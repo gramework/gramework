@@ -60,12 +60,12 @@ func (r *Router) Handle(method, route string, handler interface{}) *Router {
 
 	switch h := handler.(type) {
 	case func(*fasthttp.RequestCtx):
-		r.router.Handle(method, route, h)
-	case func(*Context):
 		r.router.Handle(method, route, r.getGrameHandler(h))
-	case func(*Context) error:
-		r.router.Handle(method, route, r.getGrameErrorHandler(h))
+	case func(*Context):
+		r.router.Handle(method, route, h)
 	case func(*fasthttp.RequestCtx) error:
+		r.router.Handle(method, route, r.getGrameErrorHandler(h))
+	case func(*Context) error:
 		r.router.Handle(method, route, r.getErrorHandler(h))
 	case string:
 		r.router.Handle(method, route, r.getStringServer(h))
@@ -82,48 +82,48 @@ func (r *Router) Handle(method, route string, handler interface{}) *Router {
 	return r
 }
 
-func (r *Router) getFmtVHandler(v interface{}) func(*fasthttp.RequestCtx) {
+func (r *Router) getFmtVHandler(v interface{}) func(*Context) {
 	cache := []byte(fmt.Sprintf("%v", v))
-	return func(ctx *fasthttp.RequestCtx) {
+	return func(ctx *Context) {
 		ctx.Write(cache)
 	}
 }
 
-func (r *Router) getStringServer(str string) func(*fasthttp.RequestCtx) {
+func (r *Router) getStringServer(str string) func(*Context) {
 	b := []byte(str)
-	return func(ctx *fasthttp.RequestCtx) {
+	return func(ctx *Context) {
 		ctx.Write(b)
 	}
 }
 
-func (r *Router) getBytesServer(b []byte) func(*fasthttp.RequestCtx) {
-	return func(ctx *fasthttp.RequestCtx) {
+func (r *Router) getBytesServer(b []byte) func(*Context) {
+	return func(ctx *Context) {
 		ctx.Write(b)
 	}
 }
 
-func (r *Router) getFmtDHandler(v interface{}) func(*fasthttp.RequestCtx) {
+func (r *Router) getFmtDHandler(v interface{}) func(*Context) {
 	const fmtD = "%d"
-	return func(ctx *fasthttp.RequestCtx) {
+	return func(ctx *Context) {
 		fmt.Fprintf(ctx, fmtD, v)
 	}
 }
 
-func (r *Router) getFmtFHandler(v interface{}) func(*fasthttp.RequestCtx) {
+func (r *Router) getFmtFHandler(v interface{}) func(*Context) {
 	const fmtF = "%f"
-	return func(ctx *fasthttp.RequestCtx) {
+	return func(ctx *Context) {
 		fmt.Fprintf(ctx, fmtF, v)
 	}
 }
 
 // PanicHandler set a handler for unhandled panics
-func (r *Router) PanicHandler(panicHandler func(*fasthttp.RequestCtx, interface{})) {
+func (r *Router) PanicHandler(panicHandler func(*Context, interface{})) {
 	r.initRouter()
 	r.router.PanicHandler = panicHandler
 }
 
 // NotFound set a handler wich is called when no matching route is found
-func (r *Router) NotFound(notFoundHandler func(*fasthttp.RequestCtx)) {
+func (r *Router) NotFound(notFoundHandler func(*Context)) {
 	r.initRouter()
 	r.router.NotFound = notFoundHandler
 }
@@ -145,12 +145,12 @@ func (r *Router) HandleOPTIONS(newValue bool) (oldValue bool) {
 }
 
 // ServeDir from a given path
-func (app *App) ServeDir(path string) func(*fasthttp.RequestCtx) {
+func (app *App) ServeDir(path string) func(*Context) {
 	return app.ServeDirCustom(path, 0, true, false, nil)
 }
 
 // ServeDirCustom gives you ability to serve a dir with custom settings
-func (app *App) ServeDirCustom(path string, stripSlashes int, compress bool, generateIndexPages bool, indexNames []string) func(*fasthttp.RequestCtx) {
+func (app *App) ServeDirCustom(path string, stripSlashes int, compress bool, generateIndexPages bool, indexNames []string) func(*Context) {
 	if indexNames == nil {
 		indexNames = []string{}
 	}
@@ -168,8 +168,8 @@ func (app *App) ServeDirCustom(path string, stripSlashes int, compress bool, gen
 	}
 
 	h := fs.NewRequestHandler()
-	return func(ctx *fasthttp.RequestCtx) {
-		h(ctx)
+	return func(ctx *Context) {
+		h(ctx.RequestCtx)
 	}
 }
 
@@ -181,7 +181,7 @@ func (r *Router) HTTP() *Router {
 	r.mu.Lock()
 	if r.httprouter == nil {
 		r.httprouter = &Router{
-			router: fasthttprouter.New(),
+			router: newRouter(),
 			app:    r.app,
 			root:   r,
 		}
@@ -199,7 +199,7 @@ func (r *Router) HTTPS() *Router {
 	r.mu.Lock()
 	if r.httpsrouter == nil {
 		r.httpsrouter = &Router{
-			router: fasthttprouter.New(),
+			router: newRouter(),
 			app:    r.app,
 			root:   r,
 		}
@@ -226,7 +226,7 @@ func (r *Router) ServeFiles(path string, rootPath string) {
 // If the path was found, it returns the handle function and the path parameter
 // values. Otherwise the third return value indicates whether a redirection to
 // the same path with an extra / without the trailing slash should be performed.
-func (r *Router) Lookup(method, path string, ctx *fasthttp.RequestCtx) (fasthttp.RequestHandler, bool) {
+func (r *Router) Lookup(method, path string, ctx *Context) (RequestHandler, bool) {
 	return r.router.Lookup(method, path, ctx)
 }
 
@@ -236,8 +236,8 @@ func (r *Router) Allowed(path, reqMethod string) (allow string) {
 }
 
 // Handler makes the router implement the fasthttp.ListenAndServe interface.
-func (r *Router) Handler() func(*fasthttp.RequestCtx) {
-	return func(ctx *fasthttp.RequestCtx) {
+func (r *Router) Handler() func(*Context) {
+	return func(ctx *Context) {
 		path := string(ctx.Path())
 		method := string(ctx.Method())
 		switch ctx.IsTLS() {
@@ -268,7 +268,7 @@ func (r *Router) Handler() func(*fasthttp.RequestCtx) {
 	}
 }
 
-func (r *Router) handle(path, method string, ctx *fasthttp.RequestCtx, handler func(ctx *fasthttp.RequestCtx), redirectTrailingSlashs bool, isRootRouter bool) (handlerFound bool) {
+func (r *Router) handle(path, method string, ctx *Context, handler func(ctx *Context), redirectTrailingSlashs bool, isRootRouter bool) (handlerFound bool) {
 	if root := r.router.Trees[method]; root != nil {
 		if f, tsr := root.GetValue(path, ctx); f != nil {
 			f(ctx)

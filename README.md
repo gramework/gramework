@@ -4,7 +4,7 @@ The Good Framework
 
 # 3rd-party license info
 
-- Gramework is now powered by [fasthttp](https://github.com/valyala/fasthttp) and [custom fasthttprouter](https://github.com/kirillDanshin/fasthttprouter).
+- Gramework is now powered by [fasthttp](https://github.com/valyala/fasthttp) and custom fasthttprouter, that is embedded now.
   You can find licenses in `/3rd-Party Licenses/fasthttp` and `/3rd-Party Licenses/fasthttprouter`.
 - The 3rd autoTLS implementation, placed in `nettls_*.go`, is an integrated version of
   [caddytls](https://github.com/mholt/caddy/tree/d85e90a7b4c06d1698d0b96b695b05d41833fcd3/caddytls), because using it by simple import isn't an option:

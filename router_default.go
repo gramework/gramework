@@ -1,7 +1,5 @@
 package gramework
 
-import "github.com/valyala/fasthttp"
-
 // GET registers a handler for a GET request to the given route
 func (app *App) GET(route string, handler interface{}) *App {
 	app.defaultRouter.Handle(MethodGET, route, handler)
@@ -54,13 +52,13 @@ func (app *App) Handle(method, route string, handler interface{}) *App {
 }
 
 // PanicHandler set a handler for unhandled panics
-func (app *App) PanicHandler(panicHandler func(*fasthttp.RequestCtx, interface{})) *App {
+func (app *App) PanicHandler(panicHandler func(*Context, interface{})) *App {
 	app.defaultRouter.PanicHandler(panicHandler)
 	return app
 }
 
 // NotFound set a handler wich is called when no matching route is found
-func (app *App) NotFound(notFoundHandler func(*fasthttp.RequestCtx)) *App {
+func (app *App) NotFound(notFoundHandler func(*Context)) *App {
 	app.defaultRouter.NotFound(notFoundHandler)
 	return app
 }

@@ -1,27 +1,25 @@
 package gramework
 
-import (
-	"github.com/kirillDanshin/fasthttprouter"
-	"github.com/valyala/fasthttp"
-)
+import "github.com/valyala/fasthttp"
 
-func (r *Router) getErrorHandler(h func(*fasthttp.RequestCtx) error) func(*fasthttp.RequestCtx) {
-	return func(ctx *fasthttp.RequestCtx) {
+func (r *Router) getErrorHandler(h func(*Context) error) func(*Context) {
+	return func(ctx *Context) {
 		if err := h(ctx); err != nil {
+			r.app.Logger.WithField("url", ctx.URI()).Errorf("Error occurred: %s", err)
 			ctx.Error("Internal Server Error", fasthttp.StatusInternalServerError)
 		}
 	}
 }
 
-func (r *Router) getGrameHandler(h func(*Context)) func(*fasthttp.RequestCtx) {
-	return func(ctx *fasthttp.RequestCtx) {
-		h(r.initGrameCtx(ctx))
+func (r *Router) getGrameHandler(h func(*fasthttp.RequestCtx)) func(*Context) {
+	return func(ctx *Context) {
+		h(ctx.RequestCtx)
 	}
 }
 
-func (r *Router) getGrameErrorHandler(h func(*Context) error) func(*fasthttp.RequestCtx) {
-	return func(ctx *fasthttp.RequestCtx) {
-		if err := h(r.initGrameCtx(ctx)); err != nil {
+func (r *Router) getGrameErrorHandler(h func(*fasthttp.RequestCtx) error) func(*Context) {
+	return func(ctx *Context) {
+		if err := h(ctx.RequestCtx); err != nil {
 			r.app.Logger.WithField("url", ctx.URI()).Errorf("Error occurred: %s", err)
 			ctx.Error("Internal Server Error", fasthttp.StatusInternalServerError)
 		}
@@ -38,6 +36,6 @@ func (r *Router) initGrameCtx(ctx *fasthttp.RequestCtx) *Context {
 
 func (r *Router) initRouter() {
 	if r.router == nil {
-		r.router = fasthttprouter.New()
+		r.router = newRouter()
 	}
 }

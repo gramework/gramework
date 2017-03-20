@@ -59,6 +59,7 @@ func HTTPChallengeHandler(ctx *Context, listenHost, altPort string) bool {
 	return true
 }
 
+// ReverseProxyHandler proxies a request to the upstream via given proxyClient
 func ReverseProxyHandler(ctx *Context, proxyClient *fasthttp.HostClient, upstream *url.URL) {
 	req := &ctx.Request
 	resp := &ctx.Response

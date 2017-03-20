@@ -5,7 +5,6 @@ import (
 
 	"github.com/apex/log"
 	"github.com/gramework/utils/nocopy"
-	"github.com/kirillDanshin/fasthttprouter"
 	"github.com/valyala/fasthttp"
 )
 
@@ -28,6 +27,13 @@ type (
 		flagsQueue      []Flag
 
 		domainListLock *sync.RWMutex
+
+		preMiddlewares            []func(*Context)
+		middlewares               []func(*Context)
+		middlewaresAfterRequest   []func(*Context)
+		middlewaresMu             *sync.RWMutex
+		preMiddlewaresMu          *sync.RWMutex
+		middlewaresAfterRequestMu *sync.RWMutex
 	}
 
 	// Context is a gramework request context
@@ -36,6 +42,8 @@ type (
 		nocopy nocopy.NoCopy
 		Logger log.Interface
 		App    *App
+
+		middlewaresShouldStopProcessing bool
 	}
 
 	// Settings for an App instance
@@ -80,11 +88,17 @@ type (
 
 	// Router handles internal handler conversion etc.
 	Router struct {
-		router      *fasthttprouter.Router
+		router      *router
 		httprouter  *Router
 		httpsrouter *Router
 		root        *Router
 		app         *App
 		mu          sync.RWMutex
 	}
+
+	// RequestHandler describes a standard request handler type
+	RequestHandler func(*Context)
+
+	// RequestHandlerErr describes a standard request handler with error returned type
+	RequestHandlerErr func(*Context) error
 )
