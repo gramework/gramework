@@ -9,7 +9,7 @@ go:
   - tip
 
 before_install:
-  - go get -t -v -bench=. -benchmem ./...
+  - go get -t -v ./...
 
 script:
   - ./.test.sh
