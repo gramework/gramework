@@ -182,7 +182,7 @@ func (r *router) Handle(method, path string, handle RequestHandler) {
 		r.Trees[method] = root
 	}
 
-	root.addRoute(path, handle)
+	root.addRoute(path, handle, r)
 }
 
 // ServeFiles serves files from the given file system root.
@@ -264,88 +264,88 @@ func (r *router) Allowed(path, reqMethod string) (allow string) {
 	return
 }
 
-// Handler makes the router implement the fasthttp.ListenAndServe interface.
-func (r *router) Handler(ctx *Context) {
-	if r.PanicHandler != nil {
-		defer r.Recv(ctx)
-	}
+// // Handler makes the router implement the fasthttp.ListenAndServe interface.
+// func (r *router) Handler(ctx *Context) {
+// 	if r.PanicHandler != nil {
+// 		defer r.Recv(ctx)
+// 	}
 
-	path := string(ctx.Path())
-	method := string(ctx.Method())
-	if root := r.Trees[method]; root != nil {
-		if f, tsr := root.GetValue(path, ctx); f != nil {
-			f(ctx)
-			return
-		} else if method != CONNECT && path != PathSlash {
-			code := 301 // Permanent redirect, request with GET method
-			if method != GET {
-				// Temporary redirect, request with same method
-				// As of Go 1.3, Go does not support status code 308.
-				code = 307
-			}
+// 	path := string(ctx.Path())
+// 	method := string(ctx.Method())
+// 	if root := r.Trees[method]; root != nil {
+// 		if f, tsr := root.GetValue(path, ctx); f != nil {
+// 			f(ctx)
+// 			return
+// 		} else if method != CONNECT && path != PathSlash {
+// 			code := 301 // Permanent redirect, request with GET method
+// 			if method != GET {
+// 				// Temporary redirect, request with same method
+// 				// As of Go 1.3, Go does not support status code 308.
+// 				code = 307
+// 			}
 
-			if tsr && r.RedirectTrailingSlash {
-				var uri string
-				if len(path) > 1 && path[len(path)-1] == SlashByte {
-					uri = path[:len(path)-1]
-				} else {
-					uri = path + PathSlash
-				}
-				ctx.Redirect(uri, code)
-				return
-			}
+// 			if tsr && r.RedirectTrailingSlash {
+// 				var uri string
+// 				if len(path) > 1 && path[len(path)-1] == SlashByte {
+// 					uri = path[:len(path)-1]
+// 				} else {
+// 					uri = path + PathSlash
+// 				}
+// 				ctx.Redirect(uri, code)
+// 				return
+// 			}
 
-			// Try to fix the request path
-			if r.RedirectFixedPath {
-				fixedPath, found := root.FindCaseInsensitivePath(
-					CleanPath(path),
-					r.RedirectTrailingSlash,
-				)
+// 			// Try to fix the request path
+// 			if r.RedirectFixedPath {
+// 				fixedPath, found := root.FindCaseInsensitivePath(
+// 					CleanPath(path),
+// 					r.RedirectTrailingSlash,
+// 				)
 
-				if found {
-					queryBuf := ctx.URI().QueryString()
-					if len(queryBuf) > 0 {
-						fixedPath = append(fixedPath, QuestionMark...)
-						fixedPath = append(fixedPath, queryBuf...)
-					}
-					uri := string(fixedPath)
-					ctx.Redirect(uri, code)
-					return
-				}
-			}
-		}
-	}
+// 				if found {
+// 					queryBuf := ctx.URI().QueryString()
+// 					if len(queryBuf) > 0 {
+// 						fixedPath = append(fixedPath, QuestionMark...)
+// 						fixedPath = append(fixedPath, queryBuf...)
+// 					}
+// 					uri := string(fixedPath)
+// 					ctx.Redirect(uri, code)
+// 					return
+// 				}
+// 			}
+// 		}
+// 	}
 
-	if method == OPTIONS {
-		// Handle OPTIONS requests
-		if r.HandleOPTIONS {
-			if allow := r.Allowed(path, method); len(allow) > 0 {
-				ctx.Response.Header.Set(HeaderAllow, allow)
-				return
-			}
-		}
-	} else {
-		// Handle 405
-		if r.HandleMethodNotAllowed {
-			if allow := r.Allowed(path, method); len(allow) > 0 {
-				ctx.Response.Header.Set(HeaderAllow, allow)
-				if r.MethodNotAllowed != nil {
-					r.MethodNotAllowed(ctx)
-				} else {
-					ctx.SetStatusCode(fasthttp.StatusMethodNotAllowed)
-					ctx.SetContentTypeBytes(DefaultContentType)
-					ctx.SetBodyString(fasthttp.StatusMessage(fasthttp.StatusMethodNotAllowed))
-				}
-				return
-			}
-		}
-	}
+// 	if method == OPTIONS {
+// 		// Handle OPTIONS requests
+// 		if r.HandleOPTIONS {
+// 			if allow := r.Allowed(path, method); len(allow) > 0 {
+// 				ctx.Response.Header.Set(HeaderAllow, allow)
+// 				return
+// 			}
+// 		}
+// 	} else {
+// 		// Handle 405
+// 		if r.HandleMethodNotAllowed {
+// 			if allow := r.Allowed(path, method); len(allow) > 0 {
+// 				ctx.Response.Header.Set(HeaderAllow, allow)
+// 				if r.MethodNotAllowed != nil {
+// 					r.MethodNotAllowed(ctx)
+// 				} else {
+// 					ctx.SetStatusCode(fasthttp.StatusMethodNotAllowed)
+// 					ctx.SetContentTypeBytes(DefaultContentType)
+// 					ctx.SetBodyString(fasthttp.StatusMessage(fasthttp.StatusMethodNotAllowed))
+// 				}
+// 				return
+// 			}
+// 		}
+// 	}
 
-	// Handle 404
-	if r.NotFound != nil {
-		r.NotFound(ctx)
-	} else {
-		ctx.Error(fasthttp.StatusMessage(fasthttp.StatusNotFound),
-			fasthttp.StatusNotFound)
-	}
-}
+// 	// Handle 404
+// 	if r.NotFound != nil {
+// 		r.NotFound(ctx)
+// 	} else {
+// 		ctx.Error(fasthttp.StatusMessage(fasthttp.StatusNotFound),
+// 			fasthttp.StatusNotFound)
+// 	}
+// }

@@ -83,10 +83,13 @@ func (n *node) incrementChildPrio(pos int) int {
 
 // addRoute adds a node with the given handle to the path.
 // Not concurrency-safe!
-func (n *node) addRoute(path string, handle RequestHandler) {
+func (n *node) addRoute(path string, handle RequestHandler, r *router) {
 	fullPath := path
 	n.priority++
 	numParams := countParams(path)
+	if n.router == nil {
+		n.router = r
+	}
 
 	// non-empty tree
 	if len(n.path) > 0 || len(n.children) > 0 {
@@ -189,6 +192,7 @@ func (n *node) addRoute(path string, handle RequestHandler) {
 					n.indices += string([]byte{c})
 					child := &node{
 						maxParams: numParams,
+						router:    n.router,
 					}
 					n.children = append(n.children, child)
 					n.incrementChildPrio(len(n.indices) - 1)
@@ -256,6 +260,7 @@ func (n *node) insertChild(numParams uint8, path, fullPath string, handle Reques
 			child := &node{
 				nType:     param,
 				maxParams: numParams,
+				router:    n.router,
 			}
 			n.children = []*node{child}
 			n.wildChild = true
@@ -272,6 +277,7 @@ func (n *node) insertChild(numParams uint8, path, fullPath string, handle Reques
 				child := &node{
 					maxParams: numParams,
 					priority:  1,
+					router:    n.router,
 				}
 				n.children = []*node{child}
 				n = child
@@ -299,6 +305,7 @@ func (n *node) insertChild(numParams uint8, path, fullPath string, handle Reques
 				wildChild: true,
 				nType:     catchAll,
 				maxParams: 1,
+				router:    n.router,
 			}
 			n.children = []*node{child}
 			n.indices = string(path[i])
@@ -312,6 +319,7 @@ func (n *node) insertChild(numParams uint8, path, fullPath string, handle Reques
 				maxParams: 1,
 				handle:    handle,
 				priority:  1,
+				router:    n.router,
 			}
 			n.children = []*node{child}
 
@@ -330,6 +338,12 @@ func (n *node) insertChild(numParams uint8, path, fullPath string, handle Reques
 // made if a handle exists with an extra (without the) trailing slash for the
 // given path.
 func (n *node) GetValue(reqPath string, ctx *Context) (handle RequestHandler, tsr bool) {
+	if n.router == nil {
+		panic("no router!")
+	}
+	if n.router.cache == nil {
+		panic("no cache!")
+	}
 	if record, ok := n.router.cache.Get(reqPath); ok {
 		return record.n.handle, record.tsr
 	}

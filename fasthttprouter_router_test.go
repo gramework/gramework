@@ -15,6 +15,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"runtime/debug"
 	"testing"
 	"time"
 
@@ -25,7 +26,7 @@ func TestRouter(t *testing.T) {
 	router := New()
 
 	routed := false
-	router.Handle("GET", "/user/:name", func(ctx *fasthttp.RequestCtx) {
+	router.Handle("GET", "/user/:name", func(ctx *Context) {
 		routed = true
 		want := map[string]string{"name": "gopher"}
 
@@ -36,7 +37,7 @@ func TestRouter(t *testing.T) {
 	})
 
 	s := &fasthttp.Server{
-		Handler: router.Handler,
+		Handler: router.handler(),
 	}
 
 	rw := &readWriter{}
@@ -72,31 +73,31 @@ func (h handlerStruct) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func TestRouterAPI(t *testing.T) {
 	var get, head, options, post, put, patch, deleted bool
 
-	router := New()
-	router.GET("/GET", func(ctx *fasthttp.RequestCtx) {
+	app := New()
+	app.GET("/GET", func(ctx *Context) {
 		get = true
 	})
-	router.HEAD("/GET", func(ctx *fasthttp.RequestCtx) {
+	app.HEAD("/GET", func(ctx *Context) {
 		head = true
 	})
-	router.OPTIONS("/GET", func(ctx *fasthttp.RequestCtx) {
+	app.OPTIONS("/GET", func(ctx *Context) {
 		options = true
 	})
-	router.POST("/POST", func(ctx *fasthttp.RequestCtx) {
+	app.POST("/POST", func(ctx *Context) {
 		post = true
 	})
-	router.PUT("/PUT", func(ctx *fasthttp.RequestCtx) {
+	app.PUT("/PUT", func(ctx *Context) {
 		put = true
 	})
-	router.PATCH("/PATCH", func(ctx *fasthttp.RequestCtx) {
+	app.PATCH("/PATCH", func(ctx *Context) {
 		patch = true
 	})
-	router.DELETE("/DELETE", func(ctx *fasthttp.RequestCtx) {
+	app.DELETE("/DELETE", func(ctx *Context) {
 		deleted = true
 	})
 
 	s := &fasthttp.Server{
-		Handler: router.Handler,
+		Handler: app.handler(),
 	}
 
 	rw := &readWriter{}
@@ -225,93 +226,6 @@ func TestRouterRoot(t *testing.T) {
 	}
 }
 
-func TestRouterChaining(t *testing.T) {
-	router1 := New()
-	router2 := New()
-	router1.NotFound = router2.Handler
-
-	fooHit := false
-	router1.POST("/foo", func(ctx *fasthttp.RequestCtx) {
-		fooHit = true
-		ctx.SetStatusCode(fasthttp.StatusOK)
-	})
-
-	barHit := false
-	router2.POST("/bar", func(ctx *fasthttp.RequestCtx) {
-		barHit = true
-		ctx.SetStatusCode(fasthttp.StatusOK)
-	})
-
-	s := &fasthttp.Server{
-		Handler: router1.Handler,
-	}
-
-	rw := &readWriter{}
-	ch := make(chan error)
-
-	rw.r.WriteString("POST /foo HTTP/1.1\r\n\r\n")
-	go func() {
-		ch <- s.ServeConn(rw)
-	}()
-	select {
-	case err := <-ch:
-		if err != nil {
-			t.Fatalf("return error %s", err)
-		}
-	case <-time.After(100 * time.Millisecond):
-		t.Fatalf("timeout")
-	}
-	br := bufio.NewReader(&rw.w)
-	var resp fasthttp.Response
-	if err := resp.Read(br); err != nil {
-		t.Fatalf("Unexpected error when reading response: %s", err)
-	}
-	if !(resp.Header.StatusCode() == fasthttp.StatusOK && fooHit) {
-		t.Errorf("Regular routing failed with router chaining.")
-		t.FailNow()
-	}
-
-	rw.r.WriteString("POST /bar HTTP/1.1\r\n\r\n")
-	go func() {
-		ch <- s.ServeConn(rw)
-	}()
-	select {
-	case err := <-ch:
-		if err != nil {
-			t.Fatalf("return error %s", err)
-		}
-	case <-time.After(100 * time.Millisecond):
-		t.Fatalf("timeout")
-	}
-	if err := resp.Read(br); err != nil {
-		t.Fatalf("Unexpected error when reading response: %s", err)
-	}
-	if !(resp.Header.StatusCode() == fasthttp.StatusOK && barHit) {
-		t.Errorf("Chained routing failed with router chaining.")
-		t.FailNow()
-	}
-
-	rw.r.WriteString("POST /qax HTTP/1.1\r\n\r\n")
-	go func() {
-		ch <- s.ServeConn(rw)
-	}()
-	select {
-	case err := <-ch:
-		if err != nil {
-			t.Fatalf("return error %s", err)
-		}
-	case <-time.After(100 * time.Millisecond):
-		t.Fatalf("timeout")
-	}
-	if err := resp.Read(br); err != nil {
-		t.Fatalf("Unexpected error when reading response: %s", err)
-	}
-	if !(resp.Header.StatusCode() == fasthttp.StatusNotFound) {
-		t.Errorf("NotFound behavior failed with router chaining.")
-		t.FailNow()
-	}
-}
-
 func TestRouterOPTIONS(t *testing.T) {
 	// TODO: because fasthttp is not support OPTIONS method now,
 	// these test cases will be used in the future.
@@ -323,7 +237,7 @@ func TestRouterOPTIONS(t *testing.T) {
 	// test not allowed
 	// * (server)
 	s := &fasthttp.Server{
-		Handler: router.Handler,
+		Handler: router.handler(),
 	}
 
 	rw := &readWriter{}
@@ -512,7 +426,7 @@ func TestRouterNotAllowed(t *testing.T) {
 
 	// Test not allowed
 	s := &fasthttp.Server{
-		Handler: router.Handler,
+		Handler: router.handler(),
 	}
 
 	rw := &readWriter{}
@@ -568,7 +482,7 @@ func TestRouterNotAllowed(t *testing.T) {
 	}
 
 	responseText := "custom method"
-	router.MethodNotAllowed = fasthttp.RequestHandler(func(ctx *fasthttp.RequestCtx) {
+	router.MethodNotAllowed(func(ctx *Context) {
 		ctx.SetStatusCode(fasthttp.StatusTeapot)
 		ctx.Write([]byte(responseText))
 	})
@@ -624,7 +538,7 @@ func TestRouterNotFound(t *testing.T) {
 	}
 
 	s := &fasthttp.Server{
-		Handler: router.Handler,
+		Handler: router.handler(),
 	}
 
 	rw := &readWriter{}
@@ -632,6 +546,7 @@ func TestRouterNotFound(t *testing.T) {
 	var resp fasthttp.Response
 	ch := make(chan error)
 	for _, tr := range testRoutes {
+		t.Logf("testing %v, want %v code", tr.route, tr.code)
 		rw.r.WriteString(fmt.Sprintf("GET %s HTTP/1.1\r\n\r\n", tr.route))
 		go func() {
 			ch <- s.ServeConn(rw)
@@ -652,10 +567,10 @@ func TestRouterNotFound(t *testing.T) {
 				tr.route, resp.Header.StatusCode(), tr.code)
 		}
 	}
-
+	t.Log("not found test")
 	// Test custom not found handler
 	var notFound bool
-	router.NotFound = fasthttp.RequestHandler(func(ctx *fasthttp.RequestCtx) {
+	router.NotFound(func(ctx *Context) {
 		ctx.SetStatusCode(404)
 		notFound = true
 	})
@@ -675,7 +590,11 @@ func TestRouterNotFound(t *testing.T) {
 		t.Fatalf("Unexpected error when reading response: %s", err)
 	}
 	if !(resp.Header.StatusCode() == 404 && notFound == true) {
-		t.Errorf("Custom NotFound handler failed: Code=%d, Header=%v", resp.Header.StatusCode(), string(resp.Header.Peek("Location")))
+		t.Errorf(
+			"Custom NotFound handler failed: Code=%d, Header=%v, url=/nope",
+			resp.Header.StatusCode(),
+			string(resp.Header.Peek("Location")),
+		)
 	}
 
 	// Test other method than GET (want 307 instead of 301)
@@ -695,14 +614,17 @@ func TestRouterNotFound(t *testing.T) {
 	if err := resp.Read(br); err != nil {
 		t.Fatalf("Unexpected error when reading response: %s", err)
 	}
-	if !(resp.Header.StatusCode() == 307) {
-		t.Errorf("Custom NotFound handler failed: Code=%d, Header=%v", resp.Header.StatusCode(), string(resp.Header.Peek("Location")))
+	if resp.Header.StatusCode() != 307 {
+		t.Errorf("Custom NotFound handler failed: Code=%d, Header=%v, url=/path",
+			resp.Header.StatusCode(),
+			string(resp.Header.Peek("Location")),
+		)
 	}
 
 	// Test special case where no node for the prefix "/" exists
 	router = New()
 	router.GET("/a", handlerFunc)
-	s.Handler = router.Handler
+	s.Handler = router.handler()
 	rw.r.WriteString("GET / HTTP/1.1\r\n\r\n")
 	go func() {
 		ch <- s.ServeConn(rw)
@@ -719,7 +641,10 @@ func TestRouterNotFound(t *testing.T) {
 		t.Fatalf("Unexpected error when reading response: %s", err)
 	}
 	if !(resp.Header.StatusCode() == 404) {
-		t.Errorf("NotFound handling route / failed: Code=%d", resp.Header.StatusCode())
+		t.Errorf("NotFound handling route / failed: Code=%d, Header=%v, url=/",
+			resp.Header.StatusCode(),
+			string(resp.Header.Peek("Location")),
+		)
 	}
 }
 
@@ -727,9 +652,9 @@ func TestRouterPanicHandler(t *testing.T) {
 	router := New()
 	panicHandled := false
 
-	router.PanicHandler = func(ctx *fasthttp.RequestCtx, p interface{}) {
+	router.PanicHandler(func(ctx *Context, p interface{}) {
 		panicHandled = true
-	}
+	})
 
 	router.Handle("PUT", "/user/:name", func(_ *fasthttp.RequestCtx) {
 		panic("oops!")
@@ -742,7 +667,7 @@ func TestRouterPanicHandler(t *testing.T) {
 	}()
 
 	s := &fasthttp.Server{
-		Handler: router.Handler,
+		Handler: router.handler(),
 	}
 
 	rw := &readWriter{}
@@ -767,16 +692,27 @@ func TestRouterPanicHandler(t *testing.T) {
 }
 
 func TestRouterLookup(t *testing.T) {
+
+	defer func() {
+		if r := recover(); r != nil {
+			Logger.Errorf("panic handled: %v", r)
+			debug.PrintStack()
+		}
+	}()
 	routed := false
 	wantHandle := func(_ *fasthttp.RequestCtx) {
 		routed = true
 	}
 
 	router := New()
-	ctx := &fasthttp.RequestCtx{}
+	ctx := &Context{
+		RequestCtx: &fasthttp.RequestCtx{},
+		Logger:     Logger,
+		App:        router,
+	}
 
 	// try empty router first
-	handle, tsr := router.Lookup("GET", "/nope", ctx)
+	handle, tsr := router.defaultRouter.Lookup("GET", "/nope", ctx)
 	if handle != nil {
 		t.Fatalf("Got handle for unregistered pattern: %v", handle)
 	}
@@ -787,7 +723,7 @@ func TestRouterLookup(t *testing.T) {
 	// insert route and try again
 	router.GET("/user/:name", wantHandle)
 
-	handle, tsr = router.Lookup("GET", "/user/gopher", ctx)
+	handle, tsr = router.defaultRouter.Lookup("GET", "/user/gopher", ctx)
 	if handle == nil {
 		t.Fatal("Got no handle!")
 	} else {
@@ -800,7 +736,7 @@ func TestRouterLookup(t *testing.T) {
 		t.Error("Param not set!")
 	}
 
-	handle, tsr = router.Lookup("GET", "/user/gopher/", ctx)
+	handle, tsr = router.defaultRouter.Lookup("GET", "/user/gopher/", ctx)
 	if handle != nil {
 		t.Fatalf("Got handle for unregistered pattern: %v", handle)
 	}
@@ -808,7 +744,7 @@ func TestRouterLookup(t *testing.T) {
 		t.Error("Got no TSR recommendation!")
 	}
 
-	handle, tsr = router.Lookup("GET", "/nope", ctx)
+	handle, tsr = router.defaultRouter.Lookup("GET", "/nope", ctx)
 	if handle != nil {
 		t.Fatalf("Got handle for unregistered pattern: %v", handle)
 	}
@@ -830,7 +766,7 @@ func TestRouterServeFiles(t *testing.T) {
 	router := New()
 
 	recv := catchPanic(func() {
-		router.ServeFiles("/noFilepath", os.TempDir())
+		router.defaultRouter.ServeFiles("/noFilepath", os.TempDir())
 	})
 	if recv == nil {
 		t.Fatal("registering path not ending with '*filepath' did not panic")
@@ -838,10 +774,10 @@ func TestRouterServeFiles(t *testing.T) {
 	body := []byte("fake ico")
 	ioutil.WriteFile(os.TempDir()+"/favicon.ico", body, 0644)
 
-	router.ServeFiles("/*filepath", os.TempDir())
+	router.defaultRouter.ServeFiles("/*filepath", os.TempDir())
 
 	s := &fasthttp.Server{
-		Handler: router.Handler,
+		Handler: router.handler(),
 	}
 
 	rw := &readWriter{}

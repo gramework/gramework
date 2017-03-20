@@ -16,3 +16,9 @@ func (app *App) HTTP() *Router {
 func (app *App) HTTPS() *Router {
 	return app.defaultRouter.HTTPS()
 }
+
+// MethodNotAllowed sets MethodNotAllowed handler
+func (app *App) MethodNotAllowed(c func(ctx *Context)) *App {
+	app.defaultRouter.router.MethodNotAllowed = c
+	return app
+}

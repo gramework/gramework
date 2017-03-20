@@ -7,7 +7,7 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-func TestRouter(t *testing.T) {
+func TestGrameRouter(t *testing.T) {
 	app := New()
 	if h, _ := app.defaultRouter.Lookup("GET", "/", nil); h != nil {
 		t.Log("GET / should not return handler before registration")
@@ -532,7 +532,9 @@ func TestDomainHTTPSRouter(t *testing.T) {
 				t.Log("panic handled when testing /redir")
 			}
 		}()
-		h(&fasthttp.RequestCtx{})
+		h(&Context{
+			RequestCtx: &fasthttp.RequestCtx{},
+		})
 	}
 
 	// POST

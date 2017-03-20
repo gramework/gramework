@@ -13,7 +13,11 @@ func (r *Router) getErrorHandler(h func(*Context) error) func(*Context) {
 
 func (r *Router) getGrameHandler(h func(*fasthttp.RequestCtx)) func(*Context) {
 	return func(ctx *Context) {
-		h(ctx.RequestCtx)
+		if ctx != nil {
+			h(ctx.RequestCtx)
+			return
+		}
+		h(&fasthttp.RequestCtx{})
 	}
 }
 

@@ -5,7 +5,6 @@ import (
 
 	"time"
 
-	"github.com/kirillDanshin/fasthttprouter"
 	"github.com/valyala/fasthttp"
 )
 
@@ -230,6 +229,11 @@ func (r *Router) Lookup(method, path string, ctx *Context) (RequestHandler, bool
 	return r.router.Lookup(method, path, ctx)
 }
 
+// MethodNotAllowed sets MethodNotAllowed handler
+func (r *Router) MethodNotAllowed(c func(ctx *Context)) {
+	r.router.MethodNotAllowed = c
+}
+
 // Allowed returns Allow header's value used in OPTIONS responses
 func (r *Router) Allowed(path, reqMethod string) (allow string) {
 	return r.router.Allowed(path, reqMethod)
@@ -240,11 +244,36 @@ func (r *Router) Handler() func(*Context) {
 	return func(ctx *Context) {
 		path := string(ctx.Path())
 		method := string(ctx.Method())
+
 		switch ctx.IsTLS() {
 		case true:
 			if r.httpsrouter != nil {
 				handler, rts := r.httpsrouter.router.Lookup(method, path, ctx)
 				if handler != nil && r.httpsrouter.handle(path, method, ctx, handler, rts, false) {
+					return
+				}
+				if r.httpsrouter.router.RedirectFixedPath {
+					Logger.Info("3")
+					if root, ok := r.httpsrouter.router.Trees[method]; ok && root != nil {
+						fixedPath, found := root.FindCaseInsensitivePath(
+							CleanPath(path),
+							r.httpsrouter.router.RedirectTrailingSlash,
+						)
+
+						if found {
+							code := redirectCode
+							if method != GET {
+								code = temporaryRedirectCode
+							}
+							ctx.SetStatusCode(code)
+							ctx.Response.Header.AddBytesV("Location", fixedPath)
+							return
+						}
+					}
+				}
+
+				if r.httpsrouter.router.NotFound != nil {
+					r.httpsrouter.router.NotFound(ctx)
 					return
 				}
 			}
@@ -254,11 +283,54 @@ func (r *Router) Handler() func(*Context) {
 				if handler != nil && r.httprouter.handle(path, method, ctx, handler, rts, false) {
 					return
 				}
+
+				if r.httprouter.router.RedirectFixedPath {
+					Logger.Info("2")
+					if root, ok := r.httprouter.router.Trees[method]; ok && root != nil {
+						fixedPath, found := root.FindCaseInsensitivePath(
+							CleanPath(path),
+							r.httprouter.router.RedirectTrailingSlash,
+						)
+
+						if found {
+							code := redirectCode
+							if method != GET {
+								code = temporaryRedirectCode
+							}
+							ctx.SetStatusCode(code)
+							ctx.Response.Header.AddBytesV("Location", fixedPath)
+							return
+						}
+					}
+				}
+				if r.httprouter.router.NotFound != nil {
+					r.httprouter.router.NotFound(ctx)
+					return
+				}
 			}
 		}
 		handler, rts := r.router.Lookup(method, path, ctx)
 		if r.handle(path, method, ctx, handler, rts, true) {
 			return
+		}
+		if r.router.RedirectFixedPath {
+			if root, ok := r.router.Trees[method]; ok && root != nil {
+				fixedPath, found := root.FindCaseInsensitivePath(
+					CleanPath(path),
+					r.router.RedirectTrailingSlash,
+				)
+
+				Logger.Infof("1, %s, %v, %v", fixedPath, found, CleanPath(path))
+				if found && len(fixedPath) > 0 {
+					code := redirectCode
+					if method != GET {
+						code = temporaryRedirectCode
+					}
+					ctx.SetStatusCode(code)
+					ctx.Response.Header.AddBytesV("Location", fixedPath)
+					return
+				}
+			}
 		}
 		if r.router.NotFound != nil {
 			r.router.NotFound(ctx)
@@ -269,13 +341,17 @@ func (r *Router) Handler() func(*Context) {
 }
 
 func (r *Router) handle(path, method string, ctx *Context, handler func(ctx *Context), redirectTrailingSlashs bool, isRootRouter bool) (handlerFound bool) {
+	if r.router.PanicHandler != nil {
+		defer r.router.Recv(ctx)
+	}
 	if root := r.router.Trees[method]; root != nil {
 		if f, tsr := root.GetValue(path, ctx); f != nil {
 			f(ctx)
 			return true
-		} else if method != fasthttprouter.CONNECT && path != fasthttprouter.PathSlash {
+		} else if method != CONNECT && path != PathSlash {
 			code := redirectCode // Permanent redirect, request with GET method
-			if method != fasthttprouter.GET {
+			if method != GET {
+				Logger.Infof("not a get")
 				// Temporary redirect, request with same method
 				// As of Go 1.3, Go does not support status code 308.
 				code = temporaryRedirectCode
@@ -283,30 +359,36 @@ func (r *Router) handle(path, method string, ctx *Context, handler func(ctx *Con
 
 			if tsr && r.router.RedirectTrailingSlash {
 				var uri string
-				if len(path) > one && path[len(path)-one] == fasthttprouter.SlashByte {
+				if len(path) > one && path[len(path)-one] == SlashByte {
 					uri = path[:len(path)-one]
 				} else {
-					uri = path + fasthttprouter.PathSlash
+					uri = path + PathSlash
 				}
-				ctx.Redirect(uri, code)
+				if uri != emptyString {
+					Logger.Infof("redir 1, %v, uri=[%v]", code, uri)
+					ctx.SetStatusCode(code)
+					ctx.Response.Header.Add("Location", uri)
+				}
 				return false
 			}
 
 			// Try to fix the request path
 			if r.router.RedirectFixedPath {
 				fixedPath, found := root.FindCaseInsensitivePath(
-					fasthttprouter.CleanPath(path),
+					CleanPath(path),
 					r.router.RedirectTrailingSlash,
 				)
 
-				if found {
+				if found && len(fixedPath) > 0 {
 					queryBuf := ctx.URI().QueryString()
 					if len(queryBuf) > zero {
-						fixedPath = append(fixedPath, fasthttprouter.QuestionMark...)
+						fixedPath = append(fixedPath, QuestionMark...)
 						fixedPath = append(fixedPath, queryBuf...)
 					}
 					uri := string(fixedPath)
-					ctx.Redirect(uri, code)
+					Logger.Infof("redir 2, %v", code)
+					ctx.SetStatusCode(code)
+					ctx.Response.Header.Add("Location", uri)
 					return true
 				}
 			}
@@ -317,11 +399,11 @@ func (r *Router) handle(path, method string, ctx *Context, handler func(ctx *Con
 		return false
 	}
 
-	if method == fasthttprouter.OPTIONS {
+	if method == OPTIONS {
 		// Handle OPTIONS requests
 		if r.router.HandleOPTIONS {
 			if allow := r.router.Allowed(path, method); len(allow) > zero {
-				ctx.Response.Header.Set(fasthttprouter.HeaderAllow, allow)
+				ctx.Response.Header.Set(HeaderAllow, allow)
 				return true
 			}
 		}
@@ -329,12 +411,12 @@ func (r *Router) handle(path, method string, ctx *Context, handler func(ctx *Con
 		// Handle 405
 		if r.router.HandleMethodNotAllowed {
 			if allow := r.router.Allowed(path, method); len(allow) > zero {
-				ctx.Response.Header.Set(fasthttprouter.HeaderAllow, allow)
+				ctx.Response.Header.Set(HeaderAllow, allow)
 				if r.router.MethodNotAllowed != nil {
 					r.router.MethodNotAllowed(ctx)
 				} else {
 					ctx.SetStatusCode(fasthttp.StatusMethodNotAllowed)
-					ctx.SetContentTypeBytes(fasthttprouter.DefaultContentType)
+					ctx.SetContentTypeBytes(DefaultContentType)
 					ctx.SetBodyString(fasthttp.StatusMessage(fasthttp.StatusMethodNotAllowed))
 				}
 				return true

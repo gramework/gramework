@@ -7,6 +7,9 @@ import (
 func (app *App) handler() func(*fasthttp.RequestCtx) {
 	return func(fhctx *fasthttp.RequestCtx) {
 		ctx := app.defaultRouter.initGrameCtx(fhctx)
+		if app.defaultRouter.router.PanicHandler != nil {
+			defer app.defaultRouter.router.Recv(ctx)
+		}
 		app.preMiddlewaresMu.RLock()
 		for k := range app.preMiddlewares {
 			app.preMiddlewares[k](ctx)
