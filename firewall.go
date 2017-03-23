@@ -32,11 +32,11 @@ func (fw *firewall) NewRequest(ctx *Context) (shouldBeBlocked bool, remoteAddr s
 	return false, remoteAddr
 }
 
-// isBlocked checks if the remote addres is blocked
+// isBlocked checks if the remote address is blocked
 func (fw *firewall) isBlocked(remoteAddr string) bool {
 	fw.blockListMutex.Lock()
 
-	// Check if the remote addresse exists in the blocked map
+	// Check if the remote address exists in the blocked map
 	_, exists := fw.blockList[remoteAddr]
 
 	fw.blockListMutex.Unlock()
@@ -81,7 +81,7 @@ func (fw *firewall) cleanupRequestsCountLoop() {
 
 		fw.requestCounterMutex.Lock()
 
-		// Clear the map if not emtpy
+		// Clear the map if not empty
 		if len(fw.requestCounter) > 0 {
 			fw.requestCounter = make(map[string]int64)
 		}

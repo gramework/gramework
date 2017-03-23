@@ -57,7 +57,7 @@ func (app *App) PanicHandler(panicHandler func(*Context, interface{})) *App {
 	return app
 }
 
-// NotFound set a handler wich is called when no matching route is found
+// NotFound set a handler which is called when no matching route is found
 func (app *App) NotFound(notFoundHandler func(*Context)) *App {
 	app.defaultRouter.NotFound(notFoundHandler)
 	return app

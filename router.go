@@ -121,7 +121,7 @@ func (r *Router) PanicHandler(panicHandler func(*Context, interface{})) {
 	r.router.PanicHandler = panicHandler
 }
 
-// NotFound set a handler wich is called when no matching route is found
+// NotFound set a handler which is called when no matching route is found
 func (r *Router) NotFound(notFoundHandler func(*Context)) {
 	r.initRouter()
 	r.router.NotFound = notFoundHandler
