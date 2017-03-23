@@ -3,7 +3,7 @@ package gramework
 import "flag"
 
 var flagsToRegister = []Flag{
-	Flag{
+	{
 		Name:        "bind",
 		Description: "address to listen",
 		Default:     ":80",

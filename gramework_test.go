@@ -16,9 +16,9 @@ func TestGrameworkHTTP(t *testing.T) {
 	app.GET("/", text)
 	app.GET("/json", func(ctx *Context) {
 		m := map[string]map[string]map[string]map[string]int{
-			"abc": map[string]map[string]map[string]int{
-				"def": map[string]map[string]int{
-					"ghk": map[string]int{
+			"abc": {
+				"def": {
+					"ghk": {
 						"wtf": 42,
 					},
 				},

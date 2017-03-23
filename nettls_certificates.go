@@ -1,7 +1,6 @@
 // Copyright 2015-2017 Matt Holt and caddy contributors
 // Copyright 2017 Kirill Danshin and gramework contributors
 
-
 package gramework
 
 import (
