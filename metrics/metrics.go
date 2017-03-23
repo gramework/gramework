@@ -19,11 +19,9 @@ func Register(app *gramework.App) {
 
 func (m *Middleware) startReq(ctx *gramework.Context) {
 	ctx.SetUserValue("gramework.metrics.startTime", time.Now())
-	ctx.Writef("run")
 }
 
 func (m *Middleware) endReq(ctx *gramework.Context) {
 	startTime := ctx.UserValue("gramework.metrics.startTime").(time.Time)
 	ctx.Logger.Infof("Served in %s", time.Now().Sub(startTime))
-	ctx.Writef("end")
 }
