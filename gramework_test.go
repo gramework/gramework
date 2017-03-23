@@ -10,54 +10,53 @@ import (
 
 func TestGrameworkHTTP(t *testing.T) {
 	app := New()
-	app.EnableFirewall = true
 	const text = "test one two three"
-	var preCalled, mwCalled, postCalled bool //, jsonOK bool
+	var preCalled, mwCalled, postCalled, jsonOK bool
 	app.GET("/", text)
-	// app.GET("/json", func(ctx *Context) {
-	// 	m := map[string]map[string]map[string]map[string]int{
-	// 		"abc": {
-	// 			"def": {
-	// 				"ghk": {
-	// 					"wtf": 42,
-	// 				},
-	// 			},
-	// 		},
-	// 	}
-	// 	jsonOK = true
+	app.GET("/json", func(ctx *Context) {
+		m := map[string]map[string]map[string]map[string]int{
+			"abc": {
+				"def": {
+					"ghk": {
+						"wtf": 42,
+					},
+				},
+			},
+		}
+		jsonOK = true
 
-	// 	if err := ctx.JSON(m); err != nil {
-	// 		jsonOK = false
-	// 		ctx.Logger.Errorf("can't JSON(): %s", err)
-	// 	}
+		if err := ctx.JSON(m); err != nil {
+			jsonOK = false
+			ctx.Logger.Errorf("can't JSON(): %s", err)
+		}
 
-	// 	if b, err := ctx.ToJSON(m); err == nil {
-	// 		var m2 map[string]map[string]map[string]map[string]int
-	// 		if _, err := ctx.UnJSONBytes(b, &m2); err != nil {
-	// 			ctx.Logger.Errorf("can't unjson: %s", err)
-	// 			jsonOK = false
-	// 			return
-	// 		}
-	// 		b2, err := ctx.ToJSON(m2)
-	// 		if err != nil {
-	// 			ctx.Logger.Errorf("ToJSON returns error: %s", err)
-	// 			jsonOK = false
-	// 			return
-	// 		}
-	// 		if len(b2) != len(b) {
-	// 			ctx.Logger.Errorf("len is not equals, got len(b2) = [%v], len(b) = [%v]", len(b2), len(b))
-	// 			jsonOK = false
-	// 			return
-	// 		}
-	// 		for k := range b2 {
-	// 			if v := b[k]; v != b2[k] {
-	// 				ctx.Logger.Errorf("unexpected v: expected %v, got %v", b2[k], v)
-	// 				jsonOK = false
-	// 				return
-	// 			}
-	// 		}
-	// 	}
-	// })
+		if b, err := ctx.ToJSON(m); err == nil {
+			var m2 map[string]map[string]map[string]map[string]int
+			if _, err := ctx.UnJSONBytes(b, &m2); err != nil {
+				ctx.Logger.Errorf("can't unjson: %s", err)
+				jsonOK = false
+				return
+			}
+			b2, err := ctx.ToJSON(m2)
+			if err != nil {
+				ctx.Logger.Errorf("ToJSON returns error: %s", err)
+				jsonOK = false
+				return
+			}
+			if len(b2) != len(b) {
+				ctx.Logger.Errorf("len is not equals, got len(b2) = [%v], len(b) = [%v]", len(b2), len(b))
+				jsonOK = false
+				return
+			}
+			for k := range b2 {
+				if v := b[k]; v != b2[k] {
+					ctx.Logger.Errorf("unexpected v: expected %v, got %v", b2[k], v)
+					jsonOK = false
+					return
+				}
+			}
+		}
+	})
 	app.UsePre(func() {
 		preCalled = true
 	})
@@ -80,10 +79,12 @@ func TestGrameworkHTTP(t *testing.T) {
 	resp, err := http.Get("http://127.0.0.1:9977")
 	if err != nil {
 		t.Fatalf("Gramework isn't working! Got error: %s", err)
+		t.FailNow()
 	}
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		t.Fatalf("Gramework isn't working! Can't read body: %s", err)
+		t.FailNow()
 	}
 	resp.Body.Close()
 	if string(body) != text {
@@ -92,26 +93,32 @@ func TestGrameworkHTTP(t *testing.T) {
 			string(body),
 			text,
 		)
+		t.FailNow()
 	}
 
 	resp, err = http.Get("http://127.0.0.1:9977/json")
 	if err != nil {
 		t.Fatalf("Gramework isn't working! Got error: %s", err)
+		t.FailNow()
 	}
 	ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 	if !preCalled {
 		t.Fatalf("pre wasn't called")
+		t.FailNow()
 	}
 	if !mwCalled {
 		t.Fatalf("middleware wasn't called")
+		t.FailNow()
 	}
 	if !postCalled {
 		t.Fatalf("post middleware wasn't called")
+		t.FailNow()
 	}
-	// if !jsonOK {
-	// 	t.Fatalf("json response isn't OK")
-	// }
+	if !jsonOK {
+		t.Fatalf("json response isn't OK")
+		t.FailNow()
+	}
 }
 
 func TestGrameworkDomainHTTP(t *testing.T) {
