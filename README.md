@@ -11,3 +11,237 @@ The Good Framework
   gramework based on `fasthttp`, that is incompatible with `net/http`.
   In [the commit I based on](https://github.com/mholt/caddy/tree/d85e90a7b4c06d1698d0b96b695b05d41833fcd3), caddy is `Apache-2.0` licensed.
   It's license placed in `/3rd-Party Licenses/caddy`. @mholt [allow us](https://github.com/mholt/caddy/issues/1520#issuecomment-286907851) to copy the code in this repo.
+
+# Basic usage
+
+### Serving static data, part 1
+
+The example below will serve "hello, grameworld" and register flag "bind", that allows you to choose another ip/port that gramework should listen:
+
+```go
+package main
+
+import (
+	"github.com/gramework/gramework"
+)
+
+func main() {
+	app := gramework.New()
+
+	app.GET("/", "hello, grameworld")
+
+	app.ListenAndServe()
+}
+```
+
+### Serving static data, part 2
+
+The example below will serve result of expression "15e10" (`150000000000.000000`) and register flag "bind", that allows you to choose another ip/port that gramework should listen:
+
+```go
+package main
+
+import (
+	"github.com/gramework/gramework"
+)
+
+func main() {
+	app := gramework.New()
+
+	app.GET("/", 15e10)
+
+	app.ListenAndServe()
+}
+```
+
+### Serving static data, part 3
+
+The example below will serve static files from ./files and register flag "bind", that allows you to choose another ip/port that gramework should listen:
+
+```go
+package main
+
+import (
+	"github.com/gramework/gramework"
+)
+
+func main() {
+	app := gramework.New()
+
+	app.GET("/*any", app.ServeDir("./files"))
+
+	app.ListenAndServe()
+}
+```
+
+### Serving static data, part 4
+
+The example below will serve bytes and register flag "bind", that allows you to choose another ip/port that gramework should listen:
+
+```go
+package main
+
+import (
+	"github.com/gramework/gramework"
+)
+
+func main() {
+	app := gramework.New()
+
+	app.GET("/*any", []byte("some data"))
+
+	app.ListenAndServe()
+}
+```
+
+### Using dynamic handlers, part 1
+
+The example below will serve JSON and register flag "bind", that allows you to choose another ip/port that gramework should listen:
+
+```go
+package main
+
+import (
+	"github.com/gramework/gramework"
+)
+
+func main() {
+	app := gramework.New()
+
+	app.GET("/someJSON", func(ctx *gramework.Context) {
+		m := map[string]map[string]map[string]map[string]int{
+			"abc": {
+				"def": {
+					"ghk": {
+						"wtf": 42,
+					},
+				},
+			},
+		}
+
+		if err := ctx.JSON(m); err != nil {
+			ctx.Err500()
+		}
+	})
+
+	app.ListenAndServe()
+}
+```
+
+### Using dynamic handlers, part 2
+
+The example below will serve JSON with CORS enabled for all routes and register flag "bind", that allows you to choose another ip/port that gramework should listen:
+
+```go
+package main
+
+import (
+	"github.com/gramework/gramework"
+)
+
+func main() {
+	app := gramework.New()
+
+	app.Use(app.CORSMiddleware())
+
+	app.GET("/someJSON", func(ctx *gramework.Context) {
+		m := map[string]map[string]map[string]map[string]int{
+			"abc": {
+				"def": {
+					"ghk": {
+						"wtf": 42,
+					},
+				},
+			},
+		}
+
+		if err := ctx.JSON(m); err != nil {
+			ctx.Err500()
+		}
+	})
+
+	app.ListenAndServe()
+}
+```
+
+### Using dynamic handlers, part 3
+
+The example below will serve JSON with CORS enabled in the handler and register flag "bind", that allows you to choose another ip/port that gramework should listen:
+
+```go
+package main
+
+import (
+	"github.com/gramework/gramework"
+)
+
+func main() {
+	app := gramework.New()
+
+	app.GET("/someJSON", func(ctx *gramework.Context) {
+		ctx.CORS()
+
+		m := map[string]map[string]map[string]map[string]int{
+			"abc": {
+				"def": {
+					"ghk": {
+						"wtf": 42,
+					},
+				},
+			},
+		}
+
+		if err := ctx.JSON(m); err != nil {
+			ctx.Err500()
+		}
+	})
+
+	app.ListenAndServe()
+}
+```
+
+### Using dynamic handlers, part 3
+
+The example below will serve a string and register flag "bind", that allows you to choose another ip/port that gramework should listen:
+
+```go
+package main
+
+import (
+	"github.com/gramework/gramework"
+)
+
+func main() {
+	app := gramework.New()
+
+	app.GET("/someJSON", func(ctx *fasthttp.RequestCtx) {
+		ctx.WriteString("another data")
+	})
+
+	app.ListenAndServe()
+}
+```
+
+### Using dynamic handlers, part 4
+
+The example below shows how you can get fasthttp.RequestCtx from gramework.Context and after that it do the same that in part 3:
+
+```go
+package main
+
+import (
+	"github.com/gramework/gramework"
+)
+
+func main() {
+	app := gramework.New()
+
+	app.GET("/someJSON", func(ctx *gramework.Context) {
+		ctx.RequestCtx.WriteString("another data")
+	})
+
+	app.ListenAndServe()
+}
+```
+
+
