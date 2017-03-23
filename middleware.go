@@ -14,6 +14,12 @@ var (
 	ErrUnsupportedMiddlewareType = errors.New("unsupported middleware type")
 )
 
+func (app *App) CORSMiddleware() func(*Context) {
+	return func(ctx *Context) {
+		ctx.CORS()
+	}
+}
+
 // Use the middleware before request processing
 func (app *App) Use(middleware interface{}) error {
 	if middleware == nil {
