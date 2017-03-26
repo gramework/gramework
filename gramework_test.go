@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"io/ioutil"
 	"net/http"
+	"reflect"
 	"testing"
 	"time"
 )
@@ -48,12 +49,9 @@ func TestGrameworkHTTP(t *testing.T) {
 				jsonOK = false
 				return
 			}
-			for k := range b2 {
-				if v := b[k]; v != b2[k] {
-					ctx.Logger.Errorf("unexpected v: expected %v, got %v", b2[k], v)
-					jsonOK = false
-					return
-				}
+			if !reflect.DeepEqual(b, b2) {
+				jsonOK = false
+				return
 			}
 		}
 	})
