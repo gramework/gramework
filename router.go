@@ -174,11 +174,11 @@ func (app *App) ServeDirCustom(path string, stripSlashes int, compress bool, gen
 
 // ServeDirNoCache gives you ability to serve a dir without caching
 func (app *App) ServeDirNoCache(path string) func(*Context) {
-	return app.ServeDirNoCacheCusom(path, 0, true, false, nil)
+	return app.ServeDirNoCacheCustom(path, 0, true, false, nil)
 }
 
-// ServeDirNoCacheCusom gives you ability to serve a dir with custom settings without caching
-func (app *App) ServeDirNoCacheCusom(path string, stripSlashes int, compress bool, generateIndexPages bool, indexNames []string) func(*Context) {
+// ServeDirNoCacheCustom gives you ability to serve a dir with custom settings without caching
+func (app *App) ServeDirNoCacheCustom(path string, stripSlashes int, compress bool, generateIndexPages bool, indexNames []string) func(*Context) {
 	if indexNames == nil {
 		indexNames = []string{}
 	}
