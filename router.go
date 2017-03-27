@@ -172,6 +172,44 @@ func (app *App) ServeDirCustom(path string, stripSlashes int, compress bool, gen
 	}
 }
 
+// ServeDirNoCache gives you ability to serve a dir without caching
+func (app *App) ServeDirNoCache(path string) func(*Context) {
+	return app.ServeDirNoCacheCusom(path, 0, true, false, nil)
+}
+
+// ServeDirNoCacheCusom gives you ability to serve a dir with custom settings without caching
+func (app *App) ServeDirNoCacheCusom(path string, stripSlashes int, compress bool, generateIndexPages bool, indexNames []string) func(*Context) {
+	if indexNames == nil {
+		indexNames = []string{}
+	}
+	fs := &fasthttp.FS{
+		Root:                 path,
+		IndexNames:           indexNames,
+		GenerateIndexPages:   generateIndexPages,
+		Compress:             compress,
+		CacheDuration:        time.Millisecond,
+		CompressedFileSuffix: ".gz",
+	}
+
+	if stripSlashes > 0 {
+		fs.PathRewrite = fasthttp.NewPathSlashesStripper(stripSlashes)
+	}
+
+	h := fs.NewRequestHandler()
+	pragmaH := "Pragma"
+	pragmaV := "no-cache"
+	expiresH := "Expires"
+	expiresV := "0"
+	ccH := "Cache-Control"
+	ccV := "no-cache, no-store, must-revalidate"
+	return func(ctx *Context) {
+		ctx.Response.Header.Add(pragmaH, pragmaV)
+		ctx.Response.Header.Add(expiresH, expiresV)
+		ctx.Response.Header.Add(ccH, ccV)
+		h(ctx.RequestCtx)
+	}
+}
+
 // HTTP router returns a router instance that work only on HTTP requests
 func (r *Router) HTTP() *Router {
 	if r.root != nil {
