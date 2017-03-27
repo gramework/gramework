@@ -28,5 +28,5 @@ const (
 
 	fmtV = "%v"
 
-	htmlCT = "text/html"
+	htmlCT = "text/html; charset=utf8"
 )
