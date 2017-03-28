@@ -10,7 +10,7 @@ const cacheRecordTTLDelta = 20 * 1000000000
 
 type cache struct {
 	v  map[string]*cacheRecord
-	mu sync.Mutex
+	mu sync.RWMutex
 }
 
 type cacheRecord struct {
@@ -42,19 +42,22 @@ func (c *cache) PutWild(path string, n *node, tsr bool, values map[string]string
 }
 
 func (c *cache) Get(path string) (n *cacheRecord, ok bool) {
-	c.mu.Lock()
+	c.mu.RLock()
 	n, ok = c.v[path]
 	if ok {
 		n.lastAccessTime = Nanotime()
 	}
-	c.mu.Unlock()
+	c.mu.RUnlock()
 	return
 }
 
 func (c *cache) maintain() {
 	for {
 		runtime.Gosched()
-		time.Sleep(10 * time.Second)
+		time.Sleep(30 * time.Second)
+		if len(c.v) < 256 {
+			continue
+		}
 		c.mu.Lock()
 		for path := range c.v {
 			if Nanotime()-cacheRecordTTLDelta > c.v[path].lastAccessTime {

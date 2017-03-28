@@ -8,5 +8,5 @@ func Nanotime() int64 {
 }
 
 //go:noescape
-//go:linkname Nanotime runtime.nanotime
+//go:linkname nanotime runtime.nanotime
 func nanotime() int64
