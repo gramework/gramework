@@ -14,6 +14,7 @@ var (
 	ErrUnsupportedMiddlewareType = errors.New("unsupported middleware type")
 )
 
+// CORSMiddleware provides gramework handler with ctx.CORS() call
 func (app *App) CORSMiddleware() func(*Context) {
 	return func(ctx *Context) {
 		ctx.CORS()
