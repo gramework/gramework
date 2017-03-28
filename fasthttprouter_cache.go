@@ -12,8 +12,9 @@ type cache struct {
 }
 
 type cacheRecord struct {
-	n   *node
-	tsr bool
+	n      *node
+	tsr    bool
+	values map[string]string
 }
 
 func (c *cache) Put(path string, n *node, tsr bool) {
@@ -21,6 +22,16 @@ func (c *cache) Put(path string, n *node, tsr bool) {
 	c.v[path] = &cacheRecord{
 		n:   n,
 		tsr: tsr,
+	}
+	c.mu.Unlock()
+}
+
+func (c *cache) PutWild(path string, n *node, tsr bool, values map[string]string) {
+	c.mu.Lock()
+	c.v[path] = &cacheRecord{
+		n:      n,
+		tsr:    tsr,
+		values: values,
 	}
 	c.mu.Unlock()
 }

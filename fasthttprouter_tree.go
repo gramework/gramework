@@ -218,7 +218,7 @@ func (n *node) addRoute(path string, handle RequestHandler, r *router) {
 func (n *node) insertChild(numParams uint8, path, fullPath string, handle RequestHandler) {
 	var offset int // already handled bytes of the path
 
-	// find prefix until first wildcard (beginning with ':'' or '*'')
+	// find prefix until first wildcard (beginning with ':' or '*')
 	for i, max := 0, len(path); numParams > 0; i++ {
 		c := path[i]
 		if c != ':' && c != '*' {
@@ -345,6 +345,9 @@ func (n *node) GetValue(reqPath string, ctx *Context) (handle RequestHandler, ts
 		panic("no cache!")
 	}
 	if record, ok := n.router.cache.Get(reqPath); ok {
+		for name, value := range record.values {
+			ctx.SetUserValue(name, value)
+		}
 		return record.n.handle, record.tsr
 	}
 	path := reqPath
@@ -403,7 +406,7 @@ walk: // outer loop for walking the tree
 					if handle = n.handle; handle != nil {
 						n.hits++
 						if n.hits > 32 {
-							n.router.cache.Put(reqPath, n, tsr)
+							n.router.cache.PutWild(reqPath, n, tsr, map[string]string{n.path[2:]: path})
 						}
 						return
 					} else if len(n.children) == 1 {
@@ -423,7 +426,7 @@ walk: // outer loop for walking the tree
 					handle = n.handle
 					n.hits++
 					if n.hits > 32 {
-						n.router.cache.Put(reqPath, n, tsr)
+						n.router.cache.PutWild(reqPath, n, tsr, map[string]string{n.path[2:]: path})
 					}
 					return
 
@@ -435,6 +438,7 @@ walk: // outer loop for walking the tree
 			// We should have reached the node containing the handle.
 			// Check if this node has a handle registered.
 			if handle = n.handle; handle != nil {
+				n.router.cache.Put(reqPath, n, tsr)
 				return
 			}
 
