@@ -27,6 +27,33 @@ func (c *Context) RouteArg(argName string) string {
 	return v
 }
 
+// GETKeys returns GET parameters keys
+func (c *Context) GETKeys() []string {
+	res := []string{}
+	c.Request.URI().QueryArgs().VisitAll(func(key, value []byte) {
+		res = append(res, string(key))
+	})
+	return res
+}
+
+// GETKeysBytes returns GET parameters keys as []byte
+func (c *Context) GETKeysBytes() [][]byte {
+	res := [][]byte{}
+	c.Request.URI().QueryArgs().VisitAll(func(key, value []byte) {
+		res = append(res, key)
+	})
+	return res
+}
+
+// GETParams returns GET parameters
+func (c *Context) GETParams() map[string][]string {
+	res := map[string][]string{}
+	c.Request.URI().QueryArgs().VisitAll(func(key, value []byte) {
+		res[string(key)] = append(res[string(key)], string(value))
+	})
+	return res
+}
+
 // RouteArgErr returns an argument value as a string or empty string
 // and ErrArgNotFound if argument was not found
 func (c *Context) RouteArgErr(argName string) (string, error) {
