@@ -3,6 +3,8 @@ package gramework
 import (
 	"errors"
 	"net/http"
+	"reflect"
+	"runtime"
 	"testing"
 
 	"github.com/valyala/fasthttp"
@@ -36,16 +38,22 @@ func TestGrameRouter(t *testing.T) {
 	// POST
 
 	if h, _ := app.defaultRouter.Lookup("POST", "/", nil); h != nil {
-		t.Log("POST / should not return handler before registration")
+		fpc := runtime.FuncForPC(reflect.ValueOf(h).Pointer())
+		file, line := fpc.FileLine(fpc.Entry())
+		t.Logf("POST / should not return handler before registration, got %q (%v:%v)", fpc.Name(), file, line)
 		t.FailNow()
 	}
 	app.POST("/", 1)
 	if h, _ := app.defaultRouter.Lookup("POST", "/", nil); h == nil {
-		t.Log("POST / should return handler after registration")
+		fpc := runtime.FuncForPC(reflect.ValueOf(h).Pointer())
+		file, line := fpc.FileLine(fpc.Entry())
+		t.Logf("POST / should return handler after registration, got %q (%v:%v)", fpc.Name(), file, line)
 		t.FailNow()
 	}
 	if h, _ := app.defaultRouter.Lookup("POST", "/abc", nil); h != nil {
-		t.Log("POST /abc should not return handler before registration")
+		fpc := runtime.FuncForPC(reflect.ValueOf(h).Pointer())
+		file, line := fpc.FileLine(fpc.Entry())
+		t.Logf("POST /abc should not return handler before registration, got %q (%v:%v)", fpc.Name(), file, line)
 		t.FailNow()
 	}
 

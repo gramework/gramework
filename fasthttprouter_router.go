@@ -87,7 +87,7 @@ func newRouter() *router {
 		HandleMethodNotAllowed: true,
 		HandleOPTIONS:          true,
 		cache: &cache{
-			v: make(map[string]*cacheRecord, 0),
+			v: make(map[string]*msc, 0),
 		},
 	}
 	go r.cache.maintain()
@@ -220,7 +220,7 @@ func (r *router) Recv(ctx *Context) {
 // the same path with an extra / without the trailing slash should be performed.
 func (r *router) Lookup(method, path string, ctx *Context) (RequestHandler, bool) {
 	if root := r.Trees[method]; root != nil {
-		return root.GetValue(path, ctx)
+		return root.GetValue(path, ctx, method)
 	}
 	return nil, false
 }
@@ -247,7 +247,7 @@ func (r *router) Allowed(path, reqMethod string) (allow string) {
 				continue
 			}
 
-			handle, _ := r.Trees[method].GetValue(path, nil)
+			handle, _ := r.Trees[method].GetValue(path, nil, reqMethod)
 			if handle != nil {
 				// add request method to list of allowed methods
 				if len(allow) == 0 {

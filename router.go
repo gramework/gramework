@@ -380,7 +380,7 @@ func (r *Router) handle(path, method string, ctx *Context, handler func(ctx *Con
 		defer r.router.Recv(ctx)
 	}
 	if root := r.router.Trees[method]; root != nil {
-		if f, tsr := root.GetValue(path, ctx); f != nil {
+		if f, tsr := root.GetValue(path, ctx, string(ctx.Method())); f != nil {
 			f(ctx)
 			return true
 		} else if method != CONNECT && path != PathSlash {

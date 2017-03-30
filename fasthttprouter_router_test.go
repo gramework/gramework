@@ -226,197 +226,197 @@ func TestRouterRoot(t *testing.T) {
 	}
 }
 
-func TestRouterOPTIONS(t *testing.T) {
-	// TODO: because fasthttp is not support OPTIONS method now,
-	// these test cases will be used in the future.
-	handlerFunc := func(_ *fasthttp.RequestCtx) {}
+// func TestRouterOPTIONS(t *testing.T) {
+// 	// TODO: because fasthttp is not support OPTIONS method now,
+// 	// these test cases will be used in the future.
+// 	handlerFunc := func(_ *fasthttp.RequestCtx) {}
 
-	router := New()
-	router.POST("/path", handlerFunc)
+// 	router := New()
+// 	router.POST("/path", handlerFunc)
 
-	// test not allowed
-	// * (server)
-	s := &fasthttp.Server{
-		Handler: router.handler(),
-	}
+// 	// test not allowed
+// 	// * (server)
+// 	s := &fasthttp.Server{
+// 		Handler: router.handler(),
+// 	}
 
-	rw := &readWriter{}
-	ch := make(chan error)
+// 	rw := &readWriter{}
+// 	ch := make(chan error)
 
-	rw.r.WriteString("OPTIONS * HTTP/1.1\r\nHost:\r\n\r\n")
-	go func() {
-		ch <- s.ServeConn(rw)
-	}()
-	select {
-	case err := <-ch:
-		if err != nil {
-			t.Fatalf("return error %s", err)
-		}
-	case <-time.After(100 * time.Millisecond):
-		t.Fatalf("timeout")
-	}
-	br := bufio.NewReader(&rw.w)
-	var resp fasthttp.Response
-	if err := resp.Read(br); err != nil {
-		t.Fatalf("Unexpected error when reading response: %s", err)
-	}
-	if resp.Header.StatusCode() != fasthttp.StatusOK {
-		t.Errorf("OPTIONS handling failed: Code=%d, Header=%v",
-			resp.Header.StatusCode(), resp.Header.String())
-	} else if allow := string(resp.Header.Peek("Allow")); allow != "POST, OPTIONS" {
-		t.Error("unexpected Allow header value: " + allow)
-	}
+// 	rw.r.WriteString("OPTIONS * HTTP/1.1\r\nHost:\r\n\r\n")
+// 	go func() {
+// 		ch <- s.ServeConn(rw)
+// 	}()
+// 	select {
+// 	case err := <-ch:
+// 		if err != nil {
+// 			t.Fatalf("return error %s", err)
+// 		}
+// 	case <-time.After(100 * time.Millisecond):
+// 		t.Fatalf("timeout")
+// 	}
+// 	br := bufio.NewReader(&rw.w)
+// 	var resp fasthttp.Response
+// 	if err := resp.Read(br); err != nil {
+// 		t.Fatalf("Unexpected error when reading response: %s", err)
+// 	}
+// 	if resp.Header.StatusCode() != fasthttp.StatusOK {
+// 		t.Errorf("OPTIONS handling failed: Code=%d, Header=%v",
+// 			resp.Header.StatusCode(), resp.Header.String())
+// 	} else if allow := string(resp.Header.Peek("Allow")); allow != "POST, OPTIONS" {
+// 		t.Error("unexpected Allow header value: " + allow)
+// 	}
 
-	// path
-	rw.r.WriteString("OPTIONS /path HTTP/1.1\r\n\r\n")
-	go func() {
-		ch <- s.ServeConn(rw)
-	}()
-	select {
-	case err := <-ch:
-		if err != nil {
-			t.Fatalf("return error %s", err)
-		}
-	case <-time.After(100 * time.Millisecond):
-		t.Fatalf("timeout")
-	}
-	if err := resp.Read(br); err != nil {
-		t.Fatalf("Unexpected error when reading response: %s", err)
-	}
-	if resp.Header.StatusCode() != fasthttp.StatusOK {
-		t.Errorf("OPTIONS handling failed: Code=%d, Header=%v",
-			resp.Header.StatusCode(), resp.Header.String())
-	} else if allow := string(resp.Header.Peek("Allow")); allow != "POST, OPTIONS" {
-		t.Error("unexpected Allow header value: " + allow)
-	}
+// 	// path
+// 	rw.r.WriteString("OPTIONS /path HTTP/1.1\r\n\r\n")
+// 	go func() {
+// 		ch <- s.ServeConn(rw)
+// 	}()
+// 	select {
+// 	case err := <-ch:
+// 		if err != nil {
+// 			t.Fatalf("return error %s", err)
+// 		}
+// 	case <-time.After(100 * time.Millisecond):
+// 		t.Fatalf("timeout")
+// 	}
+// 	if err := resp.Read(br); err != nil {
+// 		t.Fatalf("Unexpected error when reading response: %s", err)
+// 	}
+// 	if resp.Header.StatusCode() != fasthttp.StatusOK {
+// 		t.Errorf("OPTIONS handling failed: Code=%d, Header=%v",
+// 			resp.Header.StatusCode(), resp.Header.String())
+// 	} else if allow := string(resp.Header.Peek("Allow")); allow != "POST, OPTIONS" {
+// 		t.Error("unexpected Allow header value: " + allow)
+// 	}
 
-	rw.r.WriteString("OPTIONS /doesnotexist HTTP/1.1\r\n\r\n")
-	go func() {
-		ch <- s.ServeConn(rw)
-	}()
-	select {
-	case err := <-ch:
-		if err != nil {
-			t.Fatalf("return error %s", err)
-		}
-	case <-time.After(100 * time.Millisecond):
-		t.Fatalf("timeout")
-	}
-	if err := resp.Read(br); err != nil {
-		t.Fatalf("Unexpected error when reading response: %s", err)
-	}
-	if !(resp.Header.StatusCode() == fasthttp.StatusNotFound) {
-		t.Errorf("OPTIONS handling failed: Code=%d, Header=%v",
-			resp.Header.StatusCode(), resp.Header.String())
-	}
+// 	rw.r.WriteString("OPTIONS /doesnotexist HTTP/1.1\r\n\r\n")
+// 	go func() {
+// 		ch <- s.ServeConn(rw)
+// 	}()
+// 	select {
+// 	case err := <-ch:
+// 		if err != nil {
+// 			t.Fatalf("return error %s", err)
+// 		}
+// 	case <-time.After(100 * time.Millisecond):
+// 		t.Fatalf("timeout")
+// 	}
+// 	if err := resp.Read(br); err != nil {
+// 		t.Fatalf("Unexpected error when reading response: %s", err)
+// 	}
+// 	if !(resp.Header.StatusCode() == fasthttp.StatusNotFound) {
+// 		t.Errorf("OPTIONS handling failed: Code=%d, Header=%v",
+// 			resp.Header.StatusCode(), resp.Header.String())
+// 	}
 
-	// add another method
-	router.GET("/path", handlerFunc)
+// 	// add another method
+// 	router.GET("/path", handlerFunc)
 
-	// test again
-	// * (server)
-	rw.r.WriteString("OPTIONS * HTTP/1.1\r\n\r\n")
-	go func() {
-		ch <- s.ServeConn(rw)
-	}()
-	select {
-	case err := <-ch:
-		if err != nil {
-			t.Fatalf("return error %s", err)
-		}
-	case <-time.After(100 * time.Millisecond):
-		t.Fatalf("timeout")
-	}
-	if err := resp.Read(br); err != nil {
-		t.Fatalf("Unexpected error when reading response: %s", err)
-	}
-	if resp.Header.StatusCode() != fasthttp.StatusOK {
-		t.Errorf("OPTIONS handling failed: Code=%d, Header=%v",
-			resp.Header.StatusCode(), resp.Header.String())
-	} else if allow := string(resp.Header.Peek("Allow")); allow != "POST, GET, OPTIONS" && allow != "GET, POST, OPTIONS" {
-		t.Error("unexpected Allow header value: " + allow)
-	}
+// 	// test again
+// 	// * (server)
+// 	rw.r.WriteString("OPTIONS * HTTP/1.1\r\n\r\n")
+// 	go func() {
+// 		ch <- s.ServeConn(rw)
+// 	}()
+// 	select {
+// 	case err := <-ch:
+// 		if err != nil {
+// 			t.Fatalf("return error %s", err)
+// 		}
+// 	case <-time.After(100 * time.Millisecond):
+// 		t.Fatalf("timeout")
+// 	}
+// 	if err := resp.Read(br); err != nil {
+// 		t.Fatalf("Unexpected error when reading response: %s", err)
+// 	}
+// 	if resp.Header.StatusCode() != fasthttp.StatusOK {
+// 		t.Errorf("OPTIONS handling failed: Code=%d, Header=%v",
+// 			resp.Header.StatusCode(), resp.Header.String())
+// 	} else if allow := string(resp.Header.Peek("Allow")); allow != "POST, GET, OPTIONS" && allow != "GET, POST, OPTIONS" {
+// 		t.Error("unexpected Allow header value: " + allow)
+// 	}
 
-	// path
-	rw.r.WriteString("OPTIONS /path HTTP/1.1\r\n\r\n")
-	go func() {
-		ch <- s.ServeConn(rw)
-	}()
-	select {
-	case err := <-ch:
-		if err != nil {
-			t.Fatalf("return error %s", err)
-		}
-	case <-time.After(100 * time.Millisecond):
-		t.Fatalf("timeout")
-	}
-	if err := resp.Read(br); err != nil {
-		t.Fatalf("Unexpected error when reading response: %s", err)
-	}
-	if resp.Header.StatusCode() != fasthttp.StatusOK {
-		t.Errorf("OPTIONS handling failed: Code=%d, Header=%v",
-			resp.Header.StatusCode(), resp.Header.String())
-	} else if allow := string(resp.Header.Peek("Allow")); allow != "POST, GET, OPTIONS" && allow != "GET, POST, OPTIONS" {
-		t.Error("unexpected Allow header value: " + allow)
-	}
+// 	// path
+// 	rw.r.WriteString("OPTIONS /path HTTP/1.1\r\n\r\n")
+// 	go func() {
+// 		ch <- s.ServeConn(rw)
+// 	}()
+// 	select {
+// 	case err := <-ch:
+// 		if err != nil {
+// 			t.Fatalf("return error %s", err)
+// 		}
+// 	case <-time.After(100 * time.Millisecond):
+// 		t.Fatalf("timeout")
+// 	}
+// 	if err := resp.Read(br); err != nil {
+// 		t.Fatalf("Unexpected error when reading response: %s", err)
+// 	}
+// 	if resp.Header.StatusCode() != fasthttp.StatusOK {
+// 		t.Errorf("OPTIONS handling failed: Code=%d, Header=%v",
+// 			resp.Header.StatusCode(), resp.Header.String())
+// 	} else if allow := string(resp.Header.Peek("Allow")); allow != "POST, GET, OPTIONS" && allow != "GET, POST, OPTIONS" {
+// 		t.Error("unexpected Allow header value: " + allow)
+// 	}
 
-	// custom handler
-	var custom bool
-	router.OPTIONS("/path", func(_ *fasthttp.RequestCtx) {
-		custom = true
-	})
+// 	// custom handler
+// 	var custom bool
+// 	router.OPTIONS("/path", func(_ *fasthttp.RequestCtx) {
+// 		custom = true
+// 	})
 
-	// test again
-	// * (server)
-	rw.r.WriteString("OPTIONS * HTTP/1.1\r\n\r\n")
-	go func() {
-		ch <- s.ServeConn(rw)
-	}()
-	select {
-	case err := <-ch:
-		if err != nil {
-			t.Fatalf("return error %s", err)
-		}
-	case <-time.After(100 * time.Millisecond):
-		t.Fatalf("timeout")
-	}
-	if err := resp.Read(br); err != nil {
-		t.Fatalf("Unexpected error when reading response: %s", err)
-	}
-	if resp.Header.StatusCode() != fasthttp.StatusOK {
-		t.Errorf("OPTIONS handling failed: Code=%d, Header=%v",
-			resp.Header.StatusCode(), resp.Header.String())
-	} else if allow := string(resp.Header.Peek("Allow")); allow != "POST, GET, OPTIONS" && allow != "GET, POST, OPTIONS" {
-		t.Error("unexpected Allow header value: " + allow)
-	}
-	if custom {
-		t.Error("custom handler called on *")
-	}
+// 	// test again
+// 	// * (server)
+// 	rw.r.WriteString("OPTIONS * HTTP/1.1\r\n\r\n")
+// 	go func() {
+// 		ch <- s.ServeConn(rw)
+// 	}()
+// 	select {
+// 	case err := <-ch:
+// 		if err != nil {
+// 			t.Fatalf("return error %s", err)
+// 		}
+// 	case <-time.After(100 * time.Millisecond):
+// 		t.Fatalf("timeout")
+// 	}
+// 	if err := resp.Read(br); err != nil {
+// 		t.Fatalf("Unexpected error when reading response: %s", err)
+// 	}
+// 	if resp.Header.StatusCode() != fasthttp.StatusOK {
+// 		t.Errorf("OPTIONS handling failed: Code=%d, Header=%v",
+// 			resp.Header.StatusCode(), resp.Header.String())
+// 	} else if allow := string(resp.Header.Peek("Allow")); allow != "POST, GET, OPTIONS" && allow != "GET, POST, OPTIONS" {
+// 		t.Error("unexpected Allow header value: " + allow)
+// 	}
+// 	if custom {
+// 		t.Error("custom handler called on *")
+// 	}
 
-	// path
-	rw.r.WriteString("OPTIONS /path HTTP/1.1\r\n\r\n")
-	go func() {
-		ch <- s.ServeConn(rw)
-	}()
-	select {
-	case err := <-ch:
-		if err != nil {
-			t.Fatalf("return error %s", err)
-		}
-	case <-time.After(100 * time.Millisecond):
-		t.Fatalf("timeout")
-	}
-	if err := resp.Read(br); err != nil {
-		t.Fatalf("Unexpected error when reading response: %s", err)
-	}
-	if resp.Header.StatusCode() != fasthttp.StatusOK {
-		t.Errorf("OPTIONS handling failed: Code=%d, Header=%v",
-			resp.Header.StatusCode(), resp.Header.String())
-	}
-	if !custom {
-		t.Error("custom handler not called")
-	}
-}
+// 	// path
+// 	rw.r.WriteString("OPTIONS /path HTTP/1.1\r\n\r\n")
+// 	go func() {
+// 		ch <- s.ServeConn(rw)
+// 	}()
+// 	select {
+// 	case err := <-ch:
+// 		if err != nil {
+// 			t.Fatalf("return error %s", err)
+// 		}
+// 	case <-time.After(100 * time.Millisecond):
+// 		t.Fatalf("timeout")
+// 	}
+// 	if err := resp.Read(br); err != nil {
+// 		t.Fatalf("Unexpected error when reading response: %s", err)
+// 	}
+// 	if resp.Header.StatusCode() != fasthttp.StatusOK {
+// 		t.Errorf("OPTIONS handling failed: Code=%d, Header=%v",
+// 			resp.Header.StatusCode(), resp.Header.String())
+// 	}
+// 	if !custom {
+// 		t.Error("custom handler not called")
+// 	}
+// }
 
 func TestRouterNotAllowed(t *testing.T) {
 	handlerFunc := func(_ *fasthttp.RequestCtx) {}
