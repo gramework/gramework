@@ -14,6 +14,8 @@ func TestGrameworkHTTP(t *testing.T) {
 	const text = "test one two three"
 	var preCalled, mwCalled, postCalled, jsonOK bool
 	app.GET("/", text)
+	app.GET("/bytes", []byte(text))
+	app.GET("/float32", float32(len(text)))
 	app.GET("/json", func(ctx *Context) {
 		m := map[string]map[string]map[string]map[string]int{
 			"abc": {
@@ -54,6 +56,12 @@ func TestGrameworkHTTP(t *testing.T) {
 				return
 			}
 		}
+	})
+	app.ServeFile("/sf", "./nanotime.s")
+	app.GET("/sdnc_static/dist/*static", app.ServeDirNoCache("./"))
+	app.GET("/sdncc_static/dist/*static", app.ServeDirNoCacheCustom("./", 0, false, false, []string{}))
+	app.MethodNotAllowed(func(ctx *Context) {
+		ctx.WriteString("GTFO")
 	})
 	app.UsePre(func() {
 		preCalled = true
