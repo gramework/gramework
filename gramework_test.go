@@ -2,6 +2,7 @@ package gramework
 
 import (
 	"crypto/tls"
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"reflect"
@@ -58,6 +59,7 @@ func TestGrameworkHTTP(t *testing.T) {
 		}
 	})
 	app.ServeFile("/sf", "./nanotime.s")
+	app.SPAIndex("./nanotime.s")
 	app.GET("/sdnc_static/dist/*static", app.ServeDirNoCache("./"))
 	app.GET("/sdncc_static/dist/*static", app.ServeDirNoCacheCustom("./", 0, false, false, []string{}))
 	app.MethodNotAllowed(func(ctx *Context) {
@@ -68,6 +70,12 @@ func TestGrameworkHTTP(t *testing.T) {
 	})
 	app.UsePre(func(ctx *Context) {
 		ctx.CORS()
+	})
+	app.UsePre(func(ctx *Context) error {
+		if 1 != 1 {
+			return errors.New("wtf o.O")
+		}
+		return nil
 	})
 	app.Use(func() {
 		mwCalled = true
