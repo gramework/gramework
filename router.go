@@ -49,6 +49,14 @@ func (r *Router) PATCH(route string, handler interface{}) *Router {
 	return r
 }
 
+// ServeFile serves a file on a given route
+func (r *Router) ServeFile(route, file string) *Router {
+	r.Handle(MethodGET, route, func(ctx *Context) {
+		ctx.SendFile(file)
+	})
+	return r
+}
+
 // Sub let you quickly register subroutes with given prefix
 // like app.Sub("v1").GET("route", "hi"), that give you /v1/route
 // registered

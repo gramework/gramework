@@ -63,6 +63,11 @@ func (app *App) NotFound(notFoundHandler func(*Context)) *App {
 	return app
 }
 
+// ServeFile serves a file on a given route
+func (app *App) ServeFile(route, file string) *Router {
+	return app.defaultRouter.ServeFile(route, file)
+}
+
 // HandleMethodNotAllowed changes HandleMethodNotAllowed mode in the router
 func (app *App) HandleMethodNotAllowed(newValue bool) (oldValue bool) {
 	return app.defaultRouter.HandleMethodNotAllowed(newValue)

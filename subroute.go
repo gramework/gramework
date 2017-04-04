@@ -29,6 +29,15 @@ func (r *SubRouter) HEAD(route string, handler interface{}) *SubRouter {
 	return r
 }
 
+// ServeFile serves a file on a given route
+func (r *SubRouter) ServeFile(route, file string) *SubRouter {
+	route = r.prefixedRoute(route)
+	r.parent.handleReg(MethodGET, route, func(ctx *Context) {
+		ctx.SendFile(file)
+	})
+	return r
+}
+
 // OPTIONS registers a handler for a OPTIONS request to the given route
 func (r *SubRouter) OPTIONS(route string, handler interface{}) *SubRouter {
 	route = r.prefixedRoute(route)
