@@ -60,6 +60,7 @@ func (r *Router) ServeFile(route, file string) *Router {
 // SPAIndex serves an index file on any unregistered route
 func (r *Router) SPAIndex(path string) *Router {
 	r.NotFound(func(ctx *Context) {
+		ctx.HTML()
 		ctx.SendFile(path)
 	})
 	return r
