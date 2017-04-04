@@ -30,3 +30,6 @@ tls-gramecache
 infraclient
 intercom
 users
+
+test_cert.pem
+test_key.pem

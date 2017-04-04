@@ -135,6 +135,11 @@ func (c *Context) UnJSONBytes(b []byte, v ...interface{}) (interface{}, error) {
 	return UnJSONBytes(b, v...)
 }
 
+// UnJSON deserializes JSON request body to given variable pointer
+func (c *Context) UnJSON(v interface{}) error {
+	return json.NewDecoder(bytes.NewReader(c.Request.Body())).Decode(&v)
+}
+
 // UnJSONBytes serializes and writes a json-formatted response to user
 func UnJSONBytes(b []byte, v ...interface{}) (interface{}, error) {
 	if len(v) == 0 {
