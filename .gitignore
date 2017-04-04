@@ -33,3 +33,6 @@ users
 
 test_cert.pem
 test_key.pem
+
+disabled
+nettls_*
