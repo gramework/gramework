@@ -68,6 +68,11 @@ func (app *App) ServeFile(route, file string) *Router {
 	return app.defaultRouter.ServeFile(route, file)
 }
 
+// SPAIndex serves an index file on any unregistered route
+func (app *App) SPAIndex(path string) *Router {
+	return app.defaultRouter.SPAIndex(path)
+}
+
 // HandleMethodNotAllowed changes HandleMethodNotAllowed mode in the router
 func (app *App) HandleMethodNotAllowed(newValue bool) (oldValue bool) {
 	return app.defaultRouter.HandleMethodNotAllowed(newValue)

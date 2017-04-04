@@ -57,6 +57,14 @@ func (r *Router) ServeFile(route, file string) *Router {
 	return r
 }
 
+// SPAIndex serves an index file on any unregistered route
+func (r *Router) SPAIndex(path string) *Router {
+	r.NotFound(func(ctx *Context) {
+		ctx.SendFile(path)
+	})
+	return r
+}
+
 // Sub let you quickly register subroutes with given prefix
 // like app.Sub("v1").GET("route", "hi"), that give you /v1/route
 // registered
