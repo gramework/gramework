@@ -96,6 +96,18 @@ type (
 		root        *Router
 		app         *App
 		mu          sync.RWMutex
+		submu       sync.Mutex
+	}
+
+	// SubRouter handles subs registration
+	// like app.Sub("v1").GET("someRoute", "hi")
+	SubRouter struct {
+		parent routerable
+		prefix string
+	}
+
+	routerable interface {
+		handleReg(method, route string, handler interface{})
 	}
 
 	// RequestHandler describes a standard request handler type

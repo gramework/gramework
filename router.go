@@ -2,7 +2,6 @@ package gramework
 
 import (
 	"fmt"
-
 	"time"
 
 	"github.com/valyala/fasthttp"
@@ -50,11 +49,17 @@ func (r *Router) PATCH(route string, handler interface{}) *Router {
 	return r
 }
 
-// Handle registers a new request handle with the given path and method.
-// For GET, POST, PUT, PATCH and DELETE requests the respective shortcut functions can be used.
-// This function is intended for bulk loading and to allow the usage of less frequently used,
-// non-standardized or custom methods (e.g. for internal communication with a proxy).
-func (r *Router) Handle(method, route string, handler interface{}) *Router {
+// Sub let you quickly register subroutes with given prefix
+// like app.Sub("v1").GET("route", "hi"), that give you /v1/route
+// registered
+func (r *Router) Sub(path string) *SubRouter {
+	return &SubRouter{
+		prefix: path,
+		parent: r,
+	}
+}
+
+func (r *Router) handleReg(method, route string, handler interface{}) {
 	r.initRouter()
 
 	switch h := handler.(type) {
@@ -78,6 +83,14 @@ func (r *Router) Handle(method, route string, handler interface{}) *Router {
 		r.app.Logger.Warnf("Unknown handler type: %T, serving fmt.Sprintf(%%v)", h)
 		r.router.Handle(method, route, r.getFmtVHandler(h))
 	}
+}
+
+// Handle registers a new request handle with the given path and method.
+// For GET, POST, PUT, PATCH and DELETE requests the respective shortcut functions can be used.
+// This function is intended for bulk loading and to allow the usage of less frequently used,
+// non-standardized or custom methods (e.g. for internal communication with a proxy).
+func (r *Router) Handle(method, route string, handler interface{}) *Router {
+	r.handleReg(method, route, handler)
 	return r
 }
 
