@@ -41,11 +41,18 @@ type (
 	// Context is a gramework request context
 	Context struct {
 		*fasthttp.RequestCtx
-		nocopy nocopy.NoCopy
-		Logger log.Interface
-		App    *App
+		nocopy  nocopy.NoCopy
+		Logger  log.Interface
+		App     *App
+		Cookies Cookies
 
 		middlewaresShouldStopProcessing bool
+	}
+
+	// Cookies handles a typical cookie storage
+	Cookies struct {
+		Storage map[string]string
+		Mu      sync.RWMutex
 	}
 
 	// Settings for an App instance

@@ -21,6 +21,7 @@ func (app *App) handler() func(*fasthttp.RequestCtx) {
 		if app.defaultRouter.router.PanicHandler != nil {
 			defer app.defaultRouter.router.Recv(ctx)
 		}
+		ctx.loadCookies()
 		app.preMiddlewaresMu.RLock()
 		for k := range app.preMiddlewares {
 			app.preMiddlewares[k](ctx)
@@ -42,17 +43,20 @@ func (app *App) handler() func(*fasthttp.RequestCtx) {
 				app.domainListLock.RUnlock()
 				app.domains[d].Handler()(ctx)
 				app.runMiddlewaresAfterRequest(ctx)
+				ctx.saveCookies()
 				return
 			}
 			app.domainListLock.RUnlock()
 			if !app.HandleUnknownDomains {
 				ctx.NotFound()
 				app.runMiddlewaresAfterRequest(ctx)
+				ctx.saveCookies()
 				return
 			}
 		}
 		app.defaultRouter.Handler()(ctx)
 		app.runMiddlewaresAfterRequest(ctx)
+		ctx.saveCookies()
 	}
 }
 
