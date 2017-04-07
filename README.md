@@ -2,6 +2,23 @@
 
 The Good Framework
 
+- [Benchmarks](#benchmarks)
+- [3rd-party license info](#3rd-party-license-info)
+- [Basic usage](#basic-usage)
+		- [Serving static data, part 1](#serving-static-data-part-1)
+		- [Serving static data, part 2](#serving-static-data-part-2)
+		- [Serving static data, part 3](#serving-static-data-part-3)
+		- [Serving static data, part 4](#serving-static-data-part-4)
+		- [Using dynamic handlers, part 1](#using-dynamic-handlers-part-1)
+		- [Using dynamic handlers, part 2](#using-dynamic-handlers-part-2)
+		- [Using dynamic handlers, part 3](#using-dynamic-handlers-part-3)
+		- [Using dynamic handlers, part 3](#using-dynamic-handlers-part-3-1)
+		- [Using dynamic handlers, part 4](#using-dynamic-handlers-part-4)
+
+# Benchmarks
+
+[![benchmark](https://raw.githubusercontent.com/smallnest/go-web-framework-benchmark/master/benchmark.png)](https://github.com/smallnest/go-web-framework-benchmark)
+
 # 3rd-party license info
 
 - Gramework is now powered by [fasthttp](https://github.com/valyala/fasthttp) and custom fasthttprouter, that is embedded now.
@@ -243,5 +260,3 @@ func main() {
 	app.ListenAndServe()
 }
 ```
-
-
