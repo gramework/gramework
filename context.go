@@ -152,9 +152,18 @@ func UnJSONBytes(b []byte, v ...interface{}) (interface{}, error) {
 }
 
 // Err500 sets Internal Server Error status
-func (c *Context) Err500() *Context {
+func (c *Context) Err500(message ...interface{}) *Context {
 	c.SetStatusCode(fasthttp.StatusInternalServerError)
-
+	for k := range message {
+		switch v := message[k].(type) {
+		case string:
+			c.WriteString(v)
+		case error:
+			c.Writef("%s", v)
+		default:
+			c.Writef("%v", v)
+		}
+	}
 	return c
 }
 
