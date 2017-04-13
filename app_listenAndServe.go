@@ -36,9 +36,11 @@ func (app *App) ListenAndServe(addr ...string) error {
 	l := app.Logger.WithField("bind", bind)
 
 	l.Info("Starting HTTP")
+
 	s := fasthttp.Server{
 		Handler: app.handler(),
 		Logger:  fasthttp.Logger(log.New(ioutil.Discard, "", log.LstdFlags)),
+		Name:    "gramework/" + Version,
 	}
 	err := s.ListenAndServe(bind)
 	l.Errorf("ListenAndServe failed: %s", err)

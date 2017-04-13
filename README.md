@@ -2,6 +2,14 @@
 
 The Good Framework
 
+### API status
+
+Stable, but not frozen: we adding functions, packages or optional arguments, so you can use new features, but we never break your projects.
+Please, fire an issue or pull request if you want any feature, you find a bug or know how to optimize gramework even more.
+Contribution rules will be added ASAP and now we are working on those too.
+
+# TOC
+
 - [Benchmarks](#benchmarks)
 - [3rd-party license info](#3rd-party-license-info)
 - [Basic usage](#basic-usage)

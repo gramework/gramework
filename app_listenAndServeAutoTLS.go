@@ -70,6 +70,7 @@ func (app *App) ListenAndServeAutoTLS(addr string, cachePath ...string) error {
 	server := fasthttp.Server{
 		Handler: app.handler(),
 		Logger:  fasthttp.Logger(log.New(ioutil.Discard, "", log.LstdFlags)),
+		Name:    "gramework/" + Version,
 	}
 	err = server.Serve(tlsLn)
 	if err != nil {
@@ -120,7 +121,12 @@ func (app *App) ListenAndServeAutoTLSDev(addr string, cachePath ...string) error
 
 	l := app.Logger.WithField("bind", addr)
 	l.Info("Starting HTTPS")
-	err = fasthttp.Serve(tlsLn, app.handler())
+	server := fasthttp.Server{
+		Handler: app.handler(),
+		Logger:  fasthttp.Logger(log.New(ioutil.Discard, "", log.LstdFlags)),
+		Name:    "gramework/" + Version,
+	}
+	err = server.Serve(tlsLn)
 	if err != nil {
 		app.Logger.Errorf("Can't serve: %s", err)
 	}
