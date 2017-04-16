@@ -134,6 +134,8 @@ func main() {
 	app := gramework.New()
 
 	app.GET("/someJSON", func(ctx *gramework.Context) {
+		// NOTE: the map below stands here to show you
+		// that gramework supports deep serialization.
 		m := map[string]map[string]map[string]map[string]int{
 			"abc": {
 				"def": {
@@ -170,6 +172,8 @@ func main() {
 	app.Use(app.CORSMiddleware())
 
 	app.GET("/someJSON", func(ctx *gramework.Context) {
+		// NOTE: the map below stands here to show you
+		// that gramework supports deep serialization.
 		m := map[string]map[string]map[string]map[string]int{
 			"abc": {
 				"def": {
@@ -206,6 +210,8 @@ func main() {
 	app.GET("/someJSON", func(ctx *gramework.Context) {
 		ctx.CORS()
 
+		// NOTE: the map below stands here to show you
+		// that gramework supports deep serialization.
 		m := map[string]map[string]map[string]map[string]int{
 			"abc": {
 				"def": {
