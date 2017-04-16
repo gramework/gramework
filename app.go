@@ -22,3 +22,14 @@ func (app *App) MethodNotAllowed(c func(ctx *Context)) *App {
 	app.defaultRouter.router.MethodNotAllowed = c
 	return app
 }
+
+// Redir sends 301 redirect to the given url
+//
+// it's equivalent to
+//
+//     ctx.Redirect(url, 301)
+func (app *App) Redir(url string) func(*Context) {
+	return func(ctx *Context) {
+		ctx.Redirect(url, redirectCode)
+	}
+}
