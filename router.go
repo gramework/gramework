@@ -13,6 +13,10 @@ func (r *Router) GET(route string, handler interface{}) *Router {
 	return r
 }
 
+func (r *Router) Forbidden(ctx *Context) {
+	ctx.Forbidden()
+}
+
 // DELETE registers a handler for a DELETE request to the given route
 func (r *Router) DELETE(route string, handler interface{}) *Router {
 	r.Handle(MethodDELETE, route, handler)
@@ -487,4 +491,15 @@ func (r *Router) handle(path, method string, ctx *Context, handler func(ctx *Con
 	}
 
 	return false
+}
+
+// Redir sends 301 redirect to the given url
+//
+// it's equivalent to
+//
+//     ctx.Redirect(url, 301)
+func (r *Router) Redir(route, url string) {
+	r.GET(route, func(ctx *Context) {
+		ctx.Redirect(route, redirectCode)
+	})
 }

@@ -97,6 +97,8 @@ const (
 	trueStr                           = "true"
 	jsonCT                            = "application/json;charset=utf8"
 	hOrigin                           = "Origin"
+	forbidden                         = "Forbidden"
+	forbiddenCode                     = 403
 )
 
 // CORS enables CORS in the current context
@@ -113,6 +115,11 @@ func (c *Context) CORS() *Context {
 	c.Response.Header.Set(corsAccessControlAllowCredentials, trueStr)
 
 	return c
+}
+
+// Forbidden send 403 Forbidden error
+func (c *Context) Forbidden() {
+	c.Error(forbidden, forbiddenCode)
 }
 
 // JSON serializes and writes a json-formatted response to user

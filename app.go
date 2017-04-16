@@ -33,3 +33,8 @@ func (app *App) Redir(url string) func(*Context) {
 		ctx.Redirect(url, redirectCode)
 	}
 }
+
+// Forbidden send 403 Forbidden error
+func (app *App) Forbidden(ctx *Context) {
+	ctx.Forbidden()
+}

@@ -17,7 +17,7 @@ func (ctx *Context) saveCookies() {
 }
 
 func (ctx *Context) loadCookies() {
-	ctx.Cookies.Storage = make(map[string]string, 0)
+	ctx.Cookies.Storage = make(map[string]string, zero)
 	ctx.Request.Header.VisitAllCookie(ctx.loadCookieVisitor)
 }
 
@@ -29,7 +29,7 @@ func (ctx *Context) loadCookieVisitor(k, v []byte) {
 func (c *Cookies) Set(key, value string) {
 	c.Mu.Lock()
 	if c.Storage == nil {
-		c.Storage = make(map[string]string, 0)
+		c.Storage = make(map[string]string, zero)
 	}
 	c.Storage[key] = value
 	c.Mu.Unlock()
@@ -39,7 +39,7 @@ func (c *Cookies) Set(key, value string) {
 func (c *Cookies) Get(key string) (string, bool) {
 	c.Mu.Lock()
 	if c.Storage == nil {
-		c.Storage = make(map[string]string, 0)
+		c.Storage = make(map[string]string, zero)
 		c.Mu.Unlock()
 		return emptyString, false
 	}
@@ -55,7 +55,7 @@ func (c *Cookies) Get(key string) (string, bool) {
 func (c *Cookies) Exists(key string) bool {
 	c.Mu.Lock()
 	if c.Storage == nil {
-		c.Storage = make(map[string]string, 0)
+		c.Storage = make(map[string]string, zero)
 		c.Mu.Unlock()
 		return false
 	}

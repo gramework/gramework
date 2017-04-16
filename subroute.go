@@ -94,3 +94,18 @@ func (r *SubRouter) prefixedRoute(route string) string {
 	}
 	return fmt.Sprintf("%s%s", r.prefix, route)
 }
+
+func (r *SubRouter) Forbidden(ctx *Context) {
+	ctx.Forbidden()
+}
+
+// Redir sends 301 redirect to the given url
+//
+// it's equivalent to
+//
+//     ctx.Redirect(url, 301)
+func (r *SubRouter) Redir(route, url string) {
+	r.GET(route, func(ctx *Context) {
+		ctx.Redirect(route, redirectCode)
+	})
+}
