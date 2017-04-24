@@ -24,12 +24,16 @@ _testmain.go
 *.prof
 coverage.txt
 profile.out
+cpu.out
+mem.out
+
 tls-gramecache.dev
 tls-gramecache
 
 infraclient
 intercom
 users
+db
 
 test_cert.pem
 test_key.pem

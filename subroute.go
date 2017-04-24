@@ -95,6 +95,48 @@ func (r *SubRouter) prefixedRoute(route string) string {
 	return fmt.Sprintf("%s%s", r.prefix, route)
 }
 
+// HTTP returns SubRouter for http requests with given r.prefix
+func (r *SubRouter) HTTP() *SubRouter {
+	switch parent := r.parent.(type) {
+	case *SubRouter:
+		return parent.HTTP()
+	case *Router:
+		return &SubRouter{
+			parent: parent,
+			prefix: r.prefix,
+		}
+	default:
+		Errorf("[HIGH SEVERITY BUG]: unreachable case found! Expected *SubRouter or *Router, got %T! Returning nil!", parent)
+		Errorf("Please report the bug on https://github.com/gramework/gramework ASAP!")
+		return nil
+	}
+}
+
+// HTTPS returns SubRouter for https requests with given r.prefix
+func (r *SubRouter) HTTPS() *SubRouter {
+	switch parent := r.parent.(type) {
+	case *SubRouter:
+		return parent.HTTPS()
+	case *Router:
+		return &SubRouter{
+			parent: parent,
+			prefix: r.prefix,
+		}
+	default:
+		Errorf("[HIGH SEVERITY BUG]: unreachable case found! Expected *SubRouter or *Router, got %T! Returning nil!", parent)
+		Errorf("Please report the bug on https://github.com/gramework/gramework ASAP!")
+		return nil
+	}
+}
+
+// ToTLSHandler returns handler that redirects user to HTTP scheme
+func (r *SubRouter) ToTLSHandler() func(*Context) {
+	return func(ctx *Context) {
+		ctx.ToTLS()
+	}
+}
+
+// Forbidden is a shortcut for ctx.Forbidden
 func (r *SubRouter) Forbidden(ctx *Context) {
 	ctx.Forbidden()
 }
