@@ -13,6 +13,7 @@ func (r *Router) GET(route string, handler interface{}) *Router {
 	return r
 }
 
+// Forbidden serves 403 on route it registered on
 func (r *Router) Forbidden(ctx *Context) {
 	ctx.Forbidden()
 }

@@ -4,6 +4,10 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-func (ctx *Context) Proxy(url string) {
-	fasthttp.Do(&ctx.Request, &ctx.Response)
+// Proxy request to given url
+func (ctx *Context) Proxy(url string) error {
+	proxyReq := fasthttp.AcquireRequest()
+	ctx.Request.CopyTo(proxyReq)
+	proxyReq.SetRequestURI(url)
+	return fasthttp.Do(proxyReq, &ctx.Response)
 }
