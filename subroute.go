@@ -11,6 +11,22 @@ func (r *SubRouter) GET(route string, handler interface{}) *SubRouter {
 	return r
 }
 
+func (r *SubRouter) determineHandler(handler interface{}) func(*Context) {
+	return r.parent.determineHandler(handler)
+}
+
+// JSON register internal handler that sets json content type
+// and serves given handler with GET method
+func (r *SubRouter) JSON(route string, handler interface{}) *SubRouter {
+	route = r.prefixedRoute(route)
+	if r.parent != nil {
+		h := r.parent.determineHandler(handler)
+		r.parent.handleReg(MethodGET, route, jsonHandler(h))
+	}
+
+	return r
+}
+
 // DELETE registers a handler for a DELETE request to the given route
 func (r *SubRouter) DELETE(route string, handler interface{}) *SubRouter {
 	route = r.prefixedRoute(route)

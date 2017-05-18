@@ -115,6 +115,7 @@ type (
 
 	routerable interface {
 		handleReg(method, route string, handler interface{})
+		determineHandler(handler interface{}) func(*Context)
 	}
 
 	// RequestHandler describes a standard request handler type
