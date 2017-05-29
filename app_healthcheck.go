@@ -6,8 +6,8 @@ import (
 
 // HealthHandler serves info about memory usage
 func (app *App) HealthHandler(ctx *Context) {
-	var m *runtime.MemStats
-	runtime.ReadMemStats(m)
+	var m runtime.MemStats
+	runtime.ReadMemStats(&m)
 
 	ctx.JSON(m)
 }
