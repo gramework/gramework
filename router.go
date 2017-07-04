@@ -201,7 +201,7 @@ func (r *Router) HandleOPTIONS(newValue bool) (oldValue bool) {
 
 // ServeDir from a given path
 func (app *App) ServeDir(path string) func(*Context) {
-	return app.ServeDirCustom(path, 0, true, false, nil)
+	return app.ServeDirCustom(path, 0, true, false, []string{"index.html", "index.htm"})
 }
 
 // ServeDirCustom gives you ability to serve a dir with custom settings
