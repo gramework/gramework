@@ -2,11 +2,60 @@
 
 The Good Framework
 
+### What is it?
+
+Fast, highly effective and go-way web framework. You get the simple yet powerful API, we handle optimizations internally.
+We glad to see your feature requests and PRs, that are implemented as fast as possible while keeping framework high quality.
+SPA-first, so [template engine support is WIP](https://github.com/gramework/gramework/issues/5).
+
+### Project history and "Why?"
+
+Basically, before I've started the project, I need a simple, powerful framework with fair license policy.
+First I consulted with lawyers, which license to choose, based on the list of packages that I need to use.
+Next, we discussed what to do in order to do everything as correctly as possible.
+
+In our days, `net/http`-based projects are slow and cost-ineffective, so I just write the basic version.
+
+**But.**
+
+Those support HTTP/2, but theoretically we can make it work even with fasthttp.
+
+Those also support websockets, but this is already was done.
+
+**But.** Again.
+
+All our company's solutions are based on fasthttp, so we can use our already stable, optimized solutions.
+
+We can provide stable, faster and more effective functionality with really simple API.
+
+We can support `net/http` handlers with compatibility layer.
+
+We can support multiple handler signature, allow runtime route registration etc.
+
+And even more `We can`.
+
+---
+
+So - **why you may want to use it?**
+
+- Gramework is battle-tested
+- Gramework is one of the rare frameworks that can help you serve up to 800k rps even on a 4Gb RAM/i5@2.9GHz/2x1Gbit server
+- Gramework make your projects' infrastructure costs more effective by using as less memory as possible
+- Gramework helps you serve requests faster, and so it helps you increase conversions ([source 1](https://blog.kissmetrics.com/speed-is-a-killer/), [source 2](https://blog.hubspot.com/marketing/page-load-time-conversion-rates))
+- You can build software faster with simple API
+- You can achieve agile support and get answers to your questions
+- You can just ask a feature and most likely it will be implemented and built in
+- You can contact me and donate for high priority feature
+- You can be sure that all license questions are OK with gramework
+- You can buy a corporate-grade support
+
 ### API status
 
 Stable, but not frozen: we adding functions, packages or optional arguments, so you can use new features, but we never break your projects.
+
 Please, fire an issue or pull request if you want any feature, you find a bug or know how to optimize gramework even more.
-Contribution rules will be added ASAP and now we are working on those too.
+
+Using Gramework with `dep` is highly recommended.
 
 # TOC
 
