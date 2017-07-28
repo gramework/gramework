@@ -62,15 +62,14 @@ Using Gramework with `dep` is highly recommended.
 - [Benchmarks](#benchmarks)
 - [3rd-party license info](#3rd-party-license-info)
 - [Basic usage](#basic-usage)
-  - [Serving static data, part 1](#serving-static-data-part-1)
-  - [Serving static data, part 2](#serving-static-data-part-2)
-  - [Serving static data, part 3](#serving-static-data-part-3)
-  - [Serving static data, part 4](#serving-static-data-part-4)
+  - [Hello world](#hello-world)
+  - [Serving a dir](#serving-a-dir)
+  - [Serving prepared bytes](#serving-prepared-bytes)
   - [Using dynamic handlers, part 1](#using-dynamic-handlers-part-1)
   - [Using dynamic handlers, part 2](#using-dynamic-handlers-part-2)
   - [Using dynamic handlers, part 3](#using-dynamic-handlers-part-3)
-  - [Using dynamic handlers, part 3](#using-dynamic-handlers-part-3-1)
   - [Using dynamic handlers, part 4](#using-dynamic-handlers-part-4)
+  - [Using dynamic handlers, part 5](#using-dynamic-handlers-part-5)
 
 # Benchmarks
 
@@ -88,7 +87,7 @@ Using Gramework with `dep` is highly recommended.
 
 # Basic usage
 
-### Serving static data, part 1
+### Hello world
 
 The example below will serve "hello, grameworld" and register flag "bind", that allows you to choose another ip/port that gramework should listen:
 
@@ -102,33 +101,13 @@ import (
 func main() {
 	app := gramework.New()
 
-	app.GET("/", "hello, grameworld")
+        app.GET("/", "hello, grameworld")
 
-	app.ListenAndServe()
+        app.ListenAndServe()
 }
 ```
 
-### Serving static data, part 2
-
-The example below will serve result of expression "15e10" (`150000000000.000000`) and register flag "bind", that allows you to choose another ip/port that gramework should listen:
-
-```go
-package main
-
-import (
-	"github.com/gramework/gramework"
-)
-
-func main() {
-	app := gramework.New()
-
-	app.GET("/", 15e10)
-
-	app.ListenAndServe()
-}
-```
-
-### Serving static data, part 3
+### Serving a dir
 
 The example below will serve static files from ./files and register flag "bind", that allows you to choose another ip/port that gramework should listen:
 
@@ -148,7 +127,7 @@ func main() {
 }
 ```
 
-### Serving static data, part 4
+### Serving prepared bytes
 
 The example below will serve bytes and register flag "bind", that allows you to choose another ip/port that gramework should listen:
 
@@ -183,16 +162,9 @@ func main() {
 	app := gramework.New()
 
 	app.GET("/someJSON", func(ctx *gramework.Context) {
-		// NOTE: the map below stands here to show you
-		// that gramework supports deep serialization.
-		m := map[string]map[string]map[string]map[string]int{
-			"abc": {
-				"def": {
-					"ghk": {
-						"wtf": 42,
-					},
-				},
-			},
+		m := map[string]interface{}{
+			"name": "Grame",
+			"age": 20,
 		}
 
 		if err := ctx.JSON(m); err != nil {
@@ -221,16 +193,9 @@ func main() {
 	app.Use(app.CORSMiddleware())
 
 	app.GET("/someJSON", func(ctx *gramework.Context) {
-		// NOTE: the map below stands here to show you
-		// that gramework supports deep serialization.
-		m := map[string]map[string]map[string]map[string]int{
-			"abc": {
-				"def": {
-					"ghk": {
-						"wtf": 42,
-					},
-				},
-			},
+		m := map[string]interface{}{
+			"name": "Grame",
+			"age": 20,
 		}
 
 		if err := ctx.JSON(m); err != nil {
@@ -259,16 +224,9 @@ func main() {
 	app.GET("/someJSON", func(ctx *gramework.Context) {
 		ctx.CORS()
 
-		// NOTE: the map below stands here to show you
-		// that gramework supports deep serialization.
-		m := map[string]map[string]map[string]map[string]int{
-			"abc": {
-				"def": {
-					"ghk": {
-						"wtf": 42,
-					},
-				},
-			},
+		m := map[string]interface{}{
+			"name": "Grame",
+			"age": 20,
 		}
 
 		if err := ctx.JSON(m); err != nil {
@@ -280,7 +238,7 @@ func main() {
 }
 ```
 
-### Using dynamic handlers, part 3
+### Using dynamic handlers, part 4
 
 The example below will serve a string and register flag "bind", that allows you to choose another ip/port that gramework should listen:
 
@@ -302,7 +260,7 @@ func main() {
 }
 ```
 
-### Using dynamic handlers, part 4
+### Using dynamic handlers, part 5
 
 The example below shows how you can get fasthttp.RequestCtx from gramework.Context and after that it do the same that in part 3:
 
@@ -317,6 +275,7 @@ func main() {
 	app := gramework.New()
 
 	app.GET("/someJSON", func(ctx *gramework.Context) {
+		// same as ctx.WriteString("another data")
 		ctx.RequestCtx.WriteString("another data")
 	})
 
