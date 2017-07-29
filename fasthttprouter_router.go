@@ -171,7 +171,7 @@ func (r *router) Handle(method, path string, handle RequestHandler) {
 		panic("path must begin with '/' in path '" + path + "'")
 	}
 
-	if path != "/" {
+	if path != Slash {
 		path = strings.TrimRight(path, Slash)
 	}
 
