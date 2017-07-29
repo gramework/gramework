@@ -1,11 +1,12 @@
 language: go
 
-# travis is slow with sudo: false now
-# https://www.traviscistatus.com/incidents/3s7jqhhzt8k1
+# we use :443 in tests
 sudo: required
 
 go:
+  - 1.7
   - 1.8
+  - stable
   - tip
 
 before_install:
