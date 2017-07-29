@@ -2,6 +2,11 @@
 
 The Good Framework
 
+### Useful links and info
+
+[GoDoc](https://godoc.org/github.com/gramework/gramework)
+[Gophers Slack #gramework channel](https://gophers.slack.com)
+
 ### What is it?
 
 Fast, highly effective and go-way web framework. You get the simple yet powerful API, we handle optimizations internally.
