@@ -5,7 +5,10 @@ The Good Framework
 ### Useful links and info
 
 [GoDoc](https://godoc.org/github.com/gramework/gramework)
+
 [Gophers Slack #gramework channel](https://gophers.slack.com)
+
+[Discord Server](https://discord.gg/HkW8DsD)
 
 ### What is it?
 
