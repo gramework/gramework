@@ -21,6 +21,21 @@ func (r *Router) getGrameHandler(h func(*fasthttp.RequestCtx)) func(*Context) {
 	}
 }
 
+func (r *Router) getGrameDumbHandler(h func()) func(*Context) {
+	return func(*Context) {
+		h()
+	}
+}
+
+func (r *Router) getGrameDumbErrorHandler(h func() error) func(*Context) {
+	return func(ctx *Context) {
+		if err := h(); err != nil {
+			r.app.Logger.WithField("url", ctx.URI()).Errorf("Error occurred: %s", err)
+			ctx.Error("Internal Server Error", fasthttp.StatusInternalServerError)
+		}
+	}
+}
+
 func (r *Router) getGrameErrorHandler(h func(*fasthttp.RequestCtx) error) func(*Context) {
 	return func(ctx *Context) {
 		if err := h(ctx.RequestCtx); err != nil {

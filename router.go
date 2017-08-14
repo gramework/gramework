@@ -100,6 +100,10 @@ func (r *Router) handleReg(method, route string, handler interface{}) {
 		r.router.Handle(method, route, r.getFmtDHandler(h))
 	case float32, float64:
 		r.router.Handle(method, route, r.getFmtFHandler(h))
+	case func():
+		r.router.Handle(method, route, r.getGrameDumbHandler(h))
+	case func() error:
+		r.router.Handle(method, route, r.getGrameDumbErrorHandler(h))
 	default:
 		r.app.Logger.Warnf("Unknown handler type: %T, serving fmt.Sprintf(%%v)", h)
 		r.router.Handle(method, route, r.getFmtVHandler(h))
