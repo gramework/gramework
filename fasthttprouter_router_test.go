@@ -525,7 +525,7 @@ func TestRouterNotFound(t *testing.T) {
 		code  int
 	}{
 		{"/path/", 301},          // TSR -/
-		{"/dir", 301},            // TSR +/
+		{"/dir", 200},            // TSR -/
 		{"/", 200},               // TSR +/
 		{"/PATH", 301},           // Fixed Case
 		{"/DIR", 301},            // Fixed Case

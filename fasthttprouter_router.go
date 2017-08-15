@@ -171,6 +171,10 @@ func (r *router) Handle(method, path string, handle RequestHandler) {
 		panic("path must begin with '/' in path '" + path + "'")
 	}
 
+	if path != Slash {
+		path = strings.TrimRight(path, Slash)
+	}
+
 	if r.Trees == nil {
 		r.Trees = make(map[string]*node)
 	}

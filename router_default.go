@@ -1,5 +1,21 @@
 package gramework
 
+// JSON register internal handler that sets json content type
+// and serves given handler with GET method
+func (app *App) JSON(route string, handler interface{}) *App {
+	h := app.defaultRouter.determineHandler(handler)
+	app.defaultRouter.Handle(MethodGET, route, jsonHandler(h))
+
+	return app
+}
+
+func jsonHandler(h func(*Context)) func(*Context) {
+	return func(ctx *Context) {
+		ctx.SetContentType(jsonCT)
+		h(ctx)
+	}
+}
+
 // GET registers a handler for a GET request to the given route
 func (app *App) GET(route string, handler interface{}) *App {
 	app.defaultRouter.Handle(MethodGET, route, handler)

@@ -54,6 +54,11 @@ func (c *Context) GETParams() map[string][]string {
 	return res
 }
 
+func (c *Context) GETParam(argName string) []string {
+	res := c.GETParams()
+	return res[argName]
+}
+
 // RouteArgErr returns an argument value as a string or empty string
 // and ErrArgNotFound if argument was not found
 func (c *Context) RouteArgErr(argName string) (string, error) {

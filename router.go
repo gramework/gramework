@@ -7,12 +7,22 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
+// JSON register internal handler that sets json content type
+// and serves given handler with GET method
+func (r *Router) JSON(route string, handler interface{}) *Router {
+	h := r.determineHandler(handler)
+	r.GET(route, jsonHandler(h))
+
+	return r
+}
+
 // GET registers a handler for a GET request to the given route
 func (r *Router) GET(route string, handler interface{}) *Router {
 	r.Handle(MethodGET, route, handler)
 	return r
 }
 
+// Forbidden serves 403 on route it registered on
 func (r *Router) Forbidden(ctx *Context) {
 	ctx.Forbidden()
 }
@@ -83,30 +93,42 @@ func (r *Router) Sub(path string) *SubRouter {
 func (r *Router) handleReg(method, route string, handler interface{}) {
 	r.initRouter()
 
+	r.router.Handle(method, route, r.determineHandler(handler))
+}
+
+func (r *Router) determineHandler(handler interface{}) func(*Context) {
 	switch h := handler.(type) {
-	case func(*fasthttp.RequestCtx):
-		r.router.Handle(method, route, r.getGrameHandler(h))
 	case func(*Context):
-		r.router.Handle(method, route, h)
-	case func(*fasthttp.RequestCtx) error:
-		r.router.Handle(method, route, r.getGrameErrorHandler(h))
+		return h
 	case func(*Context) error:
-		r.router.Handle(method, route, r.getErrorHandler(h))
+		return r.getErrorHandler(h)
+	case func(*fasthttp.RequestCtx):
+		return r.getGrameHandler(h)
+	case func(*fasthttp.RequestCtx) error:
+		return r.getGrameErrorHandler(h)
 	case string:
-		r.router.Handle(method, route, r.getStringServer(h))
+		return r.getStringServer(h)
 	case []byte:
-		r.router.Handle(method, route, r.getBytesServer(h))
+		return r.getBytesServer(h)
 	case int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64:
-		r.router.Handle(method, route, r.getFmtDHandler(h))
+		return r.getFmtDHandler(h)
 	case float32, float64:
-		r.router.Handle(method, route, r.getFmtFHandler(h))
+		return r.getFmtFHandler(h)
 	case func():
-		r.router.Handle(method, route, r.getGrameDumbHandler(h))
+		return r.getGrameDumbHandler(h)
 	case func() error:
-		r.router.Handle(method, route, r.getGrameDumbErrorHandler(h))
+		return r.getGrameDumbErrorHandler(h)
+	case func() string:
+		return r.getEFuncStrHandler(h)
 	default:
 		r.app.Logger.Warnf("Unknown handler type: %T, serving fmt.Sprintf(%%v)", h)
-		r.router.Handle(method, route, r.getFmtVHandler(h))
+		return r.getFmtVHandler(h)
+	}
+}
+
+func (r *Router) getEFuncStrHandler(h func() string) func(*Context) {
+	return func(ctx *Context) {
+		ctx.WriteString(h())
 	}
 }
 
@@ -183,7 +205,7 @@ func (r *Router) HandleOPTIONS(newValue bool) (oldValue bool) {
 
 // ServeDir from a given path
 func (app *App) ServeDir(path string) func(*Context) {
-	return app.ServeDirCustom(path, 0, true, false, nil)
+	return app.ServeDirCustom(path, 0, true, false, []string{"index.html", "index.htm"})
 }
 
 // ServeDirCustom gives you ability to serve a dir with custom settings
