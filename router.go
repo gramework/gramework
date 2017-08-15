@@ -114,6 +114,10 @@ func (r *Router) determineHandler(handler interface{}) func(*Context) {
 		return r.getFmtDHandler(h)
 	case float32, float64:
 		return r.getFmtFHandler(h)
+	case func():
+		return r.getGrameDumbHandler(h)
+	case func() error:
+		return r.getGrameDumbErrorHandler(h)
 	case func() string:
 		return r.getEFuncStrHandler(h)
 	default:
