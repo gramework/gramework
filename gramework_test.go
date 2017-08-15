@@ -17,6 +17,8 @@ func TestGrameworkHTTP(t *testing.T) {
 	app.GET("/", text)
 	app.GET("/bytes", []byte(text))
 	app.GET("/float32", float32(len(text)))
+	app.GET("/dumb", func() {})
+	app.GET("/dumbWithErr", func() error { return nil })
 	app.GET("/json", func(ctx *Context) {
 		m := map[string]map[string]map[string]map[string]int{
 			"abc": {

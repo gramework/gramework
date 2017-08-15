@@ -10,6 +10,14 @@ The Good Framework
 
 [Discord Server](https://discord.gg/HkW8DsD)
 
+Master branch coverage: [![codecov](https://codecov.io/gh/gramework/gramework/branch/master/graph/badge.svg)](https://codecov.io/gh/gramework/gramework)
+
+Master branch status: [![Build Status](https://travis-ci.org/gramework/gramework.svg?branch=master)](https://travis-ci.org/gramework/gramework)
+
+Dev branch coverage: [![codecov](https://codecov.io/gh/gramework/gramework/branch/dev/graph/badge.svg)](https://codecov.io/gh/gramework/gramework)
+
+Dev branch status: [![Build Status](https://travis-ci.org/gramework/gramework.svg?branch=dev)](https://travis-ci.org/gramework/gramework)
+
 ### What is it?
 
 Fast, highly effective and go-way web framework. You get the simple yet powerful API, we handle optimizations internally.

@@ -12,6 +12,11 @@ go:
   - 1.9rc2
   - tip
 
+cache:
+  directories:
+    - $HOME/.longtestcache
+  timeout: 21600
+
 allow_failures:
   - tip
 
