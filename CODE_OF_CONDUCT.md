@@ -28,7 +28,7 @@ Project maintainers are responsible for clarifying the standards of acceptable b
 
 Project maintainers have the right and responsibility to remove, edit, or reject comments, commits, code, wiki edits, issues, and other contributions that are not aligned to this Code of Conduct, or to ban temporarily or permanently any contributor for other behaviors that they deem inappropriate, threatening, offensive, or harmful.
 
-The project owner and lead makes all final decisions
+The project owner and lead makes all final decisions. [Kirill Danshin](https://github.com/kirillDanshin) is the lead.
 
 ## Scope
 
