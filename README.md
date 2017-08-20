@@ -4,6 +4,8 @@ The Good Framework
 
 ### Useful links and info
 
+If you find it, you can submit vulnerability via k@gramework.win.
+
 [GoDoc](https://godoc.org/github.com/gramework/gramework)
 
 [Gophers Slack #gramework channel](https://gophers.slack.com)
