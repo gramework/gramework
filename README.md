@@ -1,4 +1,4 @@
-# gramework [![codecov](https://codecov.io/gh/gramework/gramework/branch/master/graph/badge.svg)](https://codecov.io/gh/gramework/gramework) [![Build Status](https://travis-ci.org/gramework/gramework.svg?branch=master)](https://travis-ci.org/gramework/gramework)
+# gramework [![codecov](https://codecov.io/gh/gramework/gramework/branch/master/graph/badge.svg)](https://codecov.io/gh/gramework/gramework) [![Build Status](https://travis-ci.org/gramework/gramework.svg?branch=master)](https://travis-ci.org/gramework/gramework) [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/1203/badge)](https://bestpractices.coreinfrastructure.org/projects/1203)
 
 The Good Framework
 
@@ -6,19 +6,15 @@ The Good Framework
 
 If you find it, you can submit vulnerability via k@gramework.win.
 
-[GoDoc](https://godoc.org/github.com/gramework/gramework)
-
-[Gophers Slack #gramework channel](https://gophers.slack.com)
-
-[Discord Server](https://discord.gg/HkW8DsD)
-
-Master branch coverage: [![codecov](https://codecov.io/gh/gramework/gramework/branch/master/graph/badge.svg)](https://codecov.io/gh/gramework/gramework)
-
-Master branch status: [![Build Status](https://travis-ci.org/gramework/gramework.svg?branch=master)](https://travis-ci.org/gramework/gramework)
-
-Dev branch coverage: [![codecov](https://codecov.io/gh/gramework/gramework/branch/dev/graph/badge.svg)](https://codecov.io/gh/gramework/gramework)
-
-Dev branch status: [![Build Status](https://travis-ci.org/gramework/gramework.svg?branch=dev)](https://travis-ci.org/gramework/gramework)
+| Name  | Link/Badge  	|
+|---	|---		|
+| Docs  | [GoDoc](https://godoc.org/github.com/gramework/gramework) |
+| We have #gramework channel in the Gophers Slack | https://gophers.slack.com |
+| Our Discord Server | https://discord.gg/HkW8DsD |
+| Master branch coverage | [![codecov](https://codecov.io/gh/gramework/gramework/branch/master/graph/badge.svg)](https://codecov.io/gh/gramework/gramework) |
+| Master branch status | [![Build Status](https://travis-ci.org/gramework/gramework.svg?branch=master)](https://travis-ci.org/gramework/gramework) |
+| Dev branch coverage | [![codecov](https://codecov.io/gh/gramework/gramework/branch/dev/graph/badge.svg)](https://codecov.io/gh/gramework/gramework) |
+| Dev branch status | [![Build Status](https://travis-ci.org/gramework/gramework.svg?branch=dev)](https://travis-ci.org/gramework/gramework) |
 
 ### What is it?
 
