@@ -6,6 +6,10 @@ The Good Framework
 	<img alt='Sponsor' width='888' height='68' src='https://app.codesponsor.io/embed/ZYz58qDkCKxfZe5cxRvFSjf9/gramework/gramework.svg' />
 </a>
 
+[![Gramework Stats Screenshot](https://10357-5.s.cdn13.com/docs/gramework_stats_screenshot.png)](https://grafana.com/dashboards/3422)
+
+_Gramework long-term testing stand metrics screenshot made with [Gramework Stats Dashboard](https://grafana.com/dashboards/3422) and [metrics middleware](https://github.com/gramework/gramework/tree/dev/metrics)_
+
 ### Useful links and info
 
 If you find it, you can submit vulnerability via k@gramework.win.
@@ -20,6 +24,7 @@ If you find it, you can submit vulnerability via k@gramework.win.
 | Dev branch coverage | [![codecov](https://codecov.io/gh/gramework/gramework/branch/dev/graph/badge.svg)](https://codecov.io/gh/gramework/gramework) |
 | Dev branch status | [![Build Status](https://travis-ci.org/gramework/gramework.svg?branch=dev)](https://travis-ci.org/gramework/gramework) |
 | CII Best Practices | [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/1203/badge)](https://bestpractices.coreinfrastructure.org/projects/1203) |
+| Gramework Stats Dashboard for Grafana | https://grafana.com/dashboards/3422 |
 
 ### What is it?
 
