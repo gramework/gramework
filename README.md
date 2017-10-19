@@ -32,6 +32,23 @@ Fast, highly effective and go-way web framework. You get the simple yet powerful
 We glad to see your feature requests and PRs, that are implemented as fast as possible while keeping framework high quality.
 SPA-first, so [template engine support is WIP](https://github.com/gramework/gramework/issues/5).
 
+### Gramework is trusted by such projects as:
+
+[![Confideal banner](https://10357-5.s.cdn13.com/docs/confideal_banner.jpg)](https://confideal.io)
+
+Confideal is a service for making fast and safe international deals through smart contracts on Ethereum blockchain.
+
+> With Gramework, we have made a number of improvements:
+> - reduced boilerplate code;
+> - expedited the development process without cutting neither scope nor performance requirements;
+> - reduced the code that needs to be maintained;
+> - saved hundreds of hours by using by using functionality that comes as a part of the framework;
+> - optimized costs  of service maintenance
+> - took advantage of services' and the implementation code's being scalable.
+
+-----
+
+
 ### Project history and "Why?"
 
 Basically, before I've started the project, I need a simple, powerful framework with fair license policy.
