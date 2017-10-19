@@ -43,7 +43,7 @@ Confideal is a service for making fast and safe international deals through smar
 > - expedited the development process without cutting neither scope nor performance requirements;
 > - reduced the code that needs to be maintained;
 > - saved hundreds of hours by using by using functionality that comes as a part of the framework;
-> - optimized costs  of service maintenance
+> - optimized costs  of service maintenance;
 > - took advantage of services' and the implementation code's being scalable.
 
 -----
