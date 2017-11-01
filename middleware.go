@@ -15,9 +15,9 @@ var (
 )
 
 // CORSMiddleware provides gramework handler with ctx.CORS() call
-func (app *App) CORSMiddleware() func(*Context) {
+func (app *App) CORSMiddleware(domains ...string) func(*Context) {
 	return func(ctx *Context) {
-		ctx.CORS()
+		ctx.CORS(domains...)
 	}
 }
 

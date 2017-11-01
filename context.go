@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
+	"strings"
 
 	acceptParser "github.com/kirillDanshin/go-accept-headers"
 	"github.com/valyala/fasthttp"
@@ -159,14 +160,17 @@ const (
 )
 
 // CORS enables CORS in the current context
-func (c *Context) CORS() *Context {
-	origin := emptyString
-	if headerOrigin := c.Request.Header.Peek(hOrigin); headerOrigin != nil && len(headerOrigin) > 0 {
-		origin = string(headerOrigin)
+func (c *Context) CORS(domains ...string) *Context {
+	origins := make([]string, 0)
+	if len(domains) > 0 {
+		origins = domains
+	} else if headerOrigin := c.Request.Header.Peek(hOrigin); headerOrigin != nil && len(headerOrigin) > 0 {
+		origins = append(origins, string(headerOrigin))
 	} else {
-		origin = string(c.Request.URI().Host())
+		origins = append(origins, string(c.Request.URI().Host()))
 	}
-	c.Response.Header.Set(corsAccessControlAllowOrigin, origin)
+
+	c.Response.Header.Set(corsAccessControlAllowOrigin, strings.Join(origins, " "))
 	c.Response.Header.Set(corsAccessControlAllowMethods, methods)
 	c.Response.Header.Set(corsAccessControlAllowHeaders, corsCType)
 	c.Response.Header.Set(corsAccessControlAllowCredentials, trueStr)
