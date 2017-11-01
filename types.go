@@ -11,6 +11,7 @@ import (
 type (
 	// App represents a gramework app
 	App struct {
+		name           string
 		defaultRouter  *Router
 		errorHandler   func(func(*fasthttp.RequestCtx) error)
 		EnableFirewall bool
