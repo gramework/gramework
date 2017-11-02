@@ -61,7 +61,13 @@ func (app *App) ListenAndServeAutoTLS(addr string, cachePath ...string) error {
 	}
 
 	tlsConfig := getDefaultTLSConfig()
-	tlsConfig.GetCertificate = m.GetCertificate
+	tlsConfig.GetCertificate = func(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
+		cert, err := m.GetCertificate(hello)
+		if err != nil {
+			app.Logger.Errorf("can't get cert: %s", err)
+		}
+		return cert, err
+	}
 
 	tlsLn := tls.NewListener(ln, tlsConfig)
 
@@ -120,7 +126,13 @@ func (app *App) ListenAndServeAutoTLSDev(addr string, cachePath ...string) error
 	}
 
 	tlsConfig := getDefaultTLSConfig()
-	tlsConfig.GetCertificate = m.GetCertificate
+	tlsConfig.GetCertificate = func(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
+		cert, err := m.GetCertificate(hello)
+		if err != nil {
+			app.Logger.Errorf("can't get cert: %s", err)
+		}
+		return cert, err
+	}
 
 	tlsLn := tls.NewListener(ln, tlsConfig)
 
