@@ -2,10 +2,6 @@
 
 The Good Framework
 
-<a target='_blank' rel='nofollow' href='https://app.codesponsor.io/link/ZYz58qDkCKxfZe5cxRvFSjf9/gramework/gramework'>
-	<img alt='Sponsor' width='888' height='68' src='https://app.codesponsor.io/embed/ZYz58qDkCKxfZe5cxRvFSjf9/gramework/gramework.svg' />
-</a>
-
 [![Gramework Stats Screenshot](https://10357-5.s.cdn13.com/docs/gramework_stats_screenshot.png)](https://grafana.com/dashboards/3422)
 
 _Gramework long-term testing stand metrics screenshot made with [Gramework Stats Dashboard](https://grafana.com/dashboards/3422) and [metrics middleware](https://github.com/gramework/gramework/tree/dev/metrics)_
