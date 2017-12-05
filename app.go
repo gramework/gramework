@@ -5,7 +5,7 @@ func (app *App) SetName(name string) {
 	app.name = name
 }
 
-// ToTLSHandler returns handler that redirects user to HTTP scheme
+// ToTLSHandler returns handler that redirects user to HTTPS scheme
 func (app *App) ToTLSHandler() func(*Context) {
 	return func(ctx *Context) {
 		ctx.ToTLS()
