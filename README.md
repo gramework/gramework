@@ -291,7 +291,7 @@ import (
 func main() {
 	app := gramework.New()
 
-	app.GET("/someJSON", func(ctx *fasthttp.RequestCtx) {
+	app.GET("/someJSON", func(ctx *gramework.Context) {
 		ctx.WriteString("another data")
 	})
 
