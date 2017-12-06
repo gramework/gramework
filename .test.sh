@@ -3,7 +3,7 @@
 set -e
 echo "" > coverage.txt
 
-LIST=`go list ./... | grep -v vendor`
+LIST=$(go list ./... | grep -v vendor)
 
 # grypto has no internal dependencies, but takes very long time to test.
 # to speedup build now we need to trottle builds with travis cache.
@@ -21,7 +21,7 @@ fi
 echo LIST: ${LIST}
 
 for d in $LIST; do
-    sudo GOPATH=$GOPATH GOROOT=$GOROOT `which go` test  -bench=. -benchmem -v -race -coverprofile=profile.out -covermode=atomic $d
+    sudo GOPATH=$GOPATH GOROOT=$GOROOT $(which go) test  -bench=. -benchmem -v -race -coverprofile=profile.out -covermode=atomic $d
     if [ -f profile.out ]; then
         cat profile.out >> coverage.txt
         rm -rf profile.out
