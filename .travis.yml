@@ -3,6 +3,10 @@ language: go
 # we use :443 in tests
 sudo: required
 
+os:
+  - linux
+  - osx
+
 go:
   - 1.8
   - 1.8.x
