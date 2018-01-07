@@ -129,7 +129,7 @@ Using Gramework with `dep` is highly recommended.
 
 ### Hello world
 
-The example below will serve "hello, grameworld" and register flag "bind", that allows you to choose another ip/port that gramework should listen:
+The example below will serve "hello, grameworld". Gramework will register flag "bind" for you, that allows you to choose another ip/port that gramework should listen:
 
 ```go
 package main
@@ -147,9 +147,13 @@ func main() {
 }
 ```
 
+If you don't want support `bind` flag, pass the optional address argument to `ListenAndServe`.
+
+**NOTE**: all examples below will register `bind` flag.
+
 ### Serving a dir
 
-The example below will serve static files from ./files and register flag "bind", that allows you to choose another ip/port that gramework should listen:
+The example below will serve static files from ./files:
 
 ```go
 package main
@@ -169,7 +173,7 @@ func main() {
 
 ### Serving prepared bytes
 
-The example below will serve bytes and register flag "bind", that allows you to choose another ip/port that gramework should listen:
+The example below will serve byte slice:
 
 ```go
 package main
@@ -187,9 +191,9 @@ func main() {
 }
 ```
 
-### Using dynamic handlers, part 1
+### Using dynamic handlers, part 1. Simple JSON response.
 
-The example below will serve JSON and register flag "bind", that allows you to choose another ip/port that gramework should listen:
+The example below will serve JSON:
 
 ```go
 package main
@@ -216,9 +220,9 @@ func main() {
 }
 ```
 
-### Using dynamic handlers, part 2
+### Using dynamic handlers, part 2. Simple JSON response with service-wide CORS enabled.
 
-The example below will serve JSON with CORS enabled for all routes and register flag "bind", that allows you to choose another ip/port that gramework should listen:
+The example below will serve JSON with CORS enabled for all routes:
 
 ```go
 package main
@@ -247,9 +251,9 @@ func main() {
 }
 ```
 
-### Using dynamic handlers, part 3
+### Using dynamic handlers, part 3. Simple JSON response with handler-wide CORS enabled.
 
-The example below will serve JSON with CORS enabled in the handler and register flag "bind", that allows you to choose another ip/port that gramework should listen:
+The example below will serve JSON with CORS enabled in the handler:
 
 ```go
 package main
@@ -278,9 +282,9 @@ func main() {
 }
 ```
 
-### Using dynamic handlers, part 4
+### Using dynamic handlers, part 4. Simple FastHTTP-compatible handlers.
 
-The example below will serve a string and register flag "bind", that allows you to choose another ip/port that gramework should listen:
+The example below will serve a string:
 
 ```go
 package main
@@ -300,9 +304,9 @@ func main() {
 }
 ```
 
-### Using dynamic handlers, part 5
+### Using dynamic handlers, part 5. Access to fasthttp.RequestCtx from gramework.Context
 
-The example below shows how you can get fasthttp.RequestCtx from gramework.Context and after that it do the same that in part 3:
+The example below shows how you can get fasthttp.RequestCtx from gramework.Context and use it:
 
 ```go
 package main
