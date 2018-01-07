@@ -1,24 +1,50 @@
-# gramework [![codecov](https://codecov.io/gh/gramework/gramework/branch/master/graph/badge.svg)](https://codecov.io/gh/gramework/gramework) [![Build Status](https://travis-ci.org/gramework/gramework.svg?branch=master)](https://travis-ci.org/gramework/gramework)
+# gramework [![codecov](https://codecov.io/gh/gramework/gramework/branch/master/graph/badge.svg)](https://codecov.io/gh/gramework/gramework) [![Build Status](https://travis-ci.org/gramework/gramework.svg?branch=master)](https://travis-ci.org/gramework/gramework) [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/1203/badge)](https://bestpractices.coreinfrastructure.org/projects/1203)
 
 The Good Framework
 
-<a target='_blank' rel='nofollow' href='https://app.codesponsor.io/link/ZYz58qDkCKxfZe5cxRvFSjf9/gramework/gramework'>
-	<img alt='Sponsor' width='888' height='68' src='https://app.codesponsor.io/embed/ZYz58qDkCKxfZe5cxRvFSjf9/gramework/gramework.svg' />
-</a>
+[![Gramework Stats Screenshot](https://10357-5.s.cdn13.com/docs/gramework_stats_screenshot.png)](https://grafana.com/dashboards/3422)
+
+_Gramework long-term testing stand metrics screenshot made with [Gramework Stats Dashboard](https://grafana.com/dashboards/3422) and [metrics middleware](https://github.com/gramework/gramework/tree/dev/metrics)_
 
 ### Useful links and info
 
-[GoDoc](https://godoc.org/github.com/gramework/gramework)
+If you find it, you can submit vulnerability via k@gramework.win.
 
-[Gophers Slack #gramework channel](https://gophers.slack.com)
-
-[Discord Server](https://discord.gg/HkW8DsD)
+| Name  | Link/Badge  	|
+|---	|---		|
+| Docs  | [GoDoc](https://godoc.org/github.com/gramework/gramework) |
+| Support us with a donation or become a sponsor | [OpenCollective](https://opencollective.com/gramework) |
+| We have #gramework channel in the Gophers Slack | https://gophers.slack.com |
+| Our Discord Server | https://discord.gg/HkW8DsD |
+| Master branch coverage | [![codecov](https://codecov.io/gh/gramework/gramework/branch/master/graph/badge.svg)](https://codecov.io/gh/gramework/gramework) |
+| Master branch status | [![Build Status](https://travis-ci.org/gramework/gramework.svg?branch=master)](https://travis-ci.org/gramework/gramework) |
+| Dev branch coverage | [![codecov](https://codecov.io/gh/gramework/gramework/branch/dev/graph/badge.svg)](https://codecov.io/gh/gramework/gramework) |
+| Dev branch status | [![Build Status](https://travis-ci.org/gramework/gramework.svg?branch=dev)](https://travis-ci.org/gramework/gramework) |
+| CII Best Practices | [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/1203/badge)](https://bestpractices.coreinfrastructure.org/projects/1203) |
+| Gramework Stats Dashboard for Grafana | https://grafana.com/dashboards/3422 |
 
 ### What is it?
 
 Fast, highly effective and go-way web framework. You get the simple yet powerful API, we handle optimizations internally.
 We glad to see your feature requests and PRs, that are implemented as fast as possible while keeping framework high quality.
 SPA-first, so [template engine support is WIP](https://github.com/gramework/gramework/issues/5).
+
+### Gramework is trusted by such projects as:
+
+[![Confideal banner](https://10357-5.s.cdn13.com/docs/confideal_banner.jpg)](https://confideal.io)
+
+Confideal is a service for making fast and safe international deals through smart contracts on Ethereum blockchain.
+
+> With Gramework, we have made a number of improvements:
+> - reduced boilerplate code;
+> - expedited the development process without cutting neither scope nor performance requirements;
+> - reduced the code that needs to be maintained;
+> - saved hundreds of hours by using by using functionality that comes as a part of the framework;
+> - optimized costs  of service maintenance;
+> - took advantage of services' and the implementation code's being scalable.
+
+-----
+
 
 ### Project history and "Why?"
 

@@ -3,8 +3,11 @@ package gramework
 import (
 	"bytes"
 	"encoding/json"
+	"encoding/xml"
 	"fmt"
+	"strings"
 
+	acceptParser "github.com/kirillDanshin/go-accept-headers"
 	"github.com/valyala/fasthttp"
 )
 
@@ -25,6 +28,52 @@ func (c *Context) RouteArg(argName string) string {
 		return emptyString
 	}
 	return v
+}
+
+// @TODO: add more
+var ctypes = []string{
+	jsonCT,
+	xmlCT,
+}
+
+// Encode automatically determies accepted formats
+// and choose preferred one
+func (c *Context) Encode(v interface{}) (sentType string, err error) {
+	accept := c.Request.Header.Peek(acceptHeader)
+	accepted := acceptParser.Parse(BytesToString(accept))
+
+	sentType, err = accepted.Negotiate(ctypes...)
+	if err != nil {
+		return
+	}
+
+	switch sentType {
+	case jsonCT:
+		c.JSON(v)
+	case xmlCT:
+		c.XML(v)
+	}
+
+	return
+}
+
+// XML sends text/xml content type (see rfc3023, sec 3) and xml-encoded value to client
+func (c *Context) XML(v interface{}) error {
+	c.SetContentType(xmlCT)
+	b, err := c.ToXML(v)
+	if err != nil {
+		return err
+	}
+
+	c.Write(b)
+	return nil
+}
+
+// ToXML encodes xml-encoded value to client
+func (c *Context) ToXML(v interface{}) ([]byte, error) {
+	b := bytes.NewBuffer(nil)
+	err := xml.NewEncoder(b).Encode(v)
+	return b.Bytes(), err
 }
 
 // GETKeys returns GET parameters keys
@@ -54,9 +103,13 @@ func (c *Context) GETParams() map[string][]string {
 	return res
 }
 
+// GETParam returns GET parameter by name
 func (c *Context) GETParam(argName string) []string {
 	res := c.GETParams()
-	return res[argName]
+	if param, ok := res[argName]; ok {
+		return param
+	}
+	return []string{}
 }
 
 // RouteArgErr returns an argument value as a string or empty string
@@ -107,14 +160,17 @@ const (
 )
 
 // CORS enables CORS in the current context
-func (c *Context) CORS() *Context {
-	origin := emptyString
-	if headerOrigin := c.Request.Header.Peek(hOrigin); headerOrigin != nil && len(headerOrigin) > 0 {
-		origin = string(headerOrigin)
+func (c *Context) CORS(domains ...string) *Context {
+	origins := make([]string, 0)
+	if len(domains) > 0 {
+		origins = domains
+	} else if headerOrigin := c.Request.Header.Peek(hOrigin); headerOrigin != nil && len(headerOrigin) > 0 {
+		origins = append(origins, string(headerOrigin))
 	} else {
-		origin = string(c.Request.URI().Host())
+		origins = append(origins, string(c.Request.URI().Host()))
 	}
-	c.Response.Header.Set(corsAccessControlAllowOrigin, origin)
+
+	c.Response.Header.Set(corsAccessControlAllowOrigin, strings.Join(origins, " "))
 	c.Response.Header.Set(corsAccessControlAllowMethods, methods)
 	c.Response.Header.Set(corsAccessControlAllowHeaders, corsCType)
 	c.Response.Header.Set(corsAccessControlAllowCredentials, trueStr)
@@ -152,7 +208,8 @@ func (c *Context) UnJSON(v interface{}) error {
 	return json.NewDecoder(bytes.NewReader(c.Request.Body())).Decode(&v)
 }
 
-// UnJSONBytes serializes and writes a json-formatted response to user
+// UnJSONBytes deserializes JSON request body to given variable pointer or allocates a new one.
+// Returns resulting data and error. One of them may be nil.
 func UnJSONBytes(b []byte, v ...interface{}) (interface{}, error) {
 	if len(v) == 0 {
 		var res interface{}

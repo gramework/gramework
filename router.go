@@ -93,12 +93,16 @@ func (r *Router) Sub(path string) *SubRouter {
 func (r *Router) handleReg(method, route string, handler interface{}) {
 	r.initRouter()
 
+	r.app.Logger.Debugf("registering %s %s", method, route)
+
 	r.router.Handle(method, route, r.determineHandler(handler))
 }
 
 func (r *Router) determineHandler(handler interface{}) func(*Context) {
 	switch h := handler.(type) {
 	case func(*Context):
+		return h
+	case RequestHandler:
 		return h
 	case func(*Context) error:
 		return r.getErrorHandler(h)

@@ -14,6 +14,7 @@ const (
 // PasswordHashString returns hash of plain password in the given string
 func PasswordHashString(plainPass string) []byte {
 	return PasswordHash([]byte(plainPass))
+
 }
 
 // PasswordHash returns hash of plain password in the given byte slice

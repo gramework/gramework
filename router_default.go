@@ -18,6 +18,8 @@ func jsonHandler(h func(*Context)) func(*Context) {
 
 // GET registers a handler for a GET request to the given route
 func (app *App) GET(route string, handler interface{}) *App {
+	app.Logger.Debugf("trying to register GET %s", route)
+
 	app.defaultRouter.Handle(MethodGET, route, handler)
 	return app
 }

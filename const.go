@@ -29,4 +29,9 @@ const (
 	fmtV = "%v"
 
 	htmlCT = "text/html; charset=utf8"
+
+	xmlCT   = "text/xml"
+	plainCT = "text/plain"
+
+	acceptHeader = "Accept"
 )

@@ -3,17 +3,27 @@ language: go
 # we use :443 in tests
 sudo: required
 
+os:
+  - linux
+  - osx
+
 go:
   - 1.8
-  - 1.8.1
-  - 1.8.2
   - 1.8.x
-  - 1.9rc1
-  - 1.9rc2
+  - 1.9
+  - 1.9.1
+  - 1.9.2
+  - 1.9.x
   - tip
 
-allow_failures:
-  - tip
+cache:
+  directories:
+    - $HOME/.longtestcache
+  timeout: 21600
+
+matrix:
+  allow_failures:
+    - tip
 
 before_install:
   - go get -t -v ./...

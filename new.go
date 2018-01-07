@@ -11,7 +11,7 @@ import (
 // New App
 func New() *App {
 	logger := &log.Logger{
-		Level:   log.InfoLevel,
+		Level:   log.DebugLevel,
 		Handler: cli.New(os.Stdout),
 	}
 	flags := &Flags{
