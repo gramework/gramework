@@ -10,8 +10,6 @@ os:
 go:
   - 1.8
   - 1.8.x
-  - 1.9rc1
-  - 1.9rc2
   - 1.9
   - 1.9.1
   - 1.9.2
@@ -23,8 +21,9 @@ cache:
     - $HOME/.longtestcache
   timeout: 21600
 
-allow_failures:
-  - tip
+matrix:
+  allow_failures:
+    - tip
 
 before_install:
   - go get -t -v ./...
