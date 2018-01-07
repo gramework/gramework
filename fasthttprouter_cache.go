@@ -13,6 +13,7 @@ type cache struct {
 	mu sync.RWMutex
 }
 
+// method-specific cache
 type msc struct {
 	v  map[string]*cacheRecord
 	mu sync.RWMutex
@@ -98,11 +99,10 @@ func (c *cache) maintain() {
 				break
 			}
 		}
-		c.mu.RUnlock()
 		if skipIter {
+			c.mu.RUnlock()
 			continue
 		}
-		c.mu.RLock()
 		for _, msc := range c.v {
 			if len(msc.v) <= 256 {
 				continue

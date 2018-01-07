@@ -87,7 +87,30 @@ func newRouter() *router {
 		HandleMethodNotAllowed: true,
 		HandleOPTIONS:          true,
 		cache: &cache{
-			v: make(map[string]*msc, 0),
+			v: map[string]*msc{
+				// init default methods
+				MethodGET: &msc{
+					v: make(map[string]*cacheRecord, 0),
+				},
+				MethodDELETE: &msc{
+					v: make(map[string]*cacheRecord, 0),
+				},
+				MethodHEAD: &msc{
+					v: make(map[string]*cacheRecord, 0),
+				},
+				MethodOPTIONS: &msc{
+					v: make(map[string]*cacheRecord, 0),
+				},
+				MethodPATCH: &msc{
+					v: make(map[string]*cacheRecord, 0),
+				},
+				MethodPOST: &msc{
+					v: make(map[string]*cacheRecord, 0),
+				},
+				MethodPUT: &msc{
+					v: make(map[string]*cacheRecord, 0),
+				},
+			},
 		},
 	}
 	go r.cache.maintain()
