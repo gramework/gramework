@@ -208,7 +208,8 @@ func (c *Context) UnJSON(v interface{}) error {
 	return json.NewDecoder(bytes.NewReader(c.Request.Body())).Decode(&v)
 }
 
-// UnJSONBytes serializes and writes a json-formatted response to user
+// UnJSONBytes deserializes JSON request body to given variable pointer or allocates a new one.
+// Returns resulting data and error. One of them may be nil.
 func UnJSONBytes(b []byte, v ...interface{}) (interface{}, error) {
 	if len(v) == 0 {
 		var res interface{}
