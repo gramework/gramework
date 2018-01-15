@@ -118,3 +118,60 @@ func (r *Router) getCtxHandlerEncoderErr(h func(*Context) (map[string]interface{
 		}
 	}
 }
+
+func (r *Router) getEfaceEncoder(h func() interface{}) func(*Context) {
+	return func(ctx *Context) {
+		r := h()
+		if r == nil { // err == nil here
+			ctx.SetStatusCode(fasthttp.StatusNoContent)
+			return
+		}
+		if err := ctx.JSON(r); err != nil {
+			ctx.JSONError(err)
+		}
+	}
+}
+func (r *Router) getEfaceErrEncoder(h func() (interface{}, error)) func(*Context) {
+	return func(ctx *Context) {
+		r, err := h()
+		if err != nil {
+			ctx.JSONError(err)
+			return
+		}
+		if r == nil { // err == nil here
+			ctx.SetStatusCode(fasthttp.StatusNoContent)
+			return
+		}
+		if err = ctx.JSON(r); err != nil {
+			ctx.JSONError(err)
+		}
+	}
+}
+func (r *Router) getEfaceCtxEncoder(h func(*Context) interface{}) func(*Context) {
+	return func(ctx *Context) {
+		r := h(ctx)
+		if r == nil { // err == nil here
+			ctx.SetStatusCode(fasthttp.StatusNoContent)
+			return
+		}
+		if err := ctx.JSON(r); err != nil {
+			ctx.JSONError(err)
+		}
+	}
+}
+func (r *Router) getEfaceCtxErrEncoder(h func(*Context) (interface{}, error)) func(*Context) {
+	return func(ctx *Context) {
+		r, err := h(ctx)
+		if err != nil {
+			ctx.JSONError(err)
+			return
+		}
+		if r == nil { // err == nil here
+			ctx.SetStatusCode(fasthttp.StatusNoContent)
+			return
+		}
+		if err = ctx.JSON(r); err != nil {
+			ctx.JSONError(err)
+		}
+	}
+}
