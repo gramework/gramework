@@ -110,6 +110,14 @@ func (r *Router) determineHandler(handler interface{}) func(*Context) {
 		return r.getGrameHandler(h)
 	case func(*fasthttp.RequestCtx) error:
 		return r.getGrameErrorHandler(h)
+	case func() interface{}:
+		return r.getEfaceEncoder(h)
+	case func() (interface{}, error):
+		return r.getEfaceErrEncoder(h)
+	case func(*Context) interface{}:
+		return r.getEfaceCtxEncoder(h)
+	case func(*Context) (interface{}, error):
+		return r.getEfaceCtxErrEncoder(h)
 	case string:
 		return r.getStringServer(h)
 	case []byte:
