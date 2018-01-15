@@ -42,7 +42,7 @@ script:
   # run all our tests with race detector and coverage analyzer enabled
   - ./.test.sh
   # "go vet on steroids" + linter
-  - megacheck ./...
+  # - megacheck ./...
   # forbid code with huge functions
   - gocyclo -over 50 $GO_FILES
   # one last linter
