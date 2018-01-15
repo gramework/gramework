@@ -142,15 +142,41 @@ import (
 func main() {
 	app := gramework.New()
 
-        app.GET("/", "hello, grameworld")
+	app.GET("/", "hello, grameworld")
 
-        app.ListenAndServe()
+	app.ListenAndServe()
 }
 ```
 
 If you don't want support `bind` flag, pass the optional address argument to `ListenAndServe`.
 
 **NOTE**: all examples below will register `bind` flag.
+
+### JSON world ;)
+
+From version: 1.1.0-rc1
+
+The example below will serve `{"hello":"grameworld"}` from the map. Gramework will register flag "bind" for you, that allows you to choose another ip/port that gramework should listen:
+
+```go
+package main
+
+import (
+	"github.com/gramework/gramework"
+)
+
+func main() {
+	app := gramework.New()
+
+	app.GET("/", func() map[string]interface{} {
+		return map[string]interface{}{
+			"hello": "gramework",
+		}
+	})
+
+	app.ListenAndServe()
+}
+```
 
 ### Serving a dir
 
