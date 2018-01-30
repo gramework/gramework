@@ -34,3 +34,16 @@ func (app *App) RegFlags() {
 		}
 	}
 }
+
+func (app *App) GetStringFlag(name string) (string, bool) {
+	if !flag.Parsed() {
+		flag.Parse()
+	}
+	if app.Flags.values != nil {
+		if bindFlag, ok := app.Flags.values[name]; ok {
+			return *bindFlag.Value, ok
+		}
+	}
+
+	return "", false
+}
