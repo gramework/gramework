@@ -12,18 +12,18 @@ import (
 )
 
 // Writef is a fmt.Fprintf(context, format, a...) shortcut
-func (c *Context) Writef(format string, a ...interface{}) {
-	fmt.Fprintf(c, format, a...)
+func (ctx *Context) Writef(format string, a ...interface{}) {
+	fmt.Fprintf(ctx, format, a...)
 }
 
 // Writeln is a fmt.Fprintln(context, format, a...) shortcut
-func (c *Context) Writeln(a ...interface{}) {
-	fmt.Fprintln(c, a...)
+func (ctx *Context) Writeln(a ...interface{}) {
+	fmt.Fprintln(ctx, a...)
 }
 
 // RouteArg returns an argument value as a string or empty string
-func (c *Context) RouteArg(argName string) string {
-	v, err := c.RouteArgErr(argName)
+func (ctx *Context) RouteArg(argName string) string {
+	v, err := ctx.RouteArgErr(argName)
 	if err != nil {
 		return emptyString
 	}
@@ -38,8 +38,8 @@ var ctypes = []string{
 
 // Encode automatically determies accepted formats
 // and choose preferred one
-func (c *Context) Encode(v interface{}) (sentType string, err error) {
-	accept := c.Request.Header.Peek(acceptHeader)
+func (ctx *Context) Encode(v interface{}) (sentType string, err error) {
+	accept := ctx.Request.Header.Peek(acceptHeader)
 	accepted := acceptParser.Parse(BytesToString(accept))
 
 	sentType, err = accepted.Negotiate(ctypes...)
@@ -49,63 +49,63 @@ func (c *Context) Encode(v interface{}) (sentType string, err error) {
 
 	switch sentType {
 	case jsonCT:
-		c.JSON(v)
+		ctx.JSON(v)
 	case xmlCT:
-		c.XML(v)
+		ctx.XML(v)
 	}
 
 	return
 }
 
 // XML sends text/xml content type (see rfc3023, sec 3) and xml-encoded value to client
-func (c *Context) XML(v interface{}) error {
-	c.SetContentType(xmlCT)
-	b, err := c.ToXML(v)
+func (ctx *Context) XML(v interface{}) error {
+	ctx.SetContentType(xmlCT)
+	b, err := ctx.ToXML(v)
 	if err != nil {
 		return err
 	}
 
-	c.Write(b)
+	ctx.Write(b)
 	return nil
 }
 
 // ToXML encodes xml-encoded value to client
-func (c *Context) ToXML(v interface{}) ([]byte, error) {
+func (ctx *Context) ToXML(v interface{}) ([]byte, error) {
 	b := bytes.NewBuffer(nil)
 	err := xml.NewEncoder(b).Encode(v)
 	return b.Bytes(), err
 }
 
 // GETKeys returns GET parameters keys
-func (c *Context) GETKeys() []string {
+func (ctx *Context) GETKeys() []string {
 	res := []string{}
-	c.Request.URI().QueryArgs().VisitAll(func(key, value []byte) {
+	ctx.Request.URI().QueryArgs().VisitAll(func(key, value []byte) {
 		res = append(res, string(key))
 	})
 	return res
 }
 
 // GETKeysBytes returns GET parameters keys as []byte
-func (c *Context) GETKeysBytes() [][]byte {
+func (ctx *Context) GETKeysBytes() [][]byte {
 	res := [][]byte{}
-	c.Request.URI().QueryArgs().VisitAll(func(key, value []byte) {
+	ctx.Request.URI().QueryArgs().VisitAll(func(key, value []byte) {
 		res = append(res, key)
 	})
 	return res
 }
 
 // GETParams returns GET parameters
-func (c *Context) GETParams() map[string][]string {
+func (ctx *Context) GETParams() map[string][]string {
 	res := map[string][]string{}
-	c.Request.URI().QueryArgs().VisitAll(func(key, value []byte) {
+	ctx.Request.URI().QueryArgs().VisitAll(func(key, value []byte) {
 		res[string(key)] = append(res[string(key)], string(value))
 	})
 	return res
 }
 
 // GETParam returns GET parameter by name
-func (c *Context) GETParam(argName string) []string {
-	res := c.GETParams()
+func (ctx *Context) GETParam(argName string) []string {
+	res := ctx.GETParams()
 	if param, ok := res[argName]; ok {
 		return param
 	}
@@ -114,8 +114,8 @@ func (c *Context) GETParam(argName string) []string {
 
 // RouteArgErr returns an argument value as a string or empty string
 // and ErrArgNotFound if argument was not found
-func (c *Context) RouteArgErr(argName string) (string, error) {
-	i := c.UserValue(argName)
+func (ctx *Context) RouteArgErr(argName string) (string, error) {
+	i := ctx.UserValue(argName)
 	if i == nil {
 		return emptyString, ErrArgNotFound
 	}
@@ -128,16 +128,16 @@ func (c *Context) RouteArgErr(argName string) (string, error) {
 }
 
 // HTML sets HTML content type
-func (c *Context) HTML() *Context {
-	c.SetContentType(htmlCT)
-	return c
+func (ctx *Context) HTML() *Context {
+	ctx.SetContentType(htmlCT)
+	return ctx
 }
 
 // ToTLS redirects user to HTTPS scheme
-func (c *Context) ToTLS() {
-	u := c.URI()
+func (ctx *Context) ToTLS() {
+	u := ctx.URI()
 	u.SetScheme(https)
-	c.Redirect(u.String(), redirectCode)
+	ctx.Redirect(u.String(), redirectCode)
 }
 
 const (
@@ -160,52 +160,52 @@ const (
 )
 
 // CORS enables CORS in the current context
-func (c *Context) CORS(domains ...string) *Context {
+func (ctx *Context) CORS(domains ...string) *Context {
 	origins := make([]string, 0)
 	if len(domains) > 0 {
 		origins = domains
-	} else if headerOrigin := c.Request.Header.Peek(hOrigin); headerOrigin != nil && len(headerOrigin) > 0 {
+	} else if headerOrigin := ctx.Request.Header.Peek(hOrigin); headerOrigin != nil && len(headerOrigin) > 0 {
 		origins = append(origins, string(headerOrigin))
 	} else {
-		origins = append(origins, string(c.Request.URI().Host()))
+		origins = append(origins, string(ctx.Request.URI().Host()))
 	}
 
-	c.Response.Header.Set(corsAccessControlAllowOrigin, strings.Join(origins, " "))
-	c.Response.Header.Set(corsAccessControlAllowMethods, methods)
-	c.Response.Header.Set(corsAccessControlAllowHeaders, corsCType)
-	c.Response.Header.Set(corsAccessControlAllowCredentials, trueStr)
+	ctx.Response.Header.Set(corsAccessControlAllowOrigin, strings.Join(origins, " "))
+	ctx.Response.Header.Set(corsAccessControlAllowMethods, methods)
+	ctx.Response.Header.Set(corsAccessControlAllowHeaders, corsCType)
+	ctx.Response.Header.Set(corsAccessControlAllowCredentials, trueStr)
 
-	return c
+	return ctx
 }
 
 // Forbidden send 403 Forbidden error
-func (c *Context) Forbidden() {
-	c.Error(forbidden, forbiddenCode)
+func (ctx *Context) Forbidden() {
+	ctx.Error(forbidden, forbiddenCode)
 }
 
 // JSON serializes and writes a json-formatted response to user
-func (c *Context) JSON(v interface{}) error {
-	c.SetContentType(jsonCT)
-	b, err := c.ToJSON(v)
-	c.Write(b)
+func (ctx *Context) JSON(v interface{}) error {
+	ctx.SetContentType(jsonCT)
+	b, err := ctx.ToJSON(v)
+	ctx.Write(b)
 	return err
 }
 
 // ToJSON serializes and returns the result
-func (c *Context) ToJSON(v interface{}) ([]byte, error) {
+func (ctx *Context) ToJSON(v interface{}) ([]byte, error) {
 	b := bytes.NewBuffer(nil)
 	err := json.NewEncoder(b).Encode(v)
 	return b.Bytes(), err
 }
 
 // UnJSONBytes serializes and writes a json-formatted response to user
-func (c *Context) UnJSONBytes(b []byte, v ...interface{}) (interface{}, error) {
+func (ctx *Context) UnJSONBytes(b []byte, v ...interface{}) (interface{}, error) {
 	return UnJSONBytes(b, v...)
 }
 
 // UnJSON deserializes JSON request body to given variable pointer
-func (c *Context) UnJSON(v interface{}) error {
-	return json.NewDecoder(bytes.NewReader(c.Request.Body())).Decode(&v)
+func (ctx *Context) UnJSON(v interface{}) error {
+	return json.NewDecoder(bytes.NewReader(ctx.Request.Body())).Decode(&v)
 }
 
 // UnJSONBytes deserializes JSON request body to given variable pointer or allocates a new one.
@@ -220,25 +220,35 @@ func UnJSONBytes(b []byte, v ...interface{}) (interface{}, error) {
 	return v[0], err
 }
 
+const badRequest = "Bad Request"
+
+// BadRequest sends HTTP/1.1 400 Bad Request
+func (ctx *Context) BadRequest(err ...error) {
+	ctx.Error(badRequest, fasthttp.StatusBadRequest)
+	if len(err) == 1 {
+		ctx.Writeln(err[0])
+	}
+}
+
 // Err500 sets Internal Server Error status
-func (c *Context) Err500(message ...interface{}) *Context {
-	c.SetStatusCode(fasthttp.StatusInternalServerError)
+func (ctx *Context) Err500(message ...interface{}) *Context {
+	ctx.SetStatusCode(fasthttp.StatusInternalServerError)
 	for k := range message {
 		switch v := message[k].(type) {
 		case string:
-			c.WriteString(v)
+			ctx.WriteString(v)
 		case error:
-			c.Writef("%s", v)
+			ctx.Writef("%s", v)
 		default:
-			c.Writef("%v", v)
+			ctx.Writef("%v", v)
 		}
 	}
-	return c
+	return ctx
 }
 
 // JSONError sets Internal Server Error status,
 // serializes and writes a json-formatted response to user
-func (c *Context) JSONError(v interface{}) error {
-	c.Err500()
-	return c.JSON(v)
+func (ctx *Context) JSONError(v interface{}) error {
+	ctx.Err500()
+	return ctx.JSON(v)
 }
