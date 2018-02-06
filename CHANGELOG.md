@@ -1,3 +1,7 @@
+# 1.1.0-rc3
+- Basic Auth support via `ctx.Auth()` which returns *gramework.Auth
+- ctx.BadRequest() introduced
+
 # 1.1.0-rc2
 - Supported `GetStringFlag(name string) (value string, ok bool)`
 
