@@ -3,9 +3,6 @@ package gramework
 import (
 	"errors"
 	"flag"
-	"log"
-
-	"io/ioutil"
 
 	"github.com/valyala/fasthttp"
 )
@@ -43,7 +40,7 @@ func (app *App) ListenAndServe(addr ...string) error {
 
 	s := fasthttp.Server{
 		Handler: app.handler(),
-		Logger:  fasthttp.Logger(log.New(ioutil.Discard, "", log.LstdFlags)),
+		Logger:  NewFastHTTPLoggerAdapter(&app.Logger),
 		Name:    app.name,
 	}
 	err := s.ListenAndServe(bind)
