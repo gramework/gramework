@@ -7,11 +7,13 @@ import (
 )
 
 // BytesToString effectively converts bytes to string
+// nolint: gas
 func BytesToString(b []byte) string {
 	return *(*string)(unsafe.Pointer(&b))
 }
 
 // StringToBytes effectively converts string to bytes
+// nolint: gas
 func StringToBytes(s string) []byte {
 	strstruct := runtimer.StringStructOf(&s)
 	return *(*[]byte)(unsafe.Pointer(&runtimer.SliceType2{

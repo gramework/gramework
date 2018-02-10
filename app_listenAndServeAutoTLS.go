@@ -2,8 +2,6 @@ package gramework
 
 import (
 	"crypto/tls"
-	"io/ioutil"
-	"log"
 	"math/rand"
 	"net"
 	"runtime"
@@ -32,6 +30,9 @@ func getCachePath(dev ...bool) string {
 
 // ListenAndServeAutoTLS serves TLS requests
 func (app *App) ListenAndServeAutoTLS(addr string, cachePath ...string) error {
+	var ln net.Listener
+	var err error
+
 	if len(app.TLSEmails) == 0 {
 		return ErrTLSNoEmails
 	}
@@ -39,7 +40,7 @@ func (app *App) ListenAndServeAutoTLS(addr string, cachePath ...string) error {
 		addr += ":443"
 	}
 
-	ln, err := net.Listen("tcp4", addr)
+	ln, err = net.Listen("tcp4", addr)
 	if err != nil {
 		app.Logger.Errorf("Can't serve: %s", err)
 		return err
@@ -62,7 +63,8 @@ func (app *App) ListenAndServeAutoTLS(addr string, cachePath ...string) error {
 
 	tlsConfig := getDefaultTLSConfig()
 	tlsConfig.GetCertificate = func(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
-		cert, err := m.GetCertificate(hello)
+		var cert *tls.Certificate
+		cert, err = m.GetCertificate(hello)
 		if err != nil {
 			app.Logger.Errorf("can't get cert: %s", err)
 		}
@@ -80,7 +82,7 @@ func (app *App) ListenAndServeAutoTLS(addr string, cachePath ...string) error {
 
 	server := fasthttp.Server{
 		Handler: app.handler(),
-		Logger:  fasthttp.Logger(log.New(ioutil.Discard, "", log.LstdFlags)),
+		Logger:  app.Logger.(fasthttp.Logger),
 		Name:    app.name,
 	}
 	err = server.Serve(tlsLn)
@@ -98,8 +100,9 @@ func (app *App) ListenAndServeAutoTLSDev(addr string, cachePath ...string) error
 	if portIdx := strings.IndexByte(addr, ':'); portIdx == -1 {
 		addr += ":443"
 	}
-
-	ln, err := net.Listen("tcp4", addr)
+	var ln net.Listener
+	var err error
+	ln, err = net.Listen("tcp4", addr)
 	if err != nil {
 		app.Logger.Errorf("Can't serve: %s", err)
 		return err
@@ -127,7 +130,8 @@ func (app *App) ListenAndServeAutoTLSDev(addr string, cachePath ...string) error
 
 	tlsConfig := getDefaultTLSConfig()
 	tlsConfig.GetCertificate = func(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
-		cert, err := m.GetCertificate(hello)
+		var cert *tls.Certificate
+		cert, err = m.GetCertificate(hello)
 		if err != nil {
 			app.Logger.Errorf("can't get cert: %s", err)
 		}
@@ -140,7 +144,7 @@ func (app *App) ListenAndServeAutoTLSDev(addr string, cachePath ...string) error
 	l.Info("Starting HTTPS")
 	server := fasthttp.Server{
 		Handler: app.handler(),
-		Logger:  fasthttp.Logger(log.New(ioutil.Discard, "", log.LstdFlags)),
+		Logger:  NewFastHTTPLoggerAdapter(&app.Logger),
 		Name:    "gramework/" + Version,
 	}
 	err = server.Serve(tlsLn)
