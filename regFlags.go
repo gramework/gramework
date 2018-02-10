@@ -35,6 +35,7 @@ func (app *App) RegFlags() {
 	}
 }
 
+// GetStringFlag return command line app flag value by name and false if not exists
 func (app *App) GetStringFlag(name string) (string, bool) {
 	if !flag.Parsed() {
 		flag.Parse()

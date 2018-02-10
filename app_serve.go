@@ -1,8 +1,6 @@
 package gramework
 
 import (
-	"io/ioutil"
-	"log"
 	"net"
 
 	"github.com/valyala/fasthttp"
@@ -15,7 +13,7 @@ func (app *App) Serve(ln net.Listener) error {
 	}
 	s := fasthttp.Server{
 		Handler: app.handler(),
-		Logger:  fasthttp.Logger(log.New(ioutil.Discard, "", log.LstdFlags)),
+		Logger:  NewFastHTTPLoggerAdapter(&app.Logger),
 		Name:    app.name,
 	}
 	err := s.Serve(ln)

@@ -106,7 +106,8 @@ func (n *node) addRoute(path string, handle RequestHandler, r *router) {
 			// Find the longest common prefix.
 			// This also implies that the common prefix contains no ':' or '*'
 			// since the existing key can't contain those chars.
-			i := zero
+			var i int
+			i = zero
 			max := min(len(path), len(n.path))
 			for i < max && path[i] == n.path[i] {
 				i++
@@ -181,7 +182,7 @@ func (n *node) addRoute(path string, handle RequestHandler, r *router) {
 				}
 
 				// Check if a child with the next path byte exists
-				for i := zero; i < len(n.indices); i++ {
+				for i = zero; i < len(n.indices); i++ {
 					if c == n.indices[i] {
 						i = n.incrementChildPrio(i)
 						n = n.children[i]
