@@ -16,6 +16,7 @@ import (
 	"net/http"
 	"os"
 	"runtime/debug"
+	"strings"
 	"testing"
 	"time"
 
@@ -249,6 +250,101 @@ func TestRouterWildAnyCache(t *testing.T) {
 	}
 	if !get {
 		t.Error("routing GET failed")
+	}
+}
+
+func TestRouterWildAnyWithArgsCache(t *testing.T) {
+	var get bool
+	var getArgs map[string][]string
+	var green bool
+	var greenValue string
+
+	app := New()
+	app.GET("/GET/*any", func(ctx *Context) {
+		get = true
+		getArgs = ctx.GETParams()
+	})
+	app.GET("/GREEN/:CORN", func(ctx *Context) {
+		green = true
+		greenValue = ctx.UserValue("CORN").(string)
+	})
+
+	s := &fasthttp.Server{
+		Handler: app.handler(),
+	}
+
+	rw := &readWriter{}
+	ch := make(chan error)
+
+	boilCache := 64 // It works on values greater than the cache threshold (32).
+	for i := 0; i < boilCache; i++ {
+		app.defaultRouter.Allowed("/GET/ANY?foo=bar&fizz=buzz&fish", "OPTIONS")
+		app.defaultRouter.Allowed("/GET/ANY", "OPTIONS")
+		app.defaultRouter.Allowed("/GET", "OPTIONS")
+		app.defaultRouter.Allowed("/GREEN/CORN", "OPTIONS")
+		app.defaultRouter.Allowed("/GREEN", "OPTIONS")
+	}
+
+	rw.r.WriteString("GET /GET/ANY?foo=bar&fizz=buzz&fish HTTP/1.1\r\n\r\n")
+	go func() {
+		ch <- s.ServeConn(rw)
+	}()
+	select {
+	case err := <-ch:
+		if err != nil {
+			t.Fatalf("return error %s", err)
+		}
+	case <-time.After(100 * time.Millisecond):
+		t.Fatalf("timeout")
+	}
+	if !get {
+		t.Error("routing GET failed")
+	}
+	if getArgs == nil {
+		t.Error("get args should not be empty")
+	}
+	if foo, ok := getArgs["foo"]; ok {
+		if len(foo) != 1 || foo[0] != "bar" {
+			t.Error("the foo arg lost its bar value")
+		}
+	} else {
+		t.Error("the foo arg must exist")
+	}
+	if fizz, ok := getArgs["fizz"]; ok {
+		if len(fizz) != 1 || fizz[0] != "buzz" {
+			t.Error("the fizz arg lost its buzz value")
+		}
+	} else {
+		t.Error("the fizz arg must exist")
+	}
+	if fish, ok := getArgs["fish"]; ok {
+		if len(fish) > 0 && len(strings.Join(fish, "")) > 0 {
+			t.Error("how much is the fish?", fish)
+		}
+	} else {
+		t.Error("the fish arg must exist")
+	}
+
+	rw.r.WriteString("GET /GREEN/CORN HTTP/1.1\r\n\r\n")
+	go func() {
+		ch <- s.ServeConn(rw)
+	}()
+	select {
+	case err := <-ch:
+		if err != nil {
+			t.Fatalf("return error %s", err)
+		}
+	case <-time.After(100 * time.Millisecond):
+		t.Fatalf("timeout")
+	}
+	if !green {
+		t.Error("routing GREEN failed")
+	}
+	if len(greenValue) == 0 {
+		t.Error("the green value must exist")
+	}
+	if greenValue != "CORN" {
+		t.Errorf("the green value must be equal to 'CORH', but have '%s'", greenValue)
 	}
 }
 
