@@ -216,6 +216,42 @@ func TestRouterAPI(t *testing.T) {
 	}
 }
 
+func TestRouterWildAnyCache(t *testing.T) {
+	var get bool
+
+	app := New()
+	app.GET("/*any", func(ctx *Context) {
+		get = true
+	})
+	s := &fasthttp.Server{
+		Handler: app.handler(),
+	}
+
+	rw := &readWriter{}
+	ch := make(chan error)
+
+	boilCache := 64 // It works on values greater than the cache threshold (32).
+	for i := 0; i < boilCache; i++ {
+		app.defaultRouter.Allowed("/GET", "OPTIONS")
+	}
+
+	rw.r.WriteString("GET /GET HTTP/1.1\r\n\r\n")
+	go func() {
+		ch <- s.ServeConn(rw)
+	}()
+	select {
+	case err := <-ch:
+		if err != nil {
+			t.Fatalf("return error %s", err)
+		}
+	case <-time.After(100 * time.Millisecond):
+		t.Fatalf("timeout")
+	}
+	if !get {
+		t.Error("routing GET failed")
+	}
+}
+
 func TestRouterRoot(t *testing.T) {
 	router := New()
 	recv := catchPanic(func() {
