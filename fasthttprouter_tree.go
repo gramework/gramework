@@ -349,8 +349,10 @@ func (n *node) GetValue(reqPath string, ctx *Context, method string) (handle Req
 		panic("no cache!")
 	}
 	if record, ok := n.router.cache.Get(reqPath, method); ok {
-		for name, value := range record.values {
-			ctx.SetUserValue(name, value)
+		if ctx != nil {
+			for name, value := range record.values {
+				ctx.SetUserValue(name, value)
+			}
 		}
 		return record.n.handle, record.tsr
 	}
