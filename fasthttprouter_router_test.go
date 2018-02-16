@@ -344,7 +344,7 @@ func TestRouterWildAnyWithArgsCache(t *testing.T) {
 		t.Error("the green value must exist")
 	}
 	if greenValue != "CORN" {
-		t.Errorf("the green value must be equal to 'CORH', but have '%s'", greenValue)
+		t.Errorf("the green value must be equal to 'CORN', but have '%s'", greenValue)
 	}
 }
 
