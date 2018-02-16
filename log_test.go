@@ -1,8 +1,9 @@
 package gramework
 
 import (
-	"github.com/apex/log"
 	"testing"
+
+	"github.com/apex/log"
 )
 
 func TestLogErrorfShouldNotPanic(t *testing.T) {
