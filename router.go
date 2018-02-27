@@ -110,6 +110,14 @@ func (r *Router) determineHandler(handler interface{}) func(*Context) {
 		return r.getGrameHandler(h)
 	case func(*fasthttp.RequestCtx) error:
 		return r.getGrameErrorHandler(h)
+	case func() interface{}:
+		return r.getEfaceEncoder(h)
+	case func() (interface{}, error):
+		return r.getEfaceErrEncoder(h)
+	case func(*Context) interface{}:
+		return r.getEfaceCtxEncoder(h)
+	case func(*Context) (interface{}, error):
+		return r.getEfaceCtxErrEncoder(h)
 	case string:
 		return r.getStringServer(h)
 	case []byte:
@@ -124,6 +132,14 @@ func (r *Router) determineHandler(handler interface{}) func(*Context) {
 		return r.getGrameDumbErrorHandler(h)
 	case func() string:
 		return r.getEFuncStrHandler(h)
+	case func() map[string]interface{}:
+		return r.getHandlerEncoder(h)
+	case func(*Context) map[string]interface{}:
+		return r.getCtxHandlerEncoder(h)
+	case func() (map[string]interface{}, error):
+		return r.getHandlerEncoderErr(h)
+	case func(*Context) (map[string]interface{}, error):
+		return r.getCtxHandlerEncoderErr(h)
 	default:
 		r.app.Logger.Warnf("Unknown handler type: %T, serving fmt.Sprintf(%%v)", h)
 		return r.getFmtVHandler(h)

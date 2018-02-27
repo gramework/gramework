@@ -45,6 +45,7 @@ type (
 		nocopy  nocopy.NoCopy
 		Logger  log.Interface
 		App     *App
+		auth    *Auth
 		Cookies Cookies
 
 		middlewaresShouldStopProcessing bool
@@ -124,4 +125,19 @@ type (
 
 	// RequestHandlerErr describes a standard request handler with error returned type
 	RequestHandlerErr func(*Context) error
+
+	// Auth is a struct that handles
+	// context's basic auth features
+	Auth struct {
+		login string
+		pass  string
+
+		parsed bool
+		// if error occurred during parsing,
+		// it will be always returned for current
+		// context
+		err error
+
+		ctx *Context
+	}
 )

@@ -22,12 +22,31 @@ cache:
 matrix:
   allow_failures:
     - tip
+  fast_finish: true
 
 before_install:
+  - GO_FILES=$(find . -iname '*.go' -type f | grep -v /vendor/)
   - go get -t -v ./...
+  - go get -v github.com/golang/lint/golint
+  - go get -v honnef.co/go/tools/cmd/megacheck
+  - go get -v github.com/fzipp/gocyclo
+  - go get -v golang.org/x/tools/cmd/goimports
 
 script:
+  # fail if a .go file hasn't been formatted with goimports
+  - test -z $(goimports -l $GO_FILES)
+  # check if it even compiles
+  - go build
+  # run the official Go static analyzer
+  - go vet .
+  # run all our tests with race detector and coverage analyzer enabled
   - ./.test.sh
+  # "go vet on steroids" + linter
+  # - megacheck ./...
+  # forbid code with huge functions
+  - gocyclo -over 50 $GO_FILES
+  # one last linter
+  - golint -set_exit_status $(go list ./...)
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

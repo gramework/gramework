@@ -1,6 +1,10 @@
 package gramework
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/apex/log"
+)
 
 func TestLogErrorfShouldNotPanic(t *testing.T) {
 	defer func() {
@@ -11,4 +15,11 @@ func TestLogErrorfShouldNotPanic(t *testing.T) {
 		}
 	}()
 	Errorf("test: %v", []string{"test"})
+}
+
+func TestFastHTTPLoggerAdapter(t *testing.T) {
+	var apexLogger log.Interface
+	apexLogger = Logger
+	logger := NewFastHTTPLoggerAdapter(&apexLogger)
+	logger.Printf("printed")
 }

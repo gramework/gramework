@@ -1,4 +1,4 @@
-# gramework [![codecov](https://codecov.io/gh/gramework/gramework/branch/master/graph/badge.svg)](https://codecov.io/gh/gramework/gramework) [![Build Status](https://travis-ci.org/gramework/gramework.svg?branch=master)](https://travis-ci.org/gramework/gramework) [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/1203/badge)](https://bestpractices.coreinfrastructure.org/projects/1203)
+# gramework  [![codecov](https://codecov.io/gh/gramework/gramework/branch/master/graph/badge.svg)](https://codecov.io/gh/gramework/gramework) [![Build Status](https://travis-ci.org/gramework/gramework.svg?branch=master)](https://travis-ci.org/gramework/gramework) [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/1203/badge)](https://bestpractices.coreinfrastructure.org/projects/1203) [![Backers on Open Collective](https://opencollective.com/gramework/backers/badge.svg)](#backers) [![Sponsors on Open Collective](https://opencollective.com/gramework/sponsors/badge.svg)](#sponsors)
 
 The Good Framework
 
@@ -13,6 +13,7 @@ If you find it, you can submit vulnerability via k@gramework.win.
 | Name  | Link/Badge  	|
 |---	|---		|
 | Docs  | [GoDoc](https://godoc.org/github.com/gramework/gramework) |
+| Our Jira | [Jira](https://gramework.atlassian.net) |
 | Support us with a donation or become a sponsor | [OpenCollective](https://opencollective.com/gramework) |
 | We have #gramework channel in the Gophers Slack | https://gophers.slack.com |
 | Our Discord Server | https://discord.gg/HkW8DsD |
@@ -115,6 +116,36 @@ Using Gramework with `dep` is highly recommended.
 
 [![benchmark](https://raw.githubusercontent.com/smallnest/go-web-framework-benchmark/master/benchmark.png)](https://github.com/smallnest/go-web-framework-benchmark)
 
+## Contributors
+
+This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
+<a href="graphs/contributors"><img src="https://opencollective.com/gramework/contributors.svg?width=890&button=false" /></a>
+
+
+## Backers
+
+Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/gramework#backer)]
+
+<a href="https://opencollective.com/gramework#backers" target="_blank"><img src="https://opencollective.com/gramework/backers.svg?width=890"></a>
+
+
+## Sponsors
+
+Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/gramework)]
+
+<a href="https://opencollective.com/gramework/sponsor/0/website" target="_blank"><img src="https://opencollective.com/gramework/sponsor/0/avatar.svg"></a>
+<a href="https://opencollective.com/gramework/sponsor/1/website" target="_blank"><img src="https://opencollective.com/gramework/sponsor/1/avatar.svg"></a>
+<a href="https://opencollective.com/gramework/sponsor/2/website" target="_blank"><img src="https://opencollective.com/gramework/sponsor/2/avatar.svg"></a>
+<a href="https://opencollective.com/gramework/sponsor/3/website" target="_blank"><img src="https://opencollective.com/gramework/sponsor/3/avatar.svg"></a>
+<a href="https://opencollective.com/gramework/sponsor/4/website" target="_blank"><img src="https://opencollective.com/gramework/sponsor/4/avatar.svg"></a>
+<a href="https://opencollective.com/gramework/sponsor/5/website" target="_blank"><img src="https://opencollective.com/gramework/sponsor/5/avatar.svg"></a>
+<a href="https://opencollective.com/gramework/sponsor/6/website" target="_blank"><img src="https://opencollective.com/gramework/sponsor/6/avatar.svg"></a>
+<a href="https://opencollective.com/gramework/sponsor/7/website" target="_blank"><img src="https://opencollective.com/gramework/sponsor/7/avatar.svg"></a>
+<a href="https://opencollective.com/gramework/sponsor/8/website" target="_blank"><img src="https://opencollective.com/gramework/sponsor/8/avatar.svg"></a>
+<a href="https://opencollective.com/gramework/sponsor/9/website" target="_blank"><img src="https://opencollective.com/gramework/sponsor/9/avatar.svg"></a>
+
+
+
 # 3rd-party license info
 
 - Gramework is now powered by [fasthttp](https://github.com/valyala/fasthttp) and custom fasthttprouter, that is embedded now.
@@ -141,15 +172,71 @@ import (
 func main() {
 	app := gramework.New()
 
-        app.GET("/", "hello, grameworld")
+	app.GET("/", "hello, grameworld")
 
-        app.ListenAndServe()
+	app.ListenAndServe()
 }
 ```
 
 If you don't want support `bind` flag, pass the optional address argument to `ListenAndServe`.
 
 **NOTE**: all examples below will register `bind` flag.
+
+### JSON world ;) Part 1
+
+From version: 1.1.0-rc1
+
+The example below will serve `{"hello":"grameworld"}` from the map. Gramework will register flag "bind" for you, that allows you to choose another ip/port that gramework should listen:
+
+```go
+package main
+
+import (
+	"github.com/gramework/gramework"
+)
+
+func main() {
+	app := gramework.New()
+
+	app.GET("/", func() map[string]interface{} {
+		return map[string]interface{}{
+			"hello": "gramework",
+		}
+	})
+
+	app.ListenAndServe()
+}
+```
+
+### JSON world. Part 2
+
+From version: 1.1.0-rc1
+
+The example below will serve `{"hello":"grameworld"}` from the struct. Gramework will register flag "bind" for you, that allows you to choose another ip/port that gramework should listen:
+
+```go
+package main
+
+import (
+	"github.com/gramework/gramework"
+)
+
+type SomeResponse struct {
+	hello string
+}
+
+func main() {
+	app := gramework.New()
+
+	app.GET("/", func() interface{} {
+		return SomeResponse{
+			hello: "gramework",
+		}
+	})
+
+	app.ListenAndServe()
+}
+```
 
 ### Serving a dir
 
