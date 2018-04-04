@@ -3,12 +3,13 @@
 // Copyright (c) 2017, Kirill Danshin
 // Use of this source code is governed by a BSD-style license that can be found
 // in the 3rd-Party License/fasthttprouter file.
-
-package gramework
+package test
 
 import (
 	"runtime"
 	"testing"
+
+	"github.com/gramework/gramework"
 )
 
 var cleanTests = []struct {
@@ -66,10 +67,10 @@ var cleanTests = []struct {
 
 func TestPathClean(t *testing.T) {
 	for _, test := range cleanTests {
-		if s := CleanPath(test.path); s != test.result {
+		if s := gramework.CleanPath(test.path); s != test.result {
 			t.Errorf("CleanPath(%q) = %q, want %q", test.path, s, test.result)
 		}
-		if s := CleanPath(test.result); s != test.result {
+		if s := gramework.CleanPath(test.result); s != test.result {
 			t.Errorf("CleanPath(%q) = %q, want %q", test.result, s, test.result)
 		}
 	}
@@ -85,7 +86,7 @@ func TestPathCleanMallocs(t *testing.T) {
 	}
 
 	for _, test := range cleanTests {
-		allocs := testing.AllocsPerRun(100, func() { CleanPath(test.result) })
+		allocs := testing.AllocsPerRun(100, func() { gramework.CleanPath(test.result) })
 		if allocs > 0 {
 			t.Errorf("CleanPath(%q): %v allocs, want zero", test.result, allocs)
 		}

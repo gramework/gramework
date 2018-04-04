@@ -1,4 +1,4 @@
-package gramework
+package test
 
 import (
 	"crypto/tls"
@@ -7,10 +7,12 @@ import (
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/gramework/gramework"
 )
 
 func TestGrameworkHTTP(t *testing.T) {
-	app := New()
+	app := gramework.New()
 	const text = "test one two three"
 	var preCalled, mwCalled, postCalled, jsonOK bool
 	app.GET("/", text)
@@ -18,7 +20,7 @@ func TestGrameworkHTTP(t *testing.T) {
 	app.GET("/float32", float32(len(text)))
 	app.GET("/dumb", func() {})
 	app.GET("/dumbWithErr", func() error { return nil })
-	app.GET("/json", func(ctx *Context) {
+	app.GET("/json", func(ctx *gramework.Context) {
 		m := map[string]map[string]map[string]map[string]int{
 			"abc": {
 				"def": {
@@ -63,13 +65,13 @@ func TestGrameworkHTTP(t *testing.T) {
 	app.SPAIndex("./nanotime.s")
 	app.GET("/sdnc_static/dist/*static", app.ServeDirNoCache("./"))
 	app.GET("/sdncc_static/dist/*static", app.ServeDirNoCacheCustom("./", 0, false, false, []string{}))
-	app.MethodNotAllowed(func(ctx *Context) {
+	app.MethodNotAllowed(func(ctx *gramework.Context) {
 		ctx.WriteString("GTFO")
 	})
 	app.UsePre(func() {
 		preCalled = true
 	})
-	app.UsePre(func(ctx *Context) {
+	app.UsePre(func(ctx *gramework.Context) {
 		ctx.CORS()
 	})
 	app.Use(func() {
@@ -112,26 +114,24 @@ func TestGrameworkHTTP(t *testing.T) {
 	}
 	ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
-	if !preCalled {
+	switch {
+	case !preCalled:
 		t.Fatalf("pre wasn't called")
 		t.FailNow()
-	}
-	if !mwCalled {
+	case !mwCalled:
 		t.Fatalf("middleware wasn't called")
 		t.FailNow()
-	}
-	if !postCalled {
+	case !postCalled:
 		t.Fatalf("post middleware wasn't called")
 		t.FailNow()
-	}
-	if !jsonOK {
+	case !jsonOK:
 		t.Fatalf("json response isn't OK")
 		t.FailNow()
 	}
 }
 
 func TestGrameworkDomainHTTP(t *testing.T) {
-	app := New()
+	app := gramework.New()
 	const text = "test one two three"
 	app.Domain("127.0.0.1:9978").GET("/", text)
 	var preCalled, mwCalled, postCalled bool
@@ -180,7 +180,7 @@ func TestGrameworkDomainHTTP(t *testing.T) {
 }
 
 func TestGrameworkHTTPS(t *testing.T) {
-	app := New()
+	app := gramework.New()
 	const text = "test one two three"
 	app.GET("/", text)
 	app.TLSEmails = []string{"k@guava.by"}
@@ -214,7 +214,7 @@ func TestGrameworkHTTPS(t *testing.T) {
 }
 
 func TestGrameworkListenAll(t *testing.T) {
-	app := New()
+	app := gramework.New()
 	const text = "test one two three"
 	app.GET("/", text)
 	app.TLSEmails = []string{"k@guava.by"}
