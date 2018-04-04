@@ -1,8 +1,9 @@
-package gramework
+package test
 
 import (
 	"testing"
 
+	"github.com/gramework/gramework"
 	"github.com/gramework/gramework/infrastructure"
 )
 
@@ -13,7 +14,7 @@ func TestServeInfrastructure(t *testing.T) {
 			t.FailNow()
 		}
 	}()
-	app := New()
+	app := gramework.New()
 	i := infrastructure.New()
 	app.ServeInfrastructure(i)
 }

@@ -1,9 +1,13 @@
-package gramework
+package test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/gramework/gramework"
+)
 
 func TestDomainShouldNeverReturnNil(t *testing.T) {
-	app := New()
+	app := gramework.New()
 	if app.Domain("test") == nil {
 		t.FailNow()
 	}
