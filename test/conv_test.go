@@ -1,8 +1,10 @@
-package gramework
+package test
 
 import (
 	"bytes"
 	"testing"
+
+	"github.com/gramework/gramework"
 )
 
 func TestBytesToString(t *testing.T) {
@@ -20,7 +22,7 @@ func TestBytesToString(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		if got := BytesToString(tt.slice); got != tt.want {
+		if got := gramework.BytesToString(tt.slice); got != tt.want {
 			t.Errorf("BytesToString() = %v, want %v", got, tt.want)
 		}
 	}
@@ -41,7 +43,7 @@ func TestStringToBytes(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		if got := StringToBytes(tt.str); !bytes.Equal(got, tt.want) {
+		if got := gramework.StringToBytes(tt.str); !bytes.Equal(got, tt.want) {
 			t.Errorf("BytesToString() = %v, want %v", got, tt.want)
 		}
 	}
@@ -50,9 +52,9 @@ func TestStringToBytes(t *testing.T) {
 func BenchmarkBytesToString(b *testing.B) {
 	s := []byte("Hello world2304823049823049823409238402394823094823049428304")
 	b.ResetTimer()
-	var a = ""
+	var a string
 	for i := 0; i < b.N; i++ {
-		a = BytesToString(s)
+		a = gramework.BytesToString(s)
 	}
 	_ = a
 }
@@ -60,7 +62,7 @@ func BenchmarkBytesToString(b *testing.B) {
 func BenchmarkBytesToStringBuiltin(b *testing.B) {
 	s := []byte("Hello world2304823049823049823409238402394823094823049428304")
 	b.ResetTimer()
-	var a = ""
+	var a string
 	for i := 0; i < b.N; i++ {
 		a = string(s)
 	}
@@ -72,7 +74,7 @@ func BenchmarkStringToBytes(b *testing.B) {
 	b.ResetTimer()
 	var a []byte
 	for i := 0; i < b.N; i++ {
-		a = StringToBytes(s)
+		a = gramework.StringToBytes(s)
 	}
 	_ = a
 }
