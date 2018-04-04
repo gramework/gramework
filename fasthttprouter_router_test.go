@@ -721,7 +721,7 @@ func TestRouterNotFound(t *testing.T) {
 	if err := resp.Read(br); err != nil {
 		t.Fatalf("Unexpected error when reading response: %s", err)
 	}
-	if !(resp.Header.StatusCode() == 404 && notFound == true) {
+	if !(resp.Header.StatusCode() == http.StatusNotFound && notFound) {
 		t.Errorf(
 			"Custom NotFound handler failed: Code=%d, Header=%v, url=/nope",
 			resp.Header.StatusCode(),

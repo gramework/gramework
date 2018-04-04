@@ -36,15 +36,16 @@ func (client *Instance) watch(ctx *gramework.Context) chan []byte {
 				continue
 			}
 			bytes := buffer.Get()
-			defer buffer.Put(bytes)
 			_, body, err := api.HostClient.Get(bytes.B, api.Addr)
 			if err != nil {
 				ctx.Logger.Errorf("error while .Do() the request %s", err)
 				time.Sleep(client.conf.WatcherTickTime)
+				buffer.Put(bytes)
 				continue
 			}
 			c <- body
 			time.Sleep(client.conf.WatcherTickTime)
+			buffer.Put(bytes)
 		}
 	}()
 

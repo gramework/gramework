@@ -18,8 +18,7 @@ func TestLogErrorfShouldNotPanic(t *testing.T) {
 }
 
 func TestFastHTTPLoggerAdapter(t *testing.T) {
-	var apexLogger log.Interface
-	apexLogger = Logger
+	var apexLogger log.Interface = Logger
 	logger := NewFastHTTPLoggerAdapter(&apexLogger)
 	logger.Printf("printed")
 }

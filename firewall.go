@@ -101,7 +101,7 @@ func (fw *firewall) releaseBlockedRemoteAddrLoop() {
 			return
 		}
 
-		releaseTimestamp := time.Now().Unix() - int64(atomic.LoadInt64(fw.BlockTimeout))
+		releaseTimestamp := time.Now().Unix() - atomic.LoadInt64(fw.BlockTimeout)
 
 		// removing expired blocks
 		for key, timestamp := range fw.blockList {

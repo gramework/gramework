@@ -11,32 +11,27 @@ import (
 type (
 	// App represents a gramework app
 	App struct {
-		name           string
-		defaultRouter  *Router
-		errorHandler   func(func(*fasthttp.RequestCtx) error)
-		EnableFirewall bool
-		firewall       *firewall
-		firewallInit   *sync.Once
-
-		Logger    log.Interface
-		TLSEmails []string
-		Settings  Settings
-
-		HandleUnknownDomains bool
-		domains              map[string]*Router
-
-		Flags           *Flags
-		flagsRegistered bool
-		flagsQueue      []Flag
-
-		domainListLock *sync.RWMutex
-
-		preMiddlewares            []func(*Context)
+		defaultRouter             *Router
+		domains                   map[string]*Router
+		errorHandler              func(func(*fasthttp.RequestCtx) error)
+		firewall                  *firewall
+		firewallInit              *sync.Once
+		Flags                     *Flags
+		flagsQueue                []Flag
+		Logger                    log.Interface
+		name                      string
+		Settings                  Settings
+		TLSEmails                 []string
 		middlewares               []func(*Context)
 		middlewaresAfterRequest   []func(*Context)
+		preMiddlewares            []func(*Context)
+		domainListLock            *sync.RWMutex
+		middlewaresAfterRequestMu *sync.RWMutex
 		middlewaresMu             *sync.RWMutex
 		preMiddlewaresMu          *sync.RWMutex
-		middlewaresAfterRequestMu *sync.RWMutex
+		EnableFirewall            bool
+		flagsRegistered           bool
+		HandleUnknownDomains      bool
 	}
 
 	// Context is a gramework request context

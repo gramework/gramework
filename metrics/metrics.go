@@ -9,6 +9,7 @@ import (
 	"github.com/gramework/gramework"
 	"github.com/gramework/runtimer"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 const (
@@ -69,7 +70,7 @@ func Register(app *gramework.App, serviceName ...string) error {
 		return err
 	}
 
-	app.GET("/metrics", gramework.NewGrameHandler(prometheus.Handler()))
+	app.GET("/metrics", gramework.NewGrameHandler(promhttp.Handler()))
 	app.UsePre(m.startReq)
 	app.UseAfterRequest(m.endReq)
 
