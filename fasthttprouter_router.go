@@ -90,25 +90,25 @@ func newRouter() *router {
 			v: map[string]*msc{
 				// init default methods
 				MethodGET: &msc{
-					v: make(map[string]*cacheRecord, 0),
+					v: make(map[string]*cacheRecord),
 				},
 				MethodDELETE: &msc{
-					v: make(map[string]*cacheRecord, 0),
+					v: make(map[string]*cacheRecord),
 				},
 				MethodHEAD: &msc{
-					v: make(map[string]*cacheRecord, 0),
+					v: make(map[string]*cacheRecord),
 				},
 				MethodOPTIONS: &msc{
-					v: make(map[string]*cacheRecord, 0),
+					v: make(map[string]*cacheRecord),
 				},
 				MethodPATCH: &msc{
-					v: make(map[string]*cacheRecord, 0),
+					v: make(map[string]*cacheRecord),
 				},
 				MethodPOST: &msc{
-					v: make(map[string]*cacheRecord, 0),
+					v: make(map[string]*cacheRecord),
 				},
 				MethodPUT: &msc{
-					v: make(map[string]*cacheRecord, 0),
+					v: make(map[string]*cacheRecord),
 				},
 			},
 		},

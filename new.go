@@ -15,7 +15,7 @@ func New() *App {
 		Handler: cli.New(os.Stdout),
 	}
 	flags := &Flags{
-		values: make(map[string]Flag, 0),
+		values: make(map[string]Flag),
 	}
 	defFWLimit := int64(-1)
 	defBlockTimeout := int64(-1)
@@ -31,7 +31,7 @@ func New() *App {
 			requestCounter: make(map[string]int64),
 		},
 		firewallInit:              &sync.Once{},
-		domains:                   make(map[string]*Router, 0),
+		domains:                   make(map[string]*Router),
 		middlewaresMu:             &sync.RWMutex{},
 		middlewaresAfterRequestMu: &sync.RWMutex{},
 		preMiddlewaresMu:          &sync.RWMutex{},
