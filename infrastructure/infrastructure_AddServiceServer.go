@@ -5,10 +5,9 @@ import (
 	"time"
 )
 
-var (
-	// ErrServiceNotExists occurs when you trying to add a server to service that not exists
-	ErrServiceNotExists = errors.New("service is not exists")
-)
+// ErrServiceNotExists occurs when you trying to add a server to service that
+// not exists
+var ErrServiceNotExists = errors.New("service is not exists")
 
 // AddServiceServer registers server to a service in the infrastructure
 func (i *Infrastructure) AddServiceServer(serviceName string, addr Address) error {

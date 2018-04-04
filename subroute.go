@@ -33,6 +33,7 @@ func (r *SubRouter) DELETE(route string, handler interface{}) *SubRouter {
 	if r.parent != nil {
 		r.parent.handleReg(MethodDELETE, route, handler)
 	}
+
 	return r
 }
 
@@ -42,6 +43,7 @@ func (r *SubRouter) HEAD(route string, handler interface{}) *SubRouter {
 	if r.parent != nil {
 		r.parent.handleReg(MethodHEAD, route, handler)
 	}
+
 	return r
 }
 
@@ -51,6 +53,7 @@ func (r *SubRouter) ServeFile(route, file string) *SubRouter {
 	r.parent.handleReg(MethodGET, route, func(ctx *Context) {
 		ctx.SendFile(file)
 	})
+
 	return r
 }
 
@@ -60,6 +63,7 @@ func (r *SubRouter) OPTIONS(route string, handler interface{}) *SubRouter {
 	if r.parent != nil {
 		r.parent.handleReg(MethodOPTIONS, route, handler)
 	}
+
 	return r
 }
 
@@ -69,6 +73,7 @@ func (r *SubRouter) PUT(route string, handler interface{}) *SubRouter {
 	if r.parent != nil {
 		r.parent.handleReg(MethodPUT, route, handler)
 	}
+
 	return r
 }
 
@@ -78,6 +83,7 @@ func (r *SubRouter) POST(route string, handler interface{}) *SubRouter {
 	if r.parent != nil {
 		r.parent.handleReg(MethodPOST, route, handler)
 	}
+
 	return r
 }
 
@@ -87,6 +93,7 @@ func (r *SubRouter) PATCH(route string, handler interface{}) *SubRouter {
 	if r.parent != nil {
 		r.parent.handleReg(MethodPATCH, route, handler)
 	}
+
 	return r
 }
 
@@ -108,6 +115,7 @@ func (r *SubRouter) prefixedRoute(route string) string {
 	if r.prefix[len(r.prefix)-1] != '/' && route[0] != '/' {
 		return fmt.Sprintf("%s/%s", r.prefix, route)
 	}
+
 	return fmt.Sprintf("%s%s", r.prefix, route)
 }
 

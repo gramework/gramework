@@ -11,17 +11,15 @@ import (
 func (client *Instance) WSHandler() func(*gramework.Context) error {
 	return func(ctx *gramework.Context) error {
 		if websocket.IsWebSocketUpgrade(ctx.RequestCtx) {
-			websocket.Upgrade(ctx.RequestCtx, func(conn *websocket.Conn) {
+			return websocket.Upgrade(ctx.RequestCtx, func(conn *websocket.Conn) {
 				for {
 					v := <-client.watch(ctx)
 					conn.WriteMessage(websocket.TextMessage, v)
 				}
 			}, 0, 0)
-			return nil
 		}
-		client.handleHTTP(ctx)
 
-		return nil
+		return client.handleHTTP(ctx)
 	}
 }
 

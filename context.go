@@ -11,6 +11,32 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
+const (
+	redirectCode                      = 301
+	temporaryRedirectCode             = 307
+	zero                              = 0
+	one                               = 1
+	https                             = "https"
+	corsAccessControlAllowOrigin      = "Access-Control-Allow-Origin"
+	corsAccessControlAllowMethods     = "Access-Control-Allow-Methods"
+	corsAccessControlAllowHeaders     = "Access-Control-Allow-Headers"
+	corsAccessControlAllowCredentials = "Access-Control-Allow-Credentials"
+	methods                           = "GET,PUT,POST,DELETE"
+	corsCType                         = "Content-Type, *"
+	trueStr                           = "true"
+	jsonCT                            = "application/json;charset=utf8"
+	hOrigin                           = "Origin"
+	forbidden                         = "Forbidden"
+	forbiddenCode                     = 403
+	badRequest                        = "Bad Request"
+)
+
+// @TODO: add more
+var ctypes = []string{
+	jsonCT,
+	xmlCT,
+}
+
 // Writef is a fmt.Fprintf(context, format, a...) shortcut
 func (ctx *Context) Writef(format string, a ...interface{}) {
 	fmt.Fprintf(ctx, format, a...)
@@ -30,12 +56,6 @@ func (ctx *Context) RouteArg(argName string) string {
 	return v
 }
 
-// @TODO: add more
-var ctypes = []string{
-	jsonCT,
-	xmlCT,
-}
-
 // Encode automatically determies accepted formats
 // and choose preferred one
 func (ctx *Context) Encode(v interface{}) (sentType string, err error) {
@@ -49,9 +69,9 @@ func (ctx *Context) Encode(v interface{}) (sentType string, err error) {
 
 	switch sentType {
 	case jsonCT:
-		ctx.JSON(v)
+		err = ctx.JSON(v)
 	case xmlCT:
-		ctx.XML(v)
+		err = ctx.XML(v)
 	}
 
 	return
@@ -65,8 +85,8 @@ func (ctx *Context) XML(v interface{}) error {
 		return err
 	}
 
-	ctx.Write(b)
-	return nil
+	_, err = ctx.Write(b)
+	return err
 }
 
 // ToXML encodes xml-encoded value to client
@@ -78,7 +98,7 @@ func (ctx *Context) ToXML(v interface{}) ([]byte, error) {
 
 // GETKeys returns GET parameters keys
 func (ctx *Context) GETKeys() []string {
-	res := []string{}
+	var res []string
 	ctx.Request.URI().QueryArgs().VisitAll(func(key, value []byte) {
 		res = append(res, string(key))
 	})
@@ -87,7 +107,7 @@ func (ctx *Context) GETKeys() []string {
 
 // GETKeysBytes returns GET parameters keys as []byte
 func (ctx *Context) GETKeysBytes() [][]byte {
-	res := [][]byte{}
+	var res [][]byte
 	ctx.Request.URI().QueryArgs().VisitAll(func(key, value []byte) {
 		res = append(res, key)
 	})
@@ -96,7 +116,7 @@ func (ctx *Context) GETKeysBytes() [][]byte {
 
 // GETParams returns GET parameters
 func (ctx *Context) GETParams() map[string][]string {
-	res := map[string][]string{}
+	res := make(map[string][]string)
 	ctx.Request.URI().QueryArgs().VisitAll(func(key, value []byte) {
 		res[string(key)] = append(res[string(key)], string(value))
 	})
@@ -109,7 +129,7 @@ func (ctx *Context) GETParam(argName string) []string {
 	if param, ok := res[argName]; ok {
 		return param
 	}
-	return []string{}
+	return nil
 }
 
 // RouteArgErr returns an argument value as a string or empty string
@@ -140,25 +160,6 @@ func (ctx *Context) ToTLS() {
 	ctx.Redirect(u.String(), redirectCode)
 }
 
-const (
-	redirectCode                      = 301
-	temporaryRedirectCode             = 307
-	zero                              = 0
-	one                               = 1
-	https                             = "https"
-	corsAccessControlAllowOrigin      = "Access-Control-Allow-Origin"
-	corsAccessControlAllowMethods     = "Access-Control-Allow-Methods"
-	corsAccessControlAllowHeaders     = "Access-Control-Allow-Headers"
-	corsAccessControlAllowCredentials = "Access-Control-Allow-Credentials"
-	methods                           = "GET,PUT,POST,DELETE"
-	corsCType                         = "Content-Type, *"
-	trueStr                           = "true"
-	jsonCT                            = "application/json;charset=utf8"
-	hOrigin                           = "Origin"
-	forbidden                         = "Forbidden"
-	forbiddenCode                     = 403
-)
-
 // CORS enables CORS in the current context
 func (ctx *Context) CORS(domains ...string) *Context {
 	origins := make([]string, 0)
@@ -187,7 +188,11 @@ func (ctx *Context) Forbidden() {
 func (ctx *Context) JSON(v interface{}) error {
 	ctx.SetContentType(jsonCT)
 	b, err := ctx.ToJSON(v)
-	ctx.Write(b)
+	if err != nil {
+		return err
+	}
+
+	_, err = ctx.Write(b)
 	return err
 }
 
@@ -219,8 +224,6 @@ func UnJSONBytes(b []byte, v ...interface{}) (interface{}, error) {
 	err := json.NewDecoder(bytes.NewReader(b)).Decode(&v[0])
 	return v[0], err
 }
-
-const badRequest = "Bad Request"
 
 // BadRequest sends HTTP/1.1 400 Bad Request
 func (ctx *Context) BadRequest(err ...error) {

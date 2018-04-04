@@ -23,6 +23,26 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
+type (
+	handlerStruct struct {
+		handeled *bool
+	}
+
+	mockFileSystem struct {
+		opened bool
+	}
+
+	readWriter struct {
+		net.Conn
+		r bytes.Buffer
+		w bytes.Buffer
+	}
+)
+
+var zeroTCPAddr = &net.TCPAddr{
+	IP: net.IPv4zero,
+}
+
 func TestRouter(t *testing.T) {
 	router := New()
 
@@ -41,7 +61,7 @@ func TestRouter(t *testing.T) {
 		Handler: router.handler(),
 	}
 
-	rw := &readWriter{}
+	rw := new(readWriter)
 	rw.r.WriteString("GET /user/gopher?baz HTTP/1.1\r\n\r\n")
 
 	ch := make(chan error)
@@ -61,10 +81,6 @@ func TestRouter(t *testing.T) {
 	if !routed {
 		t.Fatal("routing failed")
 	}
-}
-
-type handlerStruct struct {
-	handeled *bool
 }
 
 func (h handlerStruct) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -101,7 +117,7 @@ func TestRouterAPI(t *testing.T) {
 		Handler: app.handler(),
 	}
 
-	rw := &readWriter{}
+	rw := new(readWriter)
 	ch := make(chan error)
 
 	rw.r.WriteString("GET /GET HTTP/1.1\r\n\r\n")
@@ -228,7 +244,7 @@ func TestRouterWildAnyCache(t *testing.T) {
 		Handler: app.handler(),
 	}
 
-	rw := &readWriter{}
+	rw := new(readWriter)
 	ch := make(chan error)
 
 	boilCache := 64 // It works on values greater than the cache threshold (32).
@@ -273,7 +289,7 @@ func TestRouterWildAnyWithArgsCache(t *testing.T) {
 		Handler: app.handler(),
 	}
 
-	rw := &readWriter{}
+	rw := new(readWriter)
 	ch := make(chan error)
 
 	boilCache := 64 // It works on values greater than the cache threshold (32).
@@ -372,7 +388,7 @@ func TestRouterRoot(t *testing.T) {
 // 		Handler: router.handler(),
 // 	}
 
-// 	rw := &readWriter{}
+// 	rw := new(readWriter{})
 // 	ch := make(chan error)
 
 // 	rw.r.WriteString("OPTIONS * HTTP/1.1\r\nHost:\r\n\r\n")
@@ -561,7 +577,7 @@ func TestRouterNotAllowed(t *testing.T) {
 		Handler: router.handler(),
 	}
 
-	rw := &readWriter{}
+	rw := new(readWriter)
 	ch := make(chan error)
 
 	rw.r.WriteString("GET /path HTTP/1.1\r\n\r\n")
@@ -673,7 +689,7 @@ func TestRouterNotFound(t *testing.T) {
 		Handler: router.handler(),
 	}
 
-	rw := &readWriter{}
+	rw := new(readWriter)
 	br := bufio.NewReader(&rw.w)
 	var resp fasthttp.Response
 	ch := make(chan error)
@@ -802,7 +818,7 @@ func TestRouterPanicHandler(t *testing.T) {
 		Handler: router.handler(),
 	}
 
-	rw := &readWriter{}
+	rw := new(readWriter)
 	ch := make(chan error)
 
 	rw.r.WriteString(string("PUT /user/gopher HTTP/1.1\r\n\r\n"))
@@ -885,10 +901,6 @@ func TestRouterLookup(t *testing.T) {
 	}
 }
 
-type mockFileSystem struct {
-	opened bool
-}
-
 func (mfs *mockFileSystem) Open(name string) (http.File, error) {
 	mfs.opened = true
 	return nil, errors.New("this is just a mock")
@@ -912,7 +924,7 @@ func TestRouterServeFiles(t *testing.T) {
 		Handler: router.handler(),
 	}
 
-	rw := &readWriter{}
+	rw := new(readWriter)
 	ch := make(chan error)
 
 	rw.r.WriteString(string("GET /favicon.ico HTTP/1.1\r\n\r\n"))
@@ -939,16 +951,6 @@ func TestRouterServeFiles(t *testing.T) {
 	if !bytes.Equal(resp.Body(), body) {
 		t.Fatalf("Unexpected body %q. Expected %q", resp.Body(), string(body))
 	}
-}
-
-type readWriter struct {
-	net.Conn
-	r bytes.Buffer
-	w bytes.Buffer
-}
-
-var zeroTCPAddr = &net.TCPAddr{
-	IP: net.IPv4zero,
 }
 
 func (rw *readWriter) Close() error {

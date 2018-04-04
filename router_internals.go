@@ -17,7 +17,7 @@ func (r *Router) getGrameHandler(h func(*fasthttp.RequestCtx)) func(*Context) {
 			h(ctx.RequestCtx)
 			return
 		}
-		h(&fasthttp.RequestCtx{})
+		h(new(fasthttp.RequestCtx))
 	}
 }
 
@@ -131,6 +131,7 @@ func (r *Router) getEfaceEncoder(h func() interface{}) func(*Context) {
 		}
 	}
 }
+
 func (r *Router) getEfaceErrEncoder(h func() (interface{}, error)) func(*Context) {
 	return func(ctx *Context) {
 		r, err := h()
@@ -147,6 +148,7 @@ func (r *Router) getEfaceErrEncoder(h func() (interface{}, error)) func(*Context
 		}
 	}
 }
+
 func (r *Router) getEfaceCtxEncoder(h func(*Context) interface{}) func(*Context) {
 	return func(ctx *Context) {
 		r := h(ctx)
@@ -159,6 +161,7 @@ func (r *Router) getEfaceCtxEncoder(h func(*Context) interface{}) func(*Context)
 		}
 	}
 }
+
 func (r *Router) getEfaceCtxErrEncoder(h func(*Context) (interface{}, error)) func(*Context) {
 	return func(ctx *Context) {
 		r, err := h(ctx)

@@ -2,10 +2,8 @@ package infrastructure
 
 import "errors"
 
-var (
-	// ErrServiceExists occurs when you trying to register a service that already exists
-	ErrServiceExists = errors.New("service exists")
-)
+// ErrServiceExists occurs when you trying to register a service that already exists
+var ErrServiceExists = errors.New("service exists")
 
 // RegisterService in the infrastructure
 func (i *Infrastructure) RegisterService(name string, s Service) error {
@@ -34,6 +32,7 @@ func (i *Infrastructure) RegisterServiceBatch(m map[string]Service) error {
 			return err
 		}
 	}
+
 	return nil
 }
 

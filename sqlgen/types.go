@@ -2,46 +2,49 @@ package sqlgen
 
 import "sync"
 
-// InsertBuilder defines internal implementation
-// of a INSERT statement builder
-type InsertBuilder struct {
-	tableName string
-	query     string
-	columns   []string
-	sqlValues []string
-	prepared  bool
-	lock      *sync.Mutex
-}
+type (
 
-// CreateBuilder stands for the API
-// of CREATE statement builder
-type CreateBuilder struct{}
+	// InsertBuilder defines internal implementation
+	// of a INSERT statement builder
+	InsertBuilder struct {
+		tableName string
+		query     string
+		columns   []string
+		sqlValues []string
+		prepared  bool
+		lock      *sync.Mutex
+	}
 
-// CreateDatabaseBuilder handles internal
-// info about CREATE DATABASE statement
-// that now builds
-type CreateDatabaseBuilder struct {
-	name  string
-	useIt bool
-}
+	// CreateBuilder stands for the API
+	// of CREATE statement builder
+	CreateBuilder struct{}
 
-// CreateTableBuilder handles internal
-// info about create table statement
-// that now builds
-type CreateTableBuilder struct {
-	name    string
-	columns []tableColumn
-}
+	// CreateDatabaseBuilder handles internal
+	// info about CREATE DATABASE statement
+	// that now builds
+	CreateDatabaseBuilder struct {
+		name  string
+		useIt bool
+	}
 
-// ColumnBuilder handles internal
-// column info
-type ColumnBuilder struct {
-	name         string
-	sqlType      string
-	tableBuilder *CreateTableBuilder
-}
+	// CreateTableBuilder handles internal
+	// info about create table statement
+	// that now builds
+	CreateTableBuilder struct {
+		name    string
+		columns []tableColumn
+	}
 
-type tableColumn struct {
-	name    string
-	sqlType string
-}
+	// ColumnBuilder handles internal
+	// column info
+	ColumnBuilder struct {
+		name         string
+		sqlType      string
+		tableBuilder *CreateTableBuilder
+	}
+
+	tableColumn struct {
+		name    string
+		sqlType string
+	}
+)

@@ -116,10 +116,12 @@ func (app *App) ListenAndServeAutoTLSDev(addr string, cachePath ...string) error
 	var m letsencrypt.Manager
 	s := rand.NewSource(time.Now().Unix())
 	r := rand.New(s)
-	m.Register(
+	if err = m.Register(
 		app.TLSEmails[r.Intn(len(app.TLSEmails))],
 		autocert.AcceptTOS,
-	)
+	); err != nil {
+		return err
+	}
 
 	if letscache != "" {
 		if err = m.CacheFile(letscache); err != nil {
