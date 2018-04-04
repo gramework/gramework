@@ -12,8 +12,8 @@ import (
 func Insert(table string) *InsertBuilder {
 	return &InsertBuilder{
 		tableName: table,
-		query:     fmt.Sprintf(`INSERT INTO %s `, table),
-		lock:      &sync.Mutex{},
+		query:     fmt.Sprintln(`INSERT INTO`, table),
+		lock:      new(sync.Mutex),
 	}
 }
 

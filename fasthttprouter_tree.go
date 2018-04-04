@@ -106,8 +106,7 @@ func (n *node) addRoute(path string, handle RequestHandler, r *router) {
 			// Find the longest common prefix.
 			// This also implies that the common prefix contains no ':' or '*'
 			// since the existing key can't contain those chars.
-			var i int
-			i = zero
+			i := zero
 			max := min(len(path), len(n.path))
 			for i < max && path[i] == n.path[i] {
 				i++

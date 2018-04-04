@@ -33,7 +33,7 @@ func (c *cache) getOrInitMSC(method string) *msc {
 		return v
 	}
 	ms := &msc{
-		v: make(map[string]*cacheRecord, 0),
+		v: make(map[string]*cacheRecord),
 	}
 	c.v[method] = ms
 	c.mu.Unlock()

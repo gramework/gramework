@@ -41,7 +41,7 @@ func TestStringToBytes(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		if got := StringToBytes(tt.str); bytes.Compare(got, tt.want) != 0 {
+		if got := StringToBytes(tt.str); !bytes.Equal(got, tt.want) {
 			t.Errorf("BytesToString() = %v, want %v", got, tt.want)
 		}
 	}

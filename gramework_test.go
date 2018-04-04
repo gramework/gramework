@@ -2,7 +2,6 @@ package gramework
 
 import (
 	"crypto/tls"
-	"errors"
 	"io/ioutil"
 	"net/http"
 	"reflect"
@@ -72,12 +71,6 @@ func TestGrameworkHTTP(t *testing.T) {
 	})
 	app.UsePre(func(ctx *Context) {
 		ctx.CORS()
-	})
-	app.UsePre(func(ctx *Context) error {
-		if 1 != 1 {
-			return errors.New("wtf o.O")
-		}
-		return nil
 	})
 	app.Use(func() {
 		mwCalled = true
