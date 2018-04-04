@@ -164,7 +164,7 @@ func (ctx *Context) CORS(domains ...string) *Context {
 	origins := make([]string, 0)
 	if len(domains) > 0 {
 		origins = domains
-	} else if headerOrigin := ctx.Request.Header.Peek(hOrigin); headerOrigin != nil {
+	} else if headerOrigin := ctx.Request.Header.Peek(hOrigin); len(headerOrigin) > 0 {
 		origins = append(origins, string(headerOrigin))
 	} else {
 		origins = append(origins, string(ctx.Request.URI().Host()))
