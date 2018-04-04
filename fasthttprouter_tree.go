@@ -12,8 +12,32 @@ import (
 	"unicode/utf8"
 )
 
+type (
+	nodeType uint8
+
+	node struct {
+		path      string
+		wildChild bool
+		nType     nodeType
+		maxParams uint8
+		indices   string
+		children  []*node
+		handle    RequestHandler
+		priority  uint32
+		hits      uint32
+		router    *router
+	}
+)
+
 // Slash constant used to minimize string allocations
 const Slash = "/"
+
+const (
+	static nodeType = iota // default
+	root
+	param
+	catchAll
+)
 
 func min(a, b int) int {
 	if a <= b {
@@ -34,28 +58,6 @@ func countParams(path string) uint8 {
 		return 255
 	}
 	return uint8(n)
-}
-
-type nodeType uint8
-
-const (
-	static nodeType = iota // default
-	root
-	param
-	catchAll
-)
-
-type node struct {
-	path      string
-	wildChild bool
-	nType     nodeType
-	maxParams uint8
-	indices   string
-	children  []*node
-	handle    RequestHandler
-	priority  uint32
-	hits      uint32
-	router    *router
 }
 
 // increments priority of the given child and reorders if necessary

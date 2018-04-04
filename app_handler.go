@@ -1,8 +1,6 @@
 package gramework
 
-import (
-	"github.com/valyala/fasthttp"
-)
+import "github.com/valyala/fasthttp"
 
 func (app *App) handler() func(*fasthttp.RequestCtx) {
 	return func(fhctx *fasthttp.RequestCtx) {

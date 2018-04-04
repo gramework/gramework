@@ -13,6 +13,7 @@ func (client *Instance) handleHTTP(ctx *gramework.Context) error {
 		ctx.Logger.Errorf("error %s", err)
 		return err
 	}
+
 	bytes := buffer.Get()
 	defer buffer.Put(bytes)
 	statusCode, body, err := api.HostClient.Get(bytes.B, api.Addr)
@@ -20,8 +21,8 @@ func (client *Instance) handleHTTP(ctx *gramework.Context) error {
 		ctx.Logger.Errorf("error while .Do() the request %s", err)
 		return err
 	}
-	ctx.SetStatusCode(statusCode)
-	ctx.Write(body)
 
-	return nil
+	ctx.SetStatusCode(statusCode)
+	_, err = ctx.Write(body)
+	return err
 }

@@ -14,6 +14,22 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
+type (
+	testRequests []struct {
+		path       string
+		nilHandler bool
+		route      string
+		ps         map[string]string
+	}
+	testRoute struct {
+		path     string
+		conflict bool
+	}
+)
+
+// Used as a workaround since we can't compare functions or their addresses
+var fakeHandlerValue string
+
 func printChildren(n *node, prefix string) {
 	fmt.Printf(" %02d:%02d %s%s[%d] %v %t %d \r\n", n.priority, n.maxParams, prefix, n.path, len(n.children), n.handle, n.wildChild, n.nType)
 	for l := len(n.path); l > 0; l-- {
@@ -24,20 +40,10 @@ func printChildren(n *node, prefix string) {
 	}
 }
 
-// Used as a workaround since we can't compare functions or their addresses
-var fakeHandlerValue string
-
 func fakeHandler(val string) RequestHandler {
 	return func(*Context) {
 		fakeHandlerValue = val
 	}
-}
-
-type testRequests []struct {
-	path       string
-	nilHandler bool
-	route      string
-	ps         map[string]string
 }
 
 func acquireContext(path string) *Context {
@@ -224,11 +230,6 @@ func catchPanic(testFunc func()) (recv interface{}) {
 	return
 }
 
-type testRoute struct {
-	path     string
-	conflict bool
-}
-
 func testRoutes(t *testing.T, routes []testRoute) {
 	tree := &node{}
 
@@ -393,9 +394,9 @@ func TestTreeDoubleWildcard(t *testing.T) {
 }*/
 
 func TestTreeTrailingSlashRedirect(t *testing.T) {
-	tree := &node{}
+	tree := new(node)
 	ctx := &Context{
-		RequestCtx: &fasthttp.RequestCtx{},
+		RequestCtx: new(fasthttp.RequestCtx),
 	}
 
 	routes := [...]string{
@@ -497,7 +498,7 @@ func TestTreeRootTrailingSlashRedirect(t *testing.T) {
 }
 
 func TestTreeFindCaseInsensitivePath(t *testing.T) {
-	tree := &node{}
+	tree := new(node)
 
 	routes := [...]string{
 		"/hi",
@@ -654,7 +655,7 @@ func TestTreeFindCaseInsensitivePath(t *testing.T) {
 func TestTreeInvalidNodeType(t *testing.T) {
 	const panicMsg = "invalid node type"
 
-	tree := &node{}
+	tree := new(node)
 	tree.addRoute("/", fakeHandler("/"), newRouter())
 	tree.addRoute("/:page", fakeHandler("/:page"), newRouter())
 

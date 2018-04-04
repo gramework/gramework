@@ -11,7 +11,7 @@ func New(config Config) *Instance {
 	client := &Instance{
 		conf:      &config,
 		clients:   make(map[string]*fasthttp.HostClient),
-		clientsMu: &sync.RWMutex{},
+		clientsMu: new(sync.RWMutex),
 		balancer:  newRangeBalancer(),
 	}
 

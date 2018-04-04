@@ -69,14 +69,12 @@ type (
 
 	firewall struct {
 		// Store a copy of current settings
-		MaxReqPerMin *int64
-		BlockTimeout *int64
-
-		blockList      map[string]int64
-		blockListMutex sync.Mutex
-
-		requestCounter      map[string]int64
+		MaxReqPerMin        *int64
+		BlockTimeout        *int64
+		blockListMutex      sync.Mutex
 		requestCounterMutex sync.Mutex
+		blockList           map[string]int64
+		requestCounter      map[string]int64
 	}
 
 	// Flags is a flags storage
@@ -88,8 +86,8 @@ type (
 	Flag struct {
 		Name        string
 		Description string
-		Value       *string
 		Default     string
+		Value       *string
 	}
 
 	// Router handles internal handler conversion etc.

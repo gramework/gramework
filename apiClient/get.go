@@ -11,6 +11,7 @@ func (client *Instance) GET() (statusCode int, body []byte, err error) {
 	if err != nil {
 		return 0, nil, err
 	}
+
 	return api.HostClient.Get(nil, api.Addr)
 }
 
