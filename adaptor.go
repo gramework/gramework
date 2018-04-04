@@ -6,6 +6,18 @@ import (
 	"net/url"
 )
 
+type (
+	netHTTPBody struct {
+		b []byte
+	}
+
+	netHTTPResponseWriter struct {
+		statusCode int
+		h          http.Header
+		body       []byte
+	}
+)
+
 // NewGrameHandlerFunc wraps net/http handler func to gramework
 // request handler, so it can be passed to gramework router.
 //
@@ -104,10 +116,6 @@ func NewGrameHandler(h http.Handler) RequestHandler {
 	}
 }
 
-type netHTTPBody struct {
-	b []byte
-}
-
 func (r *netHTTPBody) Read(p []byte) (int, error) {
 	if len(r.b) == 0 {
 		return 0, io.EOF
@@ -120,12 +128,6 @@ func (r *netHTTPBody) Read(p []byte) (int, error) {
 func (r *netHTTPBody) Close() error {
 	r.b = r.b[:0]
 	return nil
-}
-
-type netHTTPResponseWriter struct {
-	statusCode int
-	h          http.Header
-	body       []byte
 }
 
 func (w *netHTTPResponseWriter) StatusCode() int {

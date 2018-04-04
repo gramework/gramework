@@ -6,9 +6,11 @@ import (
 	"errors"
 )
 
-var authHeaderName = []byte("Authorization")
-var authSplitter = []byte(":")
-var errInvalidAuth = errors.New("invalid auth request")
+var (
+	authHeaderName = []byte("Authorization")
+	authSplitter   = []byte(":")
+	errInvalidAuth = errors.New("invalid auth request")
+)
 
 // GetPass lazy triggers parser and returns
 // password or an error. Error will be persistent

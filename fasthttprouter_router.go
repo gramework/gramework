@@ -12,16 +12,6 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-var (
-	// DefaultContentType cached to minimize memory allocations
-	DefaultContentType = []byte("text/plain; charset=utf-8")
-	// QuestionMark cached to minimize memory allocations
-	QuestionMark = []byte("?")
-
-	// SlashByte cached to minimize memory allocations
-	SlashByte = byte('/')
-)
-
 // Router is a http.Handler which can be used to dispatch requests to different
 // handler functions via configurable routes
 type router struct {
@@ -78,6 +68,45 @@ type router struct {
 	cache *cache
 }
 
+const (
+	// GET method
+	GET = "GET"
+	// HEAD method
+	HEAD = "HEAD"
+	// OPTIONS method
+	OPTIONS = "OPTIONS"
+	// POST method
+	POST = "POST"
+	// PUT method
+	PUT = "PUT"
+	// PATCH method
+	PATCH = "PATCH"
+	// DELETE method
+	DELETE = "DELETE"
+	// CONNECT method
+	CONNECT = "CONNECT"
+
+	// PathAny used to minimize memory allocations
+	PathAny = "*"
+	// PathSlashAny used to minimize memory allocations
+	PathSlashAny = "/*"
+	// PathSlash used to minimize memory allocations
+	PathSlash = "/"
+
+	// HeaderAllow used to minimize memory allocations
+	HeaderAllow = "Allow"
+)
+
+var (
+	// DefaultContentType cached to minimize memory allocations
+	DefaultContentType = []byte("text/plain; charset=utf-8")
+	// QuestionMark cached to minimize memory allocations
+	QuestionMark = []byte("?")
+
+	// SlashByte cached to minimize memory allocations
+	SlashByte = byte('/')
+)
+
 // newRouter returns a new initialized Router.
 // Path auto-correction, including trailing slashes, is enabled by default.
 func newRouter() *router {
@@ -116,35 +145,6 @@ func newRouter() *router {
 	go r.cache.maintain()
 	return r
 }
-
-const (
-	// GET method
-	GET = "GET"
-	// HEAD method
-	HEAD = "HEAD"
-	// OPTIONS method
-	OPTIONS = "OPTIONS"
-	// POST method
-	POST = "POST"
-	// PUT method
-	PUT = "PUT"
-	// PATCH method
-	PATCH = "PATCH"
-	// DELETE method
-	DELETE = "DELETE"
-	// CONNECT method
-	CONNECT = "CONNECT"
-
-	// PathAny used to minimize memory allocations
-	PathAny = "*"
-	// PathSlashAny used to minimize memory allocations
-	PathSlashAny = "/*"
-	// PathSlash used to minimize memory allocations
-	PathSlash = "/"
-
-	// HeaderAllow used to minimize memory allocations
-	HeaderAllow = "Allow"
-)
 
 // GET is a shortcut for router.Handle("GET", path, handle)
 func (r *router) GET(path string, handle RequestHandler) {

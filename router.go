@@ -92,9 +92,7 @@ func (r *Router) Sub(path string) *SubRouter {
 
 func (r *Router) handleReg(method, route string, handler interface{}) {
 	r.initRouter()
-
 	r.app.Logger.Debugf("registering %s %s", method, route)
-
 	r.router.Handle(method, route, r.determineHandler(handler))
 }
 

@@ -6,12 +6,13 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-func (client *Instance) getHostClient(addr *url.URL) (*fasthttp.HostClient, error) {
+func (client *Instance) getHostClient(addr *url.URL) *fasthttp.HostClient {
 	client.clientsMu.RLock()
 	if hostClient, ok := client.clients[addr.Host]; ok {
 		client.clientsMu.RUnlock()
-		return hostClient, nil
+		return hostClient
 	}
+
 	client.clientsMu.RUnlock()
 	hostClient := &fasthttp.HostClient{
 		Addr:  addr.Host,
@@ -21,5 +22,5 @@ func (client *Instance) getHostClient(addr *url.URL) (*fasthttp.HostClient, erro
 	client.clientsMu.Lock()
 	client.clients[addr.Host] = hostClient
 	client.clientsMu.Unlock()
-	return hostClient, nil
+	return hostClient
 }

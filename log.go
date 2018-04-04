@@ -8,6 +8,12 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
+// FastHTTPLoggerAdapter  Adapter for passing apex/log used as gramework Logger into fasthttp
+type FastHTTPLoggerAdapter struct {
+	apexLogger log.Interface
+	fasthttp.Logger
+}
+
 // Logger handles default logger
 var Logger = &log.Logger{
 	Level:   log.InfoLevel,
@@ -17,12 +23,6 @@ var Logger = &log.Logger{
 // Errorf logs an error using default logger
 func Errorf(msg string, v ...interface{}) {
 	Logger.Errorf(msg, v...)
-}
-
-// FastHTTPLoggerAdapter  Adapter for passing apex/log used as gramework Logger into fasthttp
-type FastHTTPLoggerAdapter struct {
-	apexLogger log.Interface
-	fasthttp.Logger
 }
 
 // NewFastHTTPLoggerAdapter create new *FastHTTPLoggerAdapter

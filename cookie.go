@@ -1,8 +1,6 @@
 package gramework
 
-import (
-	"github.com/valyala/fasthttp"
-)
+import "github.com/valyala/fasthttp"
 
 func (ctx *Context) saveCookies() {
 	ctx.Cookies.Mu.Lock()

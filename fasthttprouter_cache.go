@@ -6,25 +6,27 @@ import (
 	"time"
 )
 
+type (
+	cache struct {
+		v  map[string]*msc
+		mu sync.RWMutex
+	}
+
+	// method-specific cache
+	msc struct {
+		v  map[string]*cacheRecord
+		mu sync.RWMutex
+	}
+
+	cacheRecord struct {
+		n              *node
+		tsr            bool
+		values         map[string]string
+		lastAccessTime int64
+	}
+)
+
 const cacheRecordTTLDelta = 20 * 1000000000
-
-type cache struct {
-	v  map[string]*msc
-	mu sync.RWMutex
-}
-
-// method-specific cache
-type msc struct {
-	v  map[string]*cacheRecord
-	mu sync.RWMutex
-}
-
-type cacheRecord struct {
-	n              *node
-	tsr            bool
-	values         map[string]string
-	lastAccessTime int64
-}
 
 func (c *cache) getOrInitMSC(method string) *msc {
 	c.mu.Lock()

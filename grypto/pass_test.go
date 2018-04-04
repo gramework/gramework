@@ -24,8 +24,7 @@ func TestSalt128(t *testing.T) {
 func TestPasswordSanity(t *testing.T) {
 	pw := make([]byte, 12)
 	pw2 := make([]byte, 12)
-	var hash []byte
-	var hash2 []byte
+	var hash, hash2 []byte
 
 	for i := 0; i < 32; i++ {
 		grand.Read(pw)
@@ -48,8 +47,7 @@ func TestPasswordSanity(t *testing.T) {
 func TestPasswordStringSanity(t *testing.T) {
 	pw := make([]byte, 12)
 	pw2 := make([]byte, 12)
-	var hash []byte
-	var hash2 []byte
+	var hash, hash2 []byte
 
 	for i := 0; i < 32; i++ {
 		grand.Read(pw)

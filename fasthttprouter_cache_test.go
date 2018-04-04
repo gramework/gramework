@@ -11,7 +11,7 @@ func TestRouterCache(t *testing.T) {
 		t.Fatalf("Cache returned ok flag for key that not exists")
 	}
 
-	cache.Put(Slash, &node{}, false, GET)
+	cache.Put(Slash, new(node), false, GET)
 
 	if n, ok := cache.Get(Slash, GET); !ok || n == nil {
 		t.Fatalf("Cache returned unexpected result: n=[%v], ok=[%v]", n, ok)

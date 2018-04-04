@@ -3,7 +3,7 @@ package sqlgen
 // Create starts construction
 // of CREATE query
 func Create() *CreateBuilder {
-	return &CreateBuilder{}
+	return new(CreateBuilder)
 }
 
 // Database says that we are CREATE-ing
