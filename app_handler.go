@@ -37,11 +37,10 @@ func (app *App) handler() func(*fasthttp.RequestCtx) {
 		}
 		app.middlewaresMu.RUnlock()
 		if len(app.domains) > 0 {
-			d := string(ctx.URI().Host())
 			app.domainListLock.RLock()
-			if app.domains[d] != nil {
+			if app.domains[string(ctx.URI().Host())] != nil {
 				app.domainListLock.RUnlock()
-				app.domains[d].Handler()(ctx)
+				app.domains[string(ctx.URI().Host())].Handler()(ctx)
 				app.runMiddlewaresAfterRequest(ctx)
 				ctx.saveCookies()
 				return
