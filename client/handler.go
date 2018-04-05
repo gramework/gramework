@@ -1,4 +1,4 @@
-package apiClient
+package client
 
 import "github.com/gramework/gramework"
 
