@@ -61,28 +61,46 @@ func TestGrameworkHTTP(t *testing.T) {
 			}
 		}
 	})
+
 	app.ServeFile("/sf", "./nanotime.s")
 	app.SPAIndex("./nanotime.s")
 	app.GET("/sdnc_static/dist/*static", app.ServeDirNoCache("./"))
 	app.GET("/sdncc_static/dist/*static", app.ServeDirNoCacheCustom("./", 0, false, false, []string{}))
 	app.MethodNotAllowed(func(ctx *gramework.Context) {
-		ctx.WriteString("GTFO")
-	})
-	app.UsePre(func() {
-		preCalled = true
-	})
-	app.UsePre(func(ctx *gramework.Context) {
-		ctx.CORS()
-	})
-	app.Use(func() {
-		mwCalled = true
-	})
-	app.UseAfterRequest(func() {
-		postCalled = true
+		if _, err := ctx.WriteString("GTFO"); err != nil {
+			t.Error(err.Error())
+		}
 	})
 
+	var err error
+	if err = app.UsePre(func() {
+		preCalled = true
+	}); err != nil {
+		t.Error(err.Error())
+	}
+
+	if err = app.UsePre(func(ctx *gramework.Context) {
+		ctx.CORS()
+	}); err != nil {
+		t.Error(err.Error())
+	}
+
+	if err = app.Use(func() {
+		mwCalled = true
+	}); err != nil {
+		t.Error(err.Error())
+	}
+
+	if err = app.UseAfterRequest(func() {
+		postCalled = true
+	}); err != nil {
+		t.Error(err.Error())
+	}
+
 	go func() {
-		app.ListenAndServe(":9977")
+		if err := app.ListenAndServe(":9977"); err != nil {
+			t.Error(err.Error())
+		}
 	}()
 
 	time.Sleep(2 * time.Second)
@@ -92,12 +110,17 @@ func TestGrameworkHTTP(t *testing.T) {
 		t.Fatalf("Gramework isn't working! Got error: %s", err)
 		t.FailNow()
 	}
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		t.Fatalf("Gramework isn't working! Can't read body: %s", err)
 		t.FailNow()
 	}
-	resp.Body.Close()
+
+	if err = resp.Body.Close(); err != nil {
+		t.Error(err.Error())
+	}
+
 	if string(body) != text {
 		t.Fatalf(
 			"Gramework returned unexpected body! Got %q, expected %q",
@@ -112,8 +135,15 @@ func TestGrameworkHTTP(t *testing.T) {
 		t.Fatalf("Gramework isn't working! Got error: %s", err)
 		t.FailNow()
 	}
-	ioutil.ReadAll(resp.Body)
-	resp.Body.Close()
+
+	if _, err = ioutil.ReadAll(resp.Body); err != nil {
+		t.Error(err.Error())
+	}
+
+	if err = resp.Body.Close(); err != nil {
+		t.Error(err.Error())
+	}
+
 	switch {
 	case !preCalled:
 		t.Fatalf("pre wasn't called")
@@ -135,18 +165,30 @@ func TestGrameworkDomainHTTP(t *testing.T) {
 	const text = "test one two three"
 	app.Domain("127.0.0.1:9978").GET("/", text)
 	var preCalled, mwCalled, postCalled bool
-	app.UsePre(func() {
+	var err error
+
+	if err = app.UsePre(func() {
 		preCalled = true
-	})
-	app.Use(func() {
+	}); err != nil {
+		t.Error(err.Error())
+	}
+
+	if err = app.Use(func() {
 		mwCalled = true
-	})
-	app.UseAfterRequest(func() {
+	}); err != nil {
+		t.Error(err.Error())
+	}
+
+	if err = app.UseAfterRequest(func() {
 		postCalled = true
-	})
+	}); err != nil {
+		t.Error(err.Error())
+	}
 
 	go func() {
-		app.ListenAndServe(":9978")
+		if err := app.ListenAndServe(":9978"); err != nil {
+			t.Error(err.Error())
+		}
 	}()
 
 	time.Sleep(1 * time.Second)
@@ -155,11 +197,16 @@ func TestGrameworkDomainHTTP(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Gramework isn't working! Got error: %s", err)
 	}
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		t.Fatalf("Gramework isn't working! Can't read body: %s", err)
 	}
-	resp.Body.Close()
+
+	if err = resp.Body.Close(); err != nil {
+		t.Error(err.Error())
+	}
+
 	if string(body) != text {
 		t.Fatalf(
 			"Gramework returned unexpected body! Got %q, expected %q",
@@ -186,7 +233,9 @@ func TestGrameworkHTTPS(t *testing.T) {
 	app.TLSEmails = []string{"k@guava.by"}
 
 	go func() {
-		app.ListenAndServeAutoTLSDev(":9443")
+		if err := app.ListenAndServeAutoTLSDev(":9443"); err != nil {
+			t.Error(err.Error())
+		}
 	}()
 
 	time.Sleep(3 * time.Second)
@@ -195,15 +244,21 @@ func TestGrameworkHTTPS(t *testing.T) {
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 	client := &http.Client{Transport: tr}
+
 	resp, err := client.Get("https://127.0.0.1:9443")
 	if err != nil {
 		t.Fatalf("Gramework isn't working! Got error: %s", err)
 	}
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		t.Fatalf("Gramework isn't working! Can't read body: %s", err)
 	}
-	resp.Body.Close()
+
+	if err = resp.Body.Close(); err != nil {
+		t.Error(err.Error())
+	}
+
 	if string(body) != text {
 		t.Fatalf(
 			"Gramework returned unexpected body! Got %q, expected %q",
@@ -229,15 +284,21 @@ func TestGrameworkListenAll(t *testing.T) {
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 	client := &http.Client{Transport: tr}
+
 	resp, err := client.Get("http://127.0.0.1:9449")
 	if err != nil {
 		t.Fatalf("Gramework isn't working! Got error: %s", err)
 	}
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		t.Fatalf("Gramework isn't working! Can't read body: %s", err)
 	}
-	resp.Body.Close()
+
+	if err = resp.Body.Close(); err != nil {
+		t.Error(err.Error())
+	}
+
 	if string(body) != text {
 		t.Fatalf(
 			"Gramework returned unexpected body! Got %q, expected %q",
@@ -250,11 +311,16 @@ func TestGrameworkListenAll(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Gramework isn't working! Got error: %s", err)
 	}
+
 	body, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		t.Fatalf("Gramework isn't working! Can't read body: %s", err)
 	}
-	resp.Body.Close()
+
+	if err = resp.Body.Close(); err != nil {
+		t.Error(err.Error())
+	}
+
 	if string(body) != text {
 		t.Fatalf(
 			"Gramework returned unexpected body! Got %q, expected %q",
