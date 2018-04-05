@@ -1,3 +1,3 @@
-package apiClient
+package client
 
 const httpsScheme = "https"
