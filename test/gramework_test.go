@@ -44,17 +44,20 @@ func TestGrameworkHTTP(t *testing.T) {
 				jsonOK = false
 				return
 			}
+
 			b2, err := ctx.ToJSON(m2)
 			if err != nil {
 				ctx.Logger.Errorf("ToJSON returns error: %s", err)
 				jsonOK = false
 				return
 			}
+
 			if len(b2) != len(b) {
 				ctx.Logger.Errorf("len is not equals, got len(b2) = [%v], len(b) = [%v]", len(b2), len(b))
 				jsonOK = false
 				return
 			}
+
 			if !reflect.DeepEqual(b, b2) {
 				jsonOK = false
 				return
@@ -62,45 +65,39 @@ func TestGrameworkHTTP(t *testing.T) {
 		}
 	})
 
+	var err error
 	app.ServeFile("/sf", "./nanotime.s")
 	app.SPAIndex("./nanotime.s")
 	app.GET("/sdnc_static/dist/*static", app.ServeDirNoCache("./"))
 	app.GET("/sdncc_static/dist/*static", app.ServeDirNoCacheCustom("./", 0, false, false, []string{}))
 	app.MethodNotAllowed(func(ctx *gramework.Context) {
-		if _, err := ctx.WriteString("GTFO"); err != nil {
-			t.Error(err.Error())
-		}
+		_, err = ctx.WriteString("GTFO")
+		errCheck(t, err)
 	})
 
-	var err error
-	if err = app.UsePre(func() {
+	err = app.UsePre(func() {
 		preCalled = true
-	}); err != nil {
-		t.Error(err.Error())
-	}
+	})
+	errCheck(t, err)
 
-	if err = app.UsePre(func(ctx *gramework.Context) {
+	err = app.UsePre(func(ctx *gramework.Context) {
 		ctx.CORS()
-	}); err != nil {
-		t.Error(err.Error())
-	}
+	})
+	errCheck(t, err)
 
-	if err = app.Use(func() {
+	err = app.Use(func() {
 		mwCalled = true
-	}); err != nil {
-		t.Error(err.Error())
-	}
+	})
+	errCheck(t, err)
 
-	if err = app.UseAfterRequest(func() {
+	err = app.UseAfterRequest(func() {
 		postCalled = true
-	}); err != nil {
-		t.Error(err.Error())
-	}
+	})
+	errCheck(t, err)
 
 	go func() {
-		if err := app.ListenAndServe(":9977"); err != nil {
-			t.Error(err.Error())
-		}
+		err := app.ListenAndServe(":9977")
+		errCheck(t, err)
 	}()
 
 	time.Sleep(2 * time.Second)
@@ -117,9 +114,8 @@ func TestGrameworkHTTP(t *testing.T) {
 		t.FailNow()
 	}
 
-	if err = resp.Body.Close(); err != nil {
-		t.Error(err.Error())
-	}
+	err = resp.Body.Close()
+	errCheck(t, err)
 
 	if string(body) != text {
 		t.Fatalf(
@@ -136,13 +132,11 @@ func TestGrameworkHTTP(t *testing.T) {
 		t.FailNow()
 	}
 
-	if _, err = ioutil.ReadAll(resp.Body); err != nil {
-		t.Error(err.Error())
-	}
+	_, err = ioutil.ReadAll(resp.Body)
+	errCheck(t, err)
 
-	if err = resp.Body.Close(); err != nil {
-		t.Error(err.Error())
-	}
+	err = resp.Body.Close()
+	errCheck(t, err)
 
 	switch {
 	case !preCalled:
@@ -167,28 +161,24 @@ func TestGrameworkDomainHTTP(t *testing.T) {
 	var preCalled, mwCalled, postCalled bool
 	var err error
 
-	if err = app.UsePre(func() {
+	err = app.UsePre(func() {
 		preCalled = true
-	}); err != nil {
-		t.Error(err.Error())
-	}
+	})
+	errCheck(t, err)
 
-	if err = app.Use(func() {
+	err = app.Use(func() {
 		mwCalled = true
-	}); err != nil {
-		t.Error(err.Error())
-	}
+	})
+	errCheck(t, err)
 
-	if err = app.UseAfterRequest(func() {
+	err = app.UseAfterRequest(func() {
 		postCalled = true
-	}); err != nil {
-		t.Error(err.Error())
-	}
+	})
+	errCheck(t, err)
 
 	go func() {
-		if err := app.ListenAndServe(":9978"); err != nil {
-			t.Error(err.Error())
-		}
+		err := app.ListenAndServe(":9978")
+		errCheck(t, err)
 	}()
 
 	time.Sleep(1 * time.Second)
@@ -203,9 +193,8 @@ func TestGrameworkDomainHTTP(t *testing.T) {
 		t.Fatalf("Gramework isn't working! Can't read body: %s", err)
 	}
 
-	if err = resp.Body.Close(); err != nil {
-		t.Error(err.Error())
-	}
+	err = resp.Body.Close()
+	errCheck(t, err)
 
 	if string(body) != text {
 		t.Fatalf(
@@ -233,9 +222,8 @@ func TestGrameworkHTTPS(t *testing.T) {
 	app.TLSEmails = []string{"k@guava.by"}
 
 	go func() {
-		if err := app.ListenAndServeAutoTLSDev(":9443"); err != nil {
-			t.Error(err.Error())
-		}
+		err := app.ListenAndServeAutoTLSDev(":9443")
+		errCheck(t, err)
 	}()
 
 	time.Sleep(3 * time.Second)
@@ -255,9 +243,8 @@ func TestGrameworkHTTPS(t *testing.T) {
 		t.Fatalf("Gramework isn't working! Can't read body: %s", err)
 	}
 
-	if err = resp.Body.Close(); err != nil {
-		t.Error(err.Error())
-	}
+	err = resp.Body.Close()
+	errCheck(t, err)
 
 	if string(body) != text {
 		t.Fatalf(
@@ -295,9 +282,8 @@ func TestGrameworkListenAll(t *testing.T) {
 		t.Fatalf("Gramework isn't working! Can't read body: %s", err)
 	}
 
-	if err = resp.Body.Close(); err != nil {
-		t.Error(err.Error())
-	}
+	err = resp.Body.Close()
+	errCheck(t, err)
 
 	if string(body) != text {
 		t.Fatalf(
@@ -317,9 +303,8 @@ func TestGrameworkListenAll(t *testing.T) {
 		t.Fatalf("Gramework isn't working! Can't read body: %s", err)
 	}
 
-	if err = resp.Body.Close(); err != nil {
-		t.Error(err.Error())
-	}
+	err = resp.Body.Close()
+	errCheck(t, err)
 
 	if string(body) != text {
 		t.Fatalf(

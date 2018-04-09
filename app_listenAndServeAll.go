@@ -9,8 +9,10 @@ func (app *App) ListenAndServeAll(httpAddr ...string) {
 		err := app.ListenAndServeAutoTLS(":443")
 		app.Logger.Fatalf("can't serve tls: %s", err)
 	}()
-	err := app.ListenAndServe(httpAddr...)
-	app.Logger.Fatalf("can't serve http: %s", err)
+
+	if err := app.ListenAndServe(httpAddr...); err != nil {
+		app.Logger.Fatalf("can't serve http: %s", err)
+	}
 }
 
 // ListenAndServeAllDev serves HTTP and HTTPS automatically
@@ -20,9 +22,12 @@ func (app *App) ListenAndServeAll(httpAddr ...string) {
 // exit the server with app.Logger.Fatalf().
 func (app *App) ListenAndServeAllDev(httpAddr ...string) {
 	go func() {
-		err := app.ListenAndServeAutoTLSDev(":443")
-		app.Logger.Fatalf("can't serve tls: %s", err)
+		if err := app.ListenAndServeAutoTLSDev(":443"); err != nil {
+			app.Logger.Fatalf("can't serve tls: %s", err)
+		}
 	}()
-	err := app.ListenAndServe(httpAddr...)
-	app.Logger.Fatalf("can't serve http: %s", err)
+
+	if err := app.ListenAndServe(httpAddr...); err != nil {
+		app.Logger.Fatalf("can't serve http: %s", err)
+	}
 }

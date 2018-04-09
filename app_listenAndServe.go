@@ -19,19 +19,22 @@ func (app *App) ListenAndServe(addr ...string) error {
 			app.RegFlags()
 		}
 	}
+
 	if !flag.Parsed() {
 		flag.Parse()
 	}
+
 	if app.Flags.values != nil {
 		if bindFlag, ok := app.Flags.values["bind"]; ok {
 			bind = *bindFlag.Value
 		}
 	}
+
 	if bind == "" {
 		return errors.New("No bind address provided")
 	}
-	l := app.Logger.WithField("bind", bind)
 
+	l := app.Logger.WithField("bind", bind)
 	l.Info("Starting HTTP")
 
 	if len(app.name) == 0 {
@@ -43,7 +46,11 @@ func (app *App) ListenAndServe(addr ...string) error {
 		Logger:  NewFastHTTPLoggerAdapter(&app.Logger),
 		Name:    app.name,
 	}
-	err := s.ListenAndServe(bind)
-	l.Errorf("ListenAndServe failed: %s", err)
+
+	var err error
+	if err = s.ListenAndServe(bind); err != nil {
+		l.Errorf("ListenAndServe failed: %s", err)
+	}
+
 	return err
 }

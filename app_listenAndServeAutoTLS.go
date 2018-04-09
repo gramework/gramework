@@ -25,6 +25,7 @@ func getCachePath(dev ...bool) string {
 	if len(dev) > 0 && dev[0] {
 		p += ".dev"
 	}
+
 	return p
 }
 
@@ -36,6 +37,7 @@ func (app *App) ListenAndServeAutoTLS(addr string, cachePath ...string) error {
 	if len(app.TLSEmails) == 0 {
 		return ErrTLSNoEmails
 	}
+
 	if portIdx := strings.IndexByte(addr, ':'); portIdx == -1 {
 		addr += ":443"
 	}
@@ -50,6 +52,7 @@ func (app *App) ListenAndServeAutoTLS(addr string, cachePath ...string) error {
 	if len(cachePath) > 0 {
 		letscache = cachePath[0]
 	}
+
 	s := rand.NewSource(time.Now().Unix())
 	r := rand.New(s)
 	m := autocert.Manager{
@@ -68,6 +71,7 @@ func (app *App) ListenAndServeAutoTLS(addr string, cachePath ...string) error {
 		if err != nil {
 			app.Logger.Errorf("can't get cert: %s", err)
 		}
+
 		return cert, err
 	}
 
@@ -85,10 +89,11 @@ func (app *App) ListenAndServeAutoTLS(addr string, cachePath ...string) error {
 		Logger:  app.Logger.(fasthttp.Logger),
 		Name:    app.name,
 	}
-	err = server.Serve(tlsLn)
-	if err != nil {
+
+	if err = server.Serve(tlsLn); err != nil {
 		app.Logger.Errorf("Can't serve: %s", err)
 	}
+
 	return err
 }
 
@@ -97,9 +102,11 @@ func (app *App) ListenAndServeAutoTLSDev(addr string, cachePath ...string) error
 	if len(app.TLSEmails) == 0 {
 		return ErrTLSNoEmails
 	}
+
 	if portIdx := strings.IndexByte(addr, ':'); portIdx == -1 {
 		addr += ":443"
 	}
+
 	var ln net.Listener
 	var err error
 	ln, err = net.Listen("tcp4", addr)
@@ -116,10 +123,11 @@ func (app *App) ListenAndServeAutoTLSDev(addr string, cachePath ...string) error
 	var m letsencrypt.Manager
 	s := rand.NewSource(time.Now().Unix())
 	r := rand.New(s)
-	if err = m.Register(
+	err = m.Register(
 		app.TLSEmails[r.Intn(len(app.TLSEmails))],
 		autocert.AcceptTOS,
-	); err != nil {
+	)
+	if err != nil {
 		return err
 	}
 
@@ -137,6 +145,7 @@ func (app *App) ListenAndServeAutoTLSDev(addr string, cachePath ...string) error
 		if err != nil {
 			app.Logger.Errorf("can't get cert: %s", err)
 		}
+
 		return cert, err
 	}
 
@@ -149,9 +158,10 @@ func (app *App) ListenAndServeAutoTLSDev(addr string, cachePath ...string) error
 		Logger:  NewFastHTTPLoggerAdapter(&app.Logger),
 		Name:    "gramework/" + Version,
 	}
-	err = server.Serve(tlsLn)
-	if err != nil {
+
+	if err = server.Serve(tlsLn); err != nil {
 		app.Logger.Errorf("Can't serve: %s", err)
 	}
+
 	return err
 }
