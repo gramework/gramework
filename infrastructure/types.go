@@ -1,6 +1,8 @@
 package infrastructure
 
-import "sync"
+import (
+	"sync"
+)
 
 type (
 	// Infrastructure handles lists of services and current timestamp

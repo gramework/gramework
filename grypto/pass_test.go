@@ -3,9 +3,8 @@ package grypto
 import (
 	"testing"
 
-	"golang.org/x/crypto/bcrypt"
-
 	"github.com/gramework/utils/grand"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // TestSalt128 makes sure the result is always 32 hex characters

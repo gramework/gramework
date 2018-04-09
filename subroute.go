@@ -1,6 +1,8 @@
 package gramework
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // GET registers a handler for a GET request to the given route
 func (r *SubRouter) GET(route string, handler interface{}) *SubRouter {

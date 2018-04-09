@@ -1,6 +1,8 @@
 package sqlgen
 
-import "sync"
+import (
+	"sync"
+)
 
 type (
 

@@ -1,6 +1,8 @@
 package gramework
 
-import _ "unsafe" // required to use //go:linkname
+import (
+	_ "unsafe" // required to use //go:linkname
+)
 
 // Nanotime is monotonic time provider.
 func Nanotime() int64 {

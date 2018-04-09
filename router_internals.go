@@ -1,6 +1,8 @@
 package gramework
 
-import "github.com/valyala/fasthttp"
+import (
+	"github.com/valyala/fasthttp"
+)
 
 func (r *Router) getErrorHandler(h func(*Context) error) func(*Context) {
 	return func(ctx *Context) {

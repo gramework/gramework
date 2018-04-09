@@ -1,6 +1,8 @@
 package sqlgen
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // UseIt says that we need to USE
 // the database we just created

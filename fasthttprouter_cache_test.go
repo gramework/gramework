@@ -1,6 +1,8 @@
 package gramework
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestRouterCache(t *testing.T) {
 	cache := &cache{

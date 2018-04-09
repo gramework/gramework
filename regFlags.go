@@ -1,6 +1,8 @@
 package gramework
 
-import "flag"
+import (
+	"flag"
+)
 
 var flagsToRegister = []Flag{
 	{
