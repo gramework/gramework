@@ -11,26 +11,6 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-const (
-	redirectCode                      = 301
-	temporaryRedirectCode             = 307
-	zero                              = 0
-	one                               = 1
-	https                             = "https"
-	corsAccessControlAllowOrigin      = "Access-Control-Allow-Origin"
-	corsAccessControlAllowMethods     = "Access-Control-Allow-Methods"
-	corsAccessControlAllowHeaders     = "Access-Control-Allow-Headers"
-	corsAccessControlAllowCredentials = "Access-Control-Allow-Credentials"
-	methods                           = "GET,PUT,POST,DELETE"
-	corsCType                         = "Content-Type, *"
-	trueStr                           = "true"
-	jsonCT                            = "application/json;charset=utf8"
-	hOrigin                           = "Origin"
-	forbidden                         = "Forbidden"
-	forbiddenCode                     = 403
-	badRequest                        = "Bad Request"
-)
-
 // @TODO: add more
 var ctypes = []string{
 	jsonCT,
