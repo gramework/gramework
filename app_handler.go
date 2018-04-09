@@ -11,6 +11,7 @@ func (app *App) handler() func(*fasthttp.RequestCtx) {
 				app.initFirewall()
 			})
 		}
+
 		ctx := app.defaultRouter.initGrameCtx(fhctx)
 		if app.EnableFirewall {
 			if shouldBeBlocked, _ := app.firewall.NewRequest(ctx); shouldBeBlocked {
@@ -21,11 +22,13 @@ func (app *App) handler() func(*fasthttp.RequestCtx) {
 		if app.defaultRouter.router.PanicHandler != nil {
 			defer app.defaultRouter.router.Recv(ctx)
 		}
+
 		ctx.loadCookies()
 		app.preMiddlewaresMu.RLock()
 		for k := range app.preMiddlewares {
 			app.preMiddlewares[k](ctx)
 		}
+
 		app.preMiddlewaresMu.RUnlock()
 		ctx.middlewaresShouldStopProcessing = false
 		app.middlewaresMu.RLock()
@@ -35,6 +38,7 @@ func (app *App) handler() func(*fasthttp.RequestCtx) {
 				break
 			}
 		}
+
 		app.middlewaresMu.RUnlock()
 		if len(app.domains) > 0 {
 			d := string(ctx.URI().Host())
@@ -46,6 +50,7 @@ func (app *App) handler() func(*fasthttp.RequestCtx) {
 				ctx.saveCookies()
 				return
 			}
+
 			app.domainListLock.RUnlock()
 			if !app.HandleUnknownDomains {
 				ctx.NotFound()
@@ -54,6 +59,7 @@ func (app *App) handler() func(*fasthttp.RequestCtx) {
 				return
 			}
 		}
+
 		app.defaultRouter.Handler()(ctx)
 		app.runMiddlewaresAfterRequest(ctx)
 		ctx.saveCookies()
@@ -68,5 +74,6 @@ func (app *App) runMiddlewaresAfterRequest(ctx *Context) {
 			break
 		}
 	}
+
 	app.middlewaresAfterRequestMu.RUnlock()
 }

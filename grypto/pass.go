@@ -7,7 +7,9 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-const cost = 10
+const (
+	cost = 10
+)
 
 // PasswordHashString returns hash of plain password in the given string
 func PasswordHashString(plainPass string) []byte {
