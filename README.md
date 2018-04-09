@@ -1,4 +1,5 @@
 # gramework  [![codecov](https://codecov.io/gh/gramework/gramework/branch/master/graph/badge.svg)](https://codecov.io/gh/gramework/gramework) [![Build Status](https://travis-ci.org/gramework/gramework.svg?branch=master)](https://travis-ci.org/gramework/gramework) [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/1203/badge)](https://bestpractices.coreinfrastructure.org/projects/1203) [![Backers on Open Collective](https://opencollective.com/gramework/backers/badge.svg)](#backers) [![Sponsors on Open Collective](https://opencollective.com/gramework/sponsors/badge.svg)](#sponsors)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fgramework%2Fgramework.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fgramework%2Fgramework?ref=badge_shield)
 
 The Good Framework
 
@@ -155,6 +156,9 @@ Support this project by becoming a sponsor. Your logo will show up here with a l
   gramework based on `fasthttp`, that is incompatible with `net/http`.
   In [the commit I based on](https://github.com/mholt/caddy/tree/d85e90a7b4c06d1698d0b96b695b05d41833fcd3), caddy is `Apache-2.0` licensed.
   It's license placed in `/3rd-Party Licenses/caddy`. @mholt [allow us](https://github.com/mholt/caddy/issues/1520#issuecomment-286907851) to copy the code in this repo.
+
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fgramework%2Fgramework.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fgramework%2Fgramework?ref=badge_large)
 
 # Basic usage
 
