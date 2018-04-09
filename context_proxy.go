@@ -1,6 +1,8 @@
 package gramework
 
-import "github.com/valyala/fasthttp"
+import (
+	"github.com/valyala/fasthttp"
+)
 
 // Proxy request to given url
 func (ctx *Context) Proxy(url string) error {
