@@ -7,7 +7,6 @@ The Good Framework
 _Gramework long-term testing stand metrics screenshot made with [Gramework Stats Dashboard](https://grafana.com/dashboards/3422) and [metrics middleware](https://github.com/gramework/gramework/tree/dev/metrics)_
 
 ### Useful links and info
-
 If you find it, you can submit vulnerability via k@gramework.win.
 
 | Name  | Link/Badge  	|
@@ -25,13 +24,11 @@ If you find it, you can submit vulnerability via k@gramework.win.
 | Gramework Stats Dashboard for Grafana | https://grafana.com/dashboards/3422 |
 
 ### What is it?
-
 Fast, highly effective and go-way web framework. You get the simple yet powerful API, we handle optimizations internally.
 We glad to see your feature requests and PRs, that are implemented as fast as possible while keeping framework high quality.
 SPA-first, so [template engine support is WIP](https://github.com/gramework/gramework/issues/5).
 
 ### Gramework is trusted by such projects as:
-
 [![Confideal banner](https://10357-5.s.cdn13.com/docs/confideal_banner.jpg)](https://confideal.io)
 
 Confideal is a service for making fast and safe international deals through smart contracts on Ethereum blockchain.
@@ -46,9 +43,7 @@ Confideal is a service for making fast and safe international deals through smar
 
 -----
 
-
 ### Project history and "Why?"
-
 Basically, before I've started the project, I need a simple, powerful framework with fair license policy.
 First I consulted with lawyers, which license to choose, based on the list of packages that I need to use.
 Next, we discussed what to do in order to do everything as correctly as possible.
@@ -89,7 +84,6 @@ So - **why you may want to use it?**
 - You can buy a corporate-grade support
 
 ### API status
-
 Stable, but not frozen: we adding functions, packages or optional arguments, so you can use new features, but we never break your projects.
 
 **Go >= 1.8 is supported.**
@@ -99,7 +93,6 @@ Please, fire an issue or pull request if you want any feature, you find a bug or
 Using Gramework with `dep` is highly recommended.
 
 # TOC
-
 - [Benchmarks](#benchmarks)
 - [3rd-party license info](#3rd-party-license-info)
 - [Basic usage](#basic-usage)
@@ -113,24 +106,18 @@ Using Gramework with `dep` is highly recommended.
   - [Using dynamic handlers, part 5](#using-dynamic-handlers-part-5)
 
 # Benchmarks
-
 [![benchmark](https://raw.githubusercontent.com/smallnest/go-web-framework-benchmark/master/benchmark.png)](https://github.com/smallnest/go-web-framework-benchmark)
 
 ## Contributors
-
 This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
 <a href="graphs/contributors"><img src="https://opencollective.com/gramework/contributors.svg?width=890&button=false" /></a>
 
-
 ## Backers
-
 Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/gramework#backer)]
 
 <a href="https://opencollective.com/gramework#backers" target="_blank"><img src="https://opencollective.com/gramework/backers.svg?width=890"></a>
 
-
 ## Sponsors
-
 Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/gramework)]
 
 <a href="https://opencollective.com/gramework/sponsor/0/website" target="_blank"><img src="https://opencollective.com/gramework/sponsor/0/avatar.svg"></a>
@@ -144,25 +131,20 @@ Support this project by becoming a sponsor. Your logo will show up here with a l
 <a href="https://opencollective.com/gramework/sponsor/8/website" target="_blank"><img src="https://opencollective.com/gramework/sponsor/8/avatar.svg"></a>
 <a href="https://opencollective.com/gramework/sponsor/9/website" target="_blank"><img src="https://opencollective.com/gramework/sponsor/9/avatar.svg"></a>
 
-
-
 # 3rd-party license info
-
 - Gramework is now powered by [fasthttp](https://github.com/valyala/fasthttp) and custom fasthttprouter, that is embedded now.
-  You can find licenses in `/3rd-Party Licenses/fasthttp` and `/3rd-Party Licenses/fasthttprouter`.
+  You can find licenses in `/third_party_licenses/fasthttp` and `/third_party_licenses/fasthttprouter`.
 - The 3rd autoTLS implementation, placed in `nettls_*.go`, is an integrated version of
   [caddytls](https://github.com/mholt/caddy/tree/d85e90a7b4c06d1698d0b96b695b05d41833fcd3/caddytls), because using it by simple import isn't an option:
   gramework based on `fasthttp`, that is incompatible with `net/http`.
   In [the commit I based on](https://github.com/mholt/caddy/tree/d85e90a7b4c06d1698d0b96b695b05d41833fcd3), caddy is `Apache-2.0` licensed.
-  It's license placed in `/3rd-Party Licenses/caddy`. @mholt [allow us](https://github.com/mholt/caddy/issues/1520#issuecomment-286907851) to copy the code in this repo.
+  It's license placed in `/third_party_licenses/caddy`. @mholt [allow us](https://github.com/mholt/caddy/issues/1520#issuecomment-286907851) to copy the code in this repo.
 
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fgramework%2Fgramework.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fgramework%2Fgramework?ref=badge_large)
 
 # Basic usage
-
 ### Hello world
-
 The example below will serve "hello, grameworld". Gramework will register flag "bind" for you, that allows you to choose another ip/port that gramework should listen:
 
 ```go
@@ -186,7 +168,6 @@ If you don't want support `bind` flag, pass the optional address argument to `Li
 **NOTE**: all examples below will register `bind` flag.
 
 ### JSON world ;) Part 1
-
 From version: 1.1.0-rc1
 
 The example below will serve `{"hello":"grameworld"}` from the map. Gramework will register flag "bind" for you, that allows you to choose another ip/port that gramework should listen:
@@ -212,7 +193,6 @@ func main() {
 ```
 
 ### JSON world. Part 2
-
 From version: 1.1.0-rc1
 
 The example below will serve `{"hello":"grameworld"}` from the struct. Gramework will register flag "bind" for you, that allows you to choose another ip/port that gramework should listen:
@@ -242,7 +222,6 @@ func main() {
 ```
 
 ### Serving a dir
-
 The example below will serve static files from ./files:
 
 ```go
@@ -262,7 +241,6 @@ func main() {
 ```
 
 ### Serving prepared bytes
-
 The example below will serve byte slice:
 
 ```go
@@ -282,7 +260,6 @@ func main() {
 ```
 
 ### Using dynamic handlers, part 1. Simple JSON response.
-
 The example below will serve JSON:
 
 ```go
@@ -311,7 +288,6 @@ func main() {
 ```
 
 ### Using dynamic handlers, part 2. Simple JSON response with service-wide CORS enabled.
-
 The example below will serve JSON with CORS enabled for all routes:
 
 ```go
@@ -342,7 +318,6 @@ func main() {
 ```
 
 ### Using dynamic handlers, part 3. Simple JSON response with handler-wide CORS enabled.
-
 The example below will serve JSON with CORS enabled in the handler:
 
 ```go
@@ -373,7 +348,6 @@ func main() {
 ```
 
 ### Using dynamic handlers, part 4. Simple FastHTTP-compatible handlers.
-
 The example below will serve a string:
 
 ```go
@@ -395,7 +369,6 @@ func main() {
 ```
 
 ### Using dynamic handlers, part 5. Access to fasthttp.RequestCtx from gramework.Context
-
 The example below shows how you can get fasthttp.RequestCtx from gramework.Context and use it:
 
 ```go
