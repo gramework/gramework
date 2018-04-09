@@ -142,7 +142,7 @@ func (ctx *Context) ToTLS() {
 
 // CORS enables CORS in the current context
 func (ctx *Context) CORS(domains ...string) *Context {
-	origins := make([]string, 0)
+	var origins []string
 	if len(domains) > 0 {
 		origins = domains
 	} else if headerOrigin := ctx.Request.Header.Peek(hOrigin); len(headerOrigin) > 0 {
