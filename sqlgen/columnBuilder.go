@@ -1,6 +1,8 @@
 package sqlgen
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // VarChar sets VarChar(given size) type
 // to the column

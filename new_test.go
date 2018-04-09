@@ -1,6 +1,8 @@
 package gramework
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestNewShouldNeverReturnNil(t *testing.T) {
 	app := New()

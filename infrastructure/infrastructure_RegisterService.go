@@ -1,6 +1,8 @@
 package infrastructure
 
-import "errors"
+import (
+	"errors"
+)
 
 // ErrServiceExists occurs when you trying to register a service that already exists
 var ErrServiceExists = errors.New("service exists")

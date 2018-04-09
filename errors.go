@@ -1,6 +1,8 @@
 package gramework
 
-import "errors"
+import (
+	"errors"
+)
 
 var (
 	// ErrTLSNoEmails occurs when no emails provided but user tries to use AutoTLS features

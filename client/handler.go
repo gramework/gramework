@@ -1,6 +1,8 @@
 package client
 
-import "github.com/gramework/gramework"
+import (
+	"github.com/gramework/gramework"
+)
 
 // Handler returns gramework handler
 func (client *Instance) Handler() func(*gramework.Context) error {

@@ -1,9 +1,8 @@
 package pprof
 
 import (
-	"net/http/pprof"
-
 	"github.com/gramework/gramework"
+	"net/http/pprof"
 )
 
 var (
