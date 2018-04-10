@@ -3,8 +3,8 @@ package test
 import (
 	"testing"
 
+	"github.com/gramework/gramework/grypto"
 	"github.com/gramework/utils/grand"
-	"github.com/toby3d/gramework/grypto"
 	"golang.org/x/crypto/bcrypt"
 )
 
