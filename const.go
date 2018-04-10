@@ -1,60 +1,50 @@
 package gramework
 
-import (
-	"net/http"
-)
-
 const (
 	// MethodDELETE is the HTTP DELETE method
-	MethodDELETE = http.MethodDelete
+	MethodDELETE = "DELETE"
 
 	// MethodGET is the HTTP GET method
-	MethodGET = http.MethodGet
+	MethodGET = "GET"
 
 	// MethodHEAD is the HTTP HEAD method
-	MethodHEAD = http.MethodHead
+	MethodHEAD = "HEAD"
 
 	// MethodOPTIONS is the HTTP OPTIONS method
-	MethodOPTIONS = http.MethodOptions
+	MethodOPTIONS = "OPTIONS"
 
 	// MethodPATCH is the HTTP PATCH method
-	MethodPATCH = http.MethodPatch
+	MethodPATCH = "PATCH"
 
 	// MethodPOST is the HTTP POST method
-	MethodPOST = http.MethodPost
+	MethodPOST = "POST"
 
 	// MethodPUT is the HTTP PUT method
-	MethodPUT = http.MethodPut
+	MethodPUT = "PUT"
 )
 
 const (
-	emptyString = ""
-
-	fmtV = "%v"
-
-	htmlCT  = "text/html; charset=utf8"
-	jsonCT  = "application/json;charset=utf8"
-	xmlCT   = "text/xml"
-	plainCT = "text/plain"
-
-	acceptHeader = "Accept"
-)
-
-const (
+	acceptHeader                      = "Accept"
 	badRequest                        = "Bad Request"
 	corsAccessControlAllowCredentials = "Access-Control-Allow-Credentials"
 	corsAccessControlAllowHeaders     = "Access-Control-Allow-Headers"
 	corsAccessControlAllowMethods     = "Access-Control-Allow-Methods"
 	corsAccessControlAllowOrigin      = "Access-Control-Allow-Origin"
 	corsCType                         = "Content-Type, *"
+	emptyString                       = ""
+	fmtV                              = "%v"
 	forbidden                         = "Forbidden"
 	hOrigin                           = "Origin"
+	htmlCT                            = "text/html; charset=utf8"
 	https                             = "https"
+	jsonCT                            = "application/json;charset=utf8"
 	methods                           = "GET,PUT,POST,DELETE"
+	plainCT                           = "text/plain"
 	trueStr                           = "true"
-	forbiddenCode                     = http.StatusForbidden
-	redirectCode                      = http.StatusMovedPermanently
-	temporaryRedirectCode             = http.StatusTemporaryRedirect
+	xmlCT                             = "text/xml"
+	forbiddenCode                     = 403
+	redirectCode                      = 301
+	temporaryRedirectCode             = 307
 	one                               = 1
 	zero                              = 0
 )
