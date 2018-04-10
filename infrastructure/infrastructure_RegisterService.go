@@ -4,8 +4,10 @@ import (
 	"errors"
 )
 
-// ErrServiceExists occurs when you trying to register a service that already exists
-var ErrServiceExists = errors.New("service exists")
+var (
+	// ErrServiceExists occurs when you trying to register a service that already exists
+	ErrServiceExists = errors.New("service exists")
+)
 
 // RegisterService in the infrastructure
 func (i *Infrastructure) RegisterService(name string, s Service) error {
