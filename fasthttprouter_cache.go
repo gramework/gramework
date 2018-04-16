@@ -96,7 +96,10 @@ func (c *cache) maintain() {
 		skipIter := true
 		c.mu.RLock()
 		for _, v := range c.v {
-			if len(v.v) > 256 {
+			v.mu.RLock()
+			mscLen := len(v.v)
+			v.mu.RUnlock()
+			if mscLen > 256 {
 				skipIter = false
 				break
 			}
