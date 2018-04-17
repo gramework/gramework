@@ -4,7 +4,7 @@
 // Use of this source code is governed by a BSD-style license that can be found
 // in the 3rd-Party License/fasthttprouter file.
 
-package gramework
+package fasthttprouter
 
 import (
 	"fmt"

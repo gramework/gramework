@@ -66,7 +66,7 @@ func (r *Router) initGrameCtx(ctx *fasthttp.RequestCtx) *Context {
 
 func (r *Router) initRouter() {
 	if r.router == nil {
-		r.router = newRouter()
+		r.router = r.app.newRouter()
 	}
 }
 

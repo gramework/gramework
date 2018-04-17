@@ -50,7 +50,7 @@ func New() *App {
 	}
 
 	app.defaultRouter = &Router{
-		router: newRouter(),
+		router: app.newRouter(),
 		app:    app,
 	}
 

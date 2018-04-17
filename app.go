@@ -33,7 +33,7 @@ func (app *App) HTTPS() *Router {
 
 // MethodNotAllowed sets MethodNotAllowed handler
 func (app *App) MethodNotAllowed(c func(ctx *Context)) *App {
-	app.defaultRouter.router.MethodNotAllowed = c
+	app.defaultRouter.router.MethodNotAllowed(c)
 	return app
 }
 

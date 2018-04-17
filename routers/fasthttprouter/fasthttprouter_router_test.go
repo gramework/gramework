@@ -4,7 +4,7 @@
 // Use of this source code is governed by a BSD-style license that can be found
 // in the 3rd-Party License/fasthttprouter file.
 
-package gramework
+package fasthttprouter
 
 import (
 	"bufio"
@@ -20,6 +20,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/gramework/gramework"
 	"github.com/valyala/fasthttp"
 )
 
@@ -44,10 +45,10 @@ var zeroTCPAddr = &net.TCPAddr{
 }
 
 func TestRouter(t *testing.T) {
-	router := New()
+	router := newRouter()
 
 	routed := false
-	router.Handle("GET", "/user/:name", func(ctx *Context) {
+	router.Handle("GET", "/user/:name", func(ctx *gramework.Context) {
 		routed = true
 		want := map[string]string{"name": "gopher"}
 

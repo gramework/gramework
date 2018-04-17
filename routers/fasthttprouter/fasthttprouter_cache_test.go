@@ -7,7 +7,7 @@
 //     http://www.apache.org/licenses/LICENSE-2.0
 //
 
-package gramework
+package fasthttprouter
 
 import (
 	"testing"
@@ -15,7 +15,7 @@ import (
 
 func TestRouterCache(t *testing.T) {
 	cache := &cache{
-		v: make(map[string]*msc, zero),
+		v: make(map[string]*msc, 0),
 	}
 
 	if _, ok := cache.Get(Slash, GET); ok {

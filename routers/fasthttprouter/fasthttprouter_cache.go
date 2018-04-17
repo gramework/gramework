@@ -7,12 +7,14 @@
 //     http://www.apache.org/licenses/LICENSE-2.0
 //
 
-package gramework
+package fasthttprouter
 
 import (
 	"runtime"
 	"sync"
 	"time"
+
+	"github.com/gramework/gramework"
 )
 
 type (
@@ -67,7 +69,7 @@ func (c *cache) Put(path string, n *node, tsr bool, method string) {
 	msc.v[path] = &cacheRecord{
 		n:              n,
 		tsr:            tsr,
-		lastAccessTime: Nanotime(),
+		lastAccessTime: gramework.Nanotime(),
 	}
 	msc.mu.Unlock()
 }
@@ -79,7 +81,7 @@ func (c *cache) PutWild(path string, n *node, tsr bool, values map[string]string
 		n:              n,
 		tsr:            tsr,
 		values:         values,
-		lastAccessTime: Nanotime(),
+		lastAccessTime: gramework.Nanotime(),
 	}
 	msc.mu.Unlock()
 }
@@ -92,7 +94,7 @@ func (c *cache) Get(path string, method string) (n *cacheRecord, ok bool) {
 	msc.mu.RLock()
 	n, ok = msc.v[path]
 	if ok {
-		n.lastAccessTime = Nanotime()
+		n.lastAccessTime = gramework.Nanotime()
 	}
 	msc.mu.RUnlock()
 	return
@@ -123,7 +125,7 @@ func (c *cache) maintain() {
 			}
 			msc.mu.Lock()
 			for path := range msc.v {
-				if Nanotime()-cacheRecordTTLDelta > msc.v[path].lastAccessTime {
+				if gramework.Nanotime()-cacheRecordTTLDelta > msc.v[path].lastAccessTime {
 					msc.v[path].n.hits = 0
 					delete(c.v, path)
 				}
