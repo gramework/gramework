@@ -37,7 +37,7 @@ Confideal is a service for making fast and safe international deals through smar
 > - reduced boilerplate code;
 > - expedited the development process without cutting neither scope nor performance requirements;
 > - reduced the code that needs to be maintained;
-> - saved hundreds of hours by using by using functionality that comes as a part of the framework;
+> - saved hundreds of hours by using functionality that comes as a part of the framework;
 > - optimized costs  of service maintenance;
 > - took advantage of services' and the implementation code's being scalable.
 
@@ -48,7 +48,7 @@ Basically, before I've started the project, I need a simple, powerful framework 
 First I consulted with lawyers, which license to choose, based on the list of packages that I need to use.
 Next, we discussed what to do in order to do everything as correctly as possible.
 
-In our days, `net/http`-based projects are slow and cost-ineffective, so I just write the basic version.
+Nowadays, `net/http`-based projects are slow and cost-ineffective, so I just write the basic version.
 
 **But.**
 
@@ -84,7 +84,7 @@ So - **why you may want to use it?**
 - You can buy a corporate-grade support
 
 ### API status
-Stable, but not frozen: we adding functions, packages or optional arguments, so you can use new features, but we never break your projects.
+Stable, but not frozen: we add functions, packages or optional arguments, so you can use new features, but we never break your projects.
 
 **Go >= 1.8 is supported.**
 
