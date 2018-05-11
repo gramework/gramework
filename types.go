@@ -46,11 +46,12 @@ type (
 	// Context is a gramework request context
 	Context struct {
 		*fasthttp.RequestCtx
-		nocopy  nocopy.NoCopy
-		Logger  log.Interface
-		App     *App
-		auth    *Auth
-		Cookies Cookies
+		nocopy    nocopy.NoCopy
+		Logger    log.Interface
+		App       *App
+		auth      *Auth
+		Cookies   Cookies
+		requestID string
 
 		middlewaresShouldStopProcessing bool
 	}

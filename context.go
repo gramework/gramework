@@ -244,3 +244,7 @@ func (ctx *Context) JSONError(v interface{}) error {
 	ctx.Err500()
 	return ctx.JSON(v)
 }
+
+func (ctx *Context) RequestID() string {
+	return ctx.requestID
+}
