@@ -1,3 +1,7 @@
+# Minor release candidade: 1.0.0-rc6
+- Default context logger (`ctx.Logger`) now prints request id
+- Panic handler now can catch more request id generation panics from google's uuid if any
+
 # Minor release candidade: 1.0.0-rc5
 - Full X-Request-ID support in requests.
   Added support of `X-Request-ID` in request headers that has the following logic:
