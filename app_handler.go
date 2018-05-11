@@ -29,6 +29,15 @@ func (app *App) handler() func(*fasthttp.RequestCtx) {
 				return
 			}
 		}
+
+		xReqID := ctx.Request.Header.Peek(xRequestID)
+		if len(xReqID) > 0 {
+			ctx.requestID = string(xReqID)
+		} else {
+			ctx.requestID = uuid.New().String()
+		}
+		ctx.Response.Header.Add(xRequestID, ctx.requestID)
+
 		if app.defaultRouter.router.PanicHandler != nil {
 			defer app.defaultRouter.router.Recv(ctx)
 		}
@@ -55,7 +64,7 @@ func (app *App) handler() func(*fasthttp.RequestCtx) {
 			app.domainListLock.RLock()
 			if app.domains[d] != nil {
 				app.domainListLock.RUnlock()
-				app.domains[d].Handler()(ctx)
+				app.domains[d].handler(ctx)
 				app.runMiddlewaresAfterRequest(ctx)
 				ctx.saveCookies()
 				return
@@ -70,14 +79,7 @@ func (app *App) handler() func(*fasthttp.RequestCtx) {
 			}
 		}
 
-		xReqID := ctx.Request.Header.Peek(xRequestID)
-		if len(xReqID) == 0 {
-			ctx.requestID = string(xReqID)
-		} else {
-			ctx.requestID = uuid.New().String()
-		}
-
-		app.defaultRouter.Handler()(ctx)
+		app.defaultRouter.handler(ctx)
 		app.runMiddlewaresAfterRequest(ctx)
 		ctx.saveCookies()
 	}
