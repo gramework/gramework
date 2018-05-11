@@ -250,100 +250,102 @@ func (r *Router) Allowed(path, reqMethod string) (allow string) {
 
 // Handler makes the router implement the fasthttp.ListenAndServe interface.
 func (r *Router) Handler() func(*Context) {
-	return func(ctx *Context) {
-		path := string(ctx.Path())
-		method := string(ctx.Method())
+	return r.handler
+}
 
-		switch ctx.IsTLS() {
-		case true:
-			if r.httpsrouter != nil {
-				handler, rts := r.httpsrouter.router.Lookup(method, path, ctx)
-				if handler != nil && r.httpsrouter.handle(path, method, ctx, handler, rts, false) {
-					return
-				}
-				if r.httpsrouter.router.RedirectFixedPath {
-					if root, ok := r.httpsrouter.router.Trees[method]; ok && root != nil {
-						fixedPath, found := root.FindCaseInsensitivePath(
-							CleanPath(path),
-							r.httpsrouter.router.RedirectTrailingSlash,
-						)
+func (r *Router) handler(ctx *Context) {
+	path := string(ctx.Path())
+	method := string(ctx.Method())
 
-						if found {
-							code := redirectCode
-							if method != GET {
-								code = temporaryRedirectCode
-							}
-							ctx.SetStatusCode(code)
-							ctx.Response.Header.AddBytesV("Location", fixedPath)
-							return
+	switch ctx.IsTLS() {
+	case true:
+		if r.httpsrouter != nil {
+			handler, rts := r.httpsrouter.router.Lookup(method, path, ctx)
+			if handler != nil && r.httpsrouter.handle(path, method, ctx, handler, rts, false) {
+				return
+			}
+			if r.httpsrouter.router.RedirectFixedPath {
+				if root, ok := r.httpsrouter.router.Trees[method]; ok && root != nil {
+					fixedPath, found := root.FindCaseInsensitivePath(
+						CleanPath(path),
+						r.httpsrouter.router.RedirectTrailingSlash,
+					)
+
+					if found {
+						code := redirectCode
+						if method != GET {
+							code = temporaryRedirectCode
 						}
+						ctx.SetStatusCode(code)
+						ctx.Response.Header.AddBytesV("Location", fixedPath)
+						return
 					}
 				}
-
-				if r.httpsrouter.router.NotFound != nil {
-					r.httpsrouter.router.NotFound(ctx)
-					return
-				}
 			}
-		case false:
-			if r.httprouter != nil {
-				handler, rts := r.httprouter.router.Lookup(method, path, ctx)
-				if handler != nil && r.httprouter.handle(path, method, ctx, handler, rts, false) {
-					return
-				}
 
-				if r.httprouter.router.RedirectFixedPath {
-					if root, ok := r.httprouter.router.Trees[method]; ok && root != nil {
-						fixedPath, found := root.FindCaseInsensitivePath(
-							CleanPath(path),
-							r.httprouter.router.RedirectTrailingSlash,
-						)
+			if r.httpsrouter.router.NotFound != nil {
+				r.httpsrouter.router.NotFound(ctx)
+				return
+			}
+		}
+	case false:
+		if r.httprouter != nil {
+			handler, rts := r.httprouter.router.Lookup(method, path, ctx)
+			if handler != nil && r.httprouter.handle(path, method, ctx, handler, rts, false) {
+				return
+			}
 
-						if found {
-							code := redirectCode
-							if method != GET {
-								code = temporaryRedirectCode
-							}
-							ctx.SetStatusCode(code)
-							ctx.Response.Header.AddBytesV("Location", fixedPath)
-							return
+			if r.httprouter.router.RedirectFixedPath {
+				if root, ok := r.httprouter.router.Trees[method]; ok && root != nil {
+					fixedPath, found := root.FindCaseInsensitivePath(
+						CleanPath(path),
+						r.httprouter.router.RedirectTrailingSlash,
+					)
+
+					if found {
+						code := redirectCode
+						if method != GET {
+							code = temporaryRedirectCode
 						}
+						ctx.SetStatusCode(code)
+						ctx.Response.Header.AddBytesV("Location", fixedPath)
+						return
 					}
 				}
-				if r.httprouter.router.NotFound != nil {
-					r.httprouter.router.NotFound(ctx)
-					return
-				}
+			}
+			if r.httprouter.router.NotFound != nil {
+				r.httprouter.router.NotFound(ctx)
+				return
 			}
 		}
-		handler, rts := r.router.Lookup(method, path, ctx)
-		if r.handle(path, method, ctx, handler, rts, true) {
-			return
-		}
-		if r.router.RedirectFixedPath {
-			if root, ok := r.router.Trees[method]; ok && root != nil {
-				fixedPath, found := root.FindCaseInsensitivePath(
-					CleanPath(path),
-					r.router.RedirectTrailingSlash,
-				)
-
-				if found && len(fixedPath) > 0 {
-					code := redirectCode
-					if method != GET {
-						code = temporaryRedirectCode
-					}
-					ctx.SetStatusCode(code)
-					ctx.Response.Header.AddBytesV("Location", fixedPath)
-					return
-				}
-			}
-		}
-		if r.router.NotFound != nil {
-			r.router.NotFound(ctx)
-			return
-		}
-		ctx.Error(fasthttp.StatusMessage(fasthttp.StatusNotFound), fasthttp.StatusNotFound)
 	}
+	handler, rts := r.router.Lookup(method, path, ctx)
+	if r.handle(path, method, ctx, handler, rts, true) {
+		return
+	}
+	if r.router.RedirectFixedPath {
+		if root, ok := r.router.Trees[method]; ok && root != nil {
+			fixedPath, found := root.FindCaseInsensitivePath(
+				CleanPath(path),
+				r.router.RedirectTrailingSlash,
+			)
+
+			if found && len(fixedPath) > 0 {
+				code := redirectCode
+				if method != GET {
+					code = temporaryRedirectCode
+				}
+				ctx.SetStatusCode(code)
+				ctx.Response.Header.AddBytesV("Location", fixedPath)
+				return
+			}
+		}
+	}
+	if r.router.NotFound != nil {
+		r.router.NotFound(ctx)
+		return
+	}
+	ctx.Error(fasthttp.StatusMessage(fasthttp.StatusNotFound), fasthttp.StatusNotFound)
 }
 
 func (r *Router) handle(path, method string, ctx *Context, handler func(ctx *Context), redirectTrailingSlashs bool, isRootRouter bool) (handlerFound bool) {

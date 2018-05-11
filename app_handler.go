@@ -10,6 +10,7 @@
 package gramework
 
 import (
+	"github.com/google/uuid"
 	"github.com/valyala/fasthttp"
 )
 
@@ -67,6 +68,13 @@ func (app *App) handler() func(*fasthttp.RequestCtx) {
 				ctx.saveCookies()
 				return
 			}
+		}
+
+		xReqID := ctx.Request.Header.Peek(xRequestID)
+		if len(xReqID) == 0 {
+			ctx.requestID = string(xReqID)
+		} else {
+			ctx.requestID = uuid.New().String()
 		}
 
 		app.defaultRouter.Handler()(ctx)

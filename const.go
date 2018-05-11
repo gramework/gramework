@@ -51,6 +51,7 @@ const (
 	plainCT                           = "text/plain"
 	trueStr                           = "true"
 	xmlCT                             = "text/xml"
+	xRequestID                        = "X-Request-ID"
 	forbiddenCode                     = 403
 	redirectCode                      = 301
 	temporaryRedirectCode             = 307
