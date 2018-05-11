@@ -30,6 +30,11 @@ func (app *App) handler() func(*fasthttp.RequestCtx) {
 			}
 		}
 
+		if app.defaultRouter.router.PanicHandler != nil {
+			// unfortunately, we can't get rid of that defer
+			defer app.defaultRouter.router.Recv(ctx)
+		}
+
 		xReqID := ctx.Request.Header.Peek(xRequestID)
 		if len(xReqID) > 0 {
 			ctx.requestID = string(xReqID)
@@ -37,10 +42,7 @@ func (app *App) handler() func(*fasthttp.RequestCtx) {
 			ctx.requestID = uuid.New().String()
 		}
 		ctx.Response.Header.Add(xRequestID, ctx.requestID)
-
-		if app.defaultRouter.router.PanicHandler != nil {
-			defer app.defaultRouter.router.Recv(ctx)
-		}
+		ctx.Logger = ctx.Logger.WithField(xRequestID, ctx.requestID)
 
 		ctx.loadCookies()
 		app.preMiddlewaresMu.RLock()
