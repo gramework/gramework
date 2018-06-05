@@ -42,19 +42,21 @@ const (
 	corsCType                         = "Content-Type, *"
 	emptyString                       = ""
 	fmtV                              = "%v"
+	fmtS                              = "%s"
 	forbidden                         = "Forbidden"
 	hOrigin                           = "Origin"
 	htmlCT                            = "text/html; charset=utf8"
 	https                             = "https"
 	jsonCT                            = "application/json;charset=utf8"
 	methods                           = "GET,PUT,POST,DELETE"
-	plainCT                           = "text/plain"
 	trueStr                           = "true"
 	xmlCT                             = "text/xml"
+	csvCT                             = "text/csv"
 	xRequestID                        = "X-Request-ID"
 	forbiddenCode                     = 403
 	redirectCode                      = 301
 	temporaryRedirectCode             = 307
 	one                               = 1
 	zero                              = 0
+	// plainCT                        = "text/plain"
 )

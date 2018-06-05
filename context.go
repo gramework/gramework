@@ -16,6 +16,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/gocarina/gocsv"
 	acceptParser "github.com/kirillDanshin/go-accept-headers"
 	"github.com/valyala/fasthttp"
 )
@@ -24,6 +25,7 @@ import (
 var ctypes = []string{
 	jsonCT,
 	xmlCT,
+	csvCT,
 }
 
 // Writef is a fmt.Fprintf(context, format, a...) shortcut
@@ -61,8 +63,28 @@ func (ctx *Context) Encode(v interface{}) (sentType string, err error) {
 		err = ctx.JSON(v)
 	case xmlCT:
 		err = ctx.XML(v)
+	case csvCT:
+		err = ctx.CSV(v)
 	}
 
+	return
+}
+
+// CSV sends text/csv content type (see rfc4180, sec 3) and csv-encoded value to client
+func (ctx *Context) CSV(v interface{}) error {
+	ctx.SetContentType(csvCT)
+
+	b, err := ctx.ToCSV(v)
+	if err != nil {
+		return err
+	}
+	_, err = ctx.Write(b)
+	return err
+}
+
+// ToCSV encodes csv-encoded value to client
+func (ctx *Context) ToCSV(v interface{}) (b []byte, err error) {
+	b, err = gocsv.MarshalBytes(v)
 	return
 }
 
@@ -185,14 +207,15 @@ func (ctx *Context) JSON(v interface{}) error {
 	return err
 }
 
-// ToJSON serializes and returns the result
+// ToJSON serializes v and returns the result
 func (ctx *Context) ToJSON(v interface{}) ([]byte, error) {
 	b := bytes.NewBuffer(nil)
 	err := json.NewEncoder(b).Encode(v)
 	return b.Bytes(), err
 }
 
-// UnJSONBytes serializes and writes a json-formatted response to user
+// UnJSONBytes deserializes JSON request body to given variable pointer or allocates a new one.
+// Returns resulting data and error. One of them may be nil.
 func (ctx *Context) UnJSONBytes(b []byte, v ...interface{}) (interface{}, error) {
 	return UnJSONBytes(b, v...)
 }
@@ -230,9 +253,9 @@ func (ctx *Context) Err500(message ...interface{}) *Context {
 		case string:
 			ctx.WriteString(v)
 		case error:
-			ctx.Writef("%s", v)
+			ctx.Writef(fmtS, v)
 		default:
-			ctx.Writef("%v", v)
+			ctx.Writef(fmtV, v)
 		}
 	}
 	return ctx
@@ -245,6 +268,7 @@ func (ctx *Context) JSONError(v interface{}) error {
 	return ctx.JSON(v)
 }
 
+// RequestID return request ID for current context's request
 func (ctx *Context) RequestID() string {
 	return ctx.requestID
 }
