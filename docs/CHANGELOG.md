@@ -1,3 +1,8 @@
+# Minor release candidade: 1.0.0-rc7
+- `ctx.Encode()` now supports csv marshaling
+- `ctx.ToCSV()` and `ctx.CSV()` added
+- Fix documentation for `ctx.RequestID()`
+
 # Minor release candidade: 1.0.0-rc6
 - Default context logger (`ctx.Logger`) now prints request id
 - Panic handler now can catch more request id generation panics from google's uuid if any

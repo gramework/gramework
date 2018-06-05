@@ -10,4 +10,4 @@
 package gramework
 
 // Version gives you the gramework version you use now
-const Version = "1.1.0-rc6"
+const Version = "1.1.0-rc7"
