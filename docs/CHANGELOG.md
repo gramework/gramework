@@ -1,4 +1,18 @@
 # Minor release candidade: 1.0.0-rc8
+Protect enables Gramework Protection for routes registered after Protect() call.
+
+Protects all routes, that prefixed with given enpointPrefix.
+For example:
+```golang
+app := gramework.New()
+app.GET("/internal/status", serveStatus) // will **not be** protected, .Protected() isn't called yet
+app.Protect("/internal")
+registerYourInternalRoutes(app.Sub("/internal")) // all routes here are protected
+```
+Any blacklisted ip can't access protected enpoints via any method.
+Blacklist can work automatically, manually or both. To disable automatic blacklist do App.MaxHackAttemts(-1).
+Automatic blacklist bans suspected IP after App.MaxHackAttempts(). This behaviour disabled for whitelisted ip.
+
 - Brand new Gramework Protection:
   - `app.Protect()`: enables Gramework Protection for routes registered after Protect() call.
   - `app.Whitelist()`: adds given ip to Gramework Protection trustedIP list.
