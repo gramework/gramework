@@ -1,4 +1,4 @@
-# Minor release candidade: 1.0.0-rc8
+# Minor release candidade: 1.1.0-rc8
 Protect enables Gramework Protection for routes registered after Protect() call.
 
 Protects all routes, that prefixed with given enpointPrefix.
