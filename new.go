@@ -12,10 +12,13 @@ package gramework
 import (
 	"os"
 	"sync"
+	"time"
 
 	"github.com/apex/log"
 	"github.com/apex/log/handlers/cli"
 )
+
+var defaultMaxHackAttempts int32 = 5
 
 // New App
 func New() *App {
@@ -28,6 +31,7 @@ func New() *App {
 	}
 	defFWLimit := int64(-1)
 	defBlockTimeout := int64(-1)
+	maxHackAttempts := defaultMaxHackAttempts
 	app := &App{
 		Flags:          flags,
 		flagsQueue:     flagsToRegister,
@@ -47,6 +51,8 @@ func New() *App {
 		middlewares:               make([]func(*Context), 0),
 		middlewaresAfterRequest:   make([]func(*Context), 0),
 		preMiddlewares:            make([]func(*Context), 0),
+		seed:                      uintptr(time.Now().Nanosecond()),
+		maxHackAttempts:           &maxHackAttempts,
 	}
 
 	app.defaultRouter = &Router{

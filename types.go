@@ -18,6 +18,20 @@ import (
 )
 
 type (
+	ipList struct {
+		list map[uint64]struct{}
+		mu   *sync.RWMutex
+	}
+
+	suspect struct {
+		hackAttempts int32
+	}
+
+	suspectsList struct {
+		list map[uint64]*suspect
+		mu   *sync.RWMutex
+	}
+
 	// App represents a gramework app
 	App struct {
 		defaultRouter             *Router
@@ -41,6 +55,14 @@ type (
 		EnableFirewall            bool
 		flagsRegistered           bool
 		HandleUnknownDomains      bool
+		seed                      uintptr
+
+		maxHackAttempts    *int32
+		protectedPrefixes  map[string]struct{}
+		protectedEndpoints map[string]struct{}
+		trustedIP          *ipList
+		untrustedIP        *ipList
+		suspectedIP        *suspectsList
 	}
 
 	// Context is a gramework request context

@@ -11,6 +11,7 @@ package gramework
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/valyala/fasthttp"
 )
@@ -101,7 +102,16 @@ func (r *Router) Sub(path string) *SubRouter {
 func (r *Router) handleReg(method, route string, handler interface{}) {
 	r.initRouter()
 	r.app.Logger.Debugf("registering %s %s", method, route)
-	r.router.Handle(method, route, r.determineHandler(handler))
+	typedHandler := r.determineHandler(handler)
+	for prefix := range r.app.protectedPrefixes {
+		if strings.HasPrefix(strings.TrimLeft(route, "/"), strings.TrimLeft(prefix, "/")) {
+			r.app.Logger.WithField("route", route).Info("[Gramework Protection] Protection enabled for a new route")
+			r.app.protectedEndpoints[route] = struct{}{}
+			typedHandler = r.app.protectionMiddleware(typedHandler)
+			break
+		}
+	}
+	r.router.Handle(method, route, typedHandler)
 }
 
 func (r *Router) getEFuncStrHandler(h func() string) func(*Context) {
