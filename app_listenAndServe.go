@@ -29,7 +29,7 @@ func (app *App) ListenAndServe(addr ...string) error {
 		}
 	}
 
-	if !flag.Parsed() {
+	if !flag.Parsed() && !flagsDisabled {
 		flag.Parse()
 	}
 
