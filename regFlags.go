@@ -13,6 +13,8 @@ import (
 	"flag"
 )
 
+var flagsDisabled = false
+
 var flagsToRegister = []Flag{
 	{
 		Name:        "bind",
@@ -48,7 +50,7 @@ func (app *App) RegFlags() {
 
 // GetStringFlag return command line app flag value by name and false if not exists
 func (app *App) GetStringFlag(name string) (string, bool) {
-	if !flag.Parsed() {
+	if !flag.Parsed() && !flagsDisabled {
 		flag.Parse()
 	}
 	if app.Flags.values != nil {
@@ -58,4 +60,11 @@ func (app *App) GetStringFlag(name string) (string, bool) {
 	}
 
 	return "", false
+}
+
+// DisableFlags globally disables default flags.
+// Useful when using non-default flag libraries like pflag.
+func DisableFlags() {
+	flagsDisabled = true
+	flagsToRegister = []Flag{}
 }
