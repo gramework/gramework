@@ -183,7 +183,7 @@ func (app *App) Suspect(ip net.IP) (ok bool) {
 	return true
 }
 
-// MaxHackAttemts sets new max hack attempts for blacklist triggering in the Gramework Protection.
+// MaxHackAttempts sets new max hack attempts for blacklist triggering in the Gramework Protection.
 // If 0 passed, MaxHackAttempts just returns current value
 // without setting a new one.
 // If -1 passed, automatic blacklist disabled.
