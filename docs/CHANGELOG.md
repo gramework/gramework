@@ -1,3 +1,6 @@
+# Minor release candidade: 1.1.0-rc9
+- `DisableFlags()` - DisableFlags globally disables default gramework flags, which is useful when using non-default flag libraries like pflag.
+
 # Minor release candidade: 1.1.0-rc8
 Protect enables Gramework Protection for routes registered after Protect() call.
 
