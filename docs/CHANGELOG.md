@@ -29,6 +29,7 @@ Automatic blacklist bans suspected IP after App.MaxHackAttempts(). This behaviou
   - `ctx.Suspect()`: adds current client ip to Gramework Protection suspectedIP list.
   - `ctx.HackAttemptDetected()`: Suspect adds given ip to Gramework Protection suspectedIP list. Use it when you detected app-level hack attempt from current client.
   - `ctx.SuspectsHackAttempts()`: SuspectsHackAttempts returns hack attempts detected with Gramework Protection both automatically and manually by calling Context.HackAttemptDetected(). For any whitelisted ip this function will return 0.
+- Test fix: use letsencrypt stage environment instead of production one
 
 # Minor release candidade: 1.0.0-rc7
 - `ctx.Encode()` now supports csv marshaling
