@@ -1,3 +1,7 @@
+# Minor release candidade: 1.1.0-rc10
+- Gramework Protection now doesn't uses any hash algo to compute remote ip hash, if ip is valid we using the ip directly.
+  This also fixes a minor security issue
+
 # Minor release candidade: 1.1.0-rc9
 - `DisableFlags()` - DisableFlags globally disables default gramework flags, which is useful when using non-default flag libraries like pflag.
 

@@ -4,8 +4,6 @@ import (
 	"net"
 	"sync"
 	"sync/atomic"
-
-	"github.com/gramework/runtimer"
 )
 
 // Protect enables Gramework Protection for routes registered after Protect() call.
@@ -30,19 +28,19 @@ import (
 func (app *App) Protect(endpointPrefix string) {
 	if app.trustedIP == nil {
 		app.trustedIP = &ipList{
-			list: make(map[uint64]struct{}),
+			list: make(map[string]struct{}),
 			mu:   &sync.RWMutex{},
 		}
 	}
 	if app.untrustedIP == nil {
 		app.untrustedIP = &ipList{
-			list: make(map[uint64]struct{}),
+			list: make(map[string]struct{}),
 			mu:   &sync.RWMutex{},
 		}
 	}
 	if app.suspectedIP == nil {
 		app.suspectedIP = &suspectsList{
-			list: make(map[uint64]*suspect),
+			list: make(map[string]*suspect),
 			mu:   &sync.RWMutex{},
 		}
 	}
@@ -85,7 +83,7 @@ func (app *App) Whitelist(ip net.IP) (ok bool) {
 		return true
 	}
 
-	ipHash := uint64(runtimer.BytesHash(ip, app.seed))
+	ipHash := app.prepareIPListKey(ip)
 
 	// now we trust this ip
 	app.trustedIP.mu.Lock()
@@ -116,7 +114,7 @@ func (app *App) Untrust(ip net.IP) (ok bool) {
 	if ip == nil {
 		return false
 	}
-	ipHash := uint64(runtimer.BytesHash(ip, app.seed))
+	ipHash := app.prepareIPListKey(ip)
 
 	// now we don't trust this ip
 	app.trustedIP.mu.Lock()
@@ -137,7 +135,7 @@ func (app *App) Blacklist(ip net.IP) (ok bool) {
 		return false
 	}
 
-	ipHash := uint64(runtimer.BytesHash(ip, app.seed))
+	ipHash := app.prepareIPListKey(ip)
 
 	app.trustedIP.mu.RLock()
 	if _, ok := app.trustedIP.list[ipHash]; ok {
@@ -165,7 +163,7 @@ func (app *App) Blacklist(ip net.IP) (ok bool) {
 // Context.Whitelist(), Context.Blacklist(), Context.Suspect(), Context.HackAttemptDetected(),
 // Context.SuspectsHackAttempts()
 func (app *App) Suspect(ip net.IP) (ok bool) {
-	ipHash := uint64(runtimer.BytesHash(ip, app.seed))
+	ipHash := app.prepareIPListKey(ip)
 
 	app.trustedIP.mu.RLock()
 	if _, ok := app.trustedIP.list[ipHash]; ok {
@@ -301,10 +299,10 @@ func (ctx *Context) Suspect() (ok bool) {
 	return ctx.App.Suspect(ctx.RemoteIP())
 }
 
-// remoteIPHash is a shortcut for app.hashIP() function that
+// remoteIPHash is a shortcut for app.prepareIPListKey() function that
 // calculates hash for the []byte, which is what the ip is
-func (ctx *Context) remoteIPHash() uint64 {
-	return ctx.App.hashIP(ctx.RemoteIP())
+func (ctx *Context) remoteIPHash() string {
+	return ctx.App.prepareIPListKey(ctx.RemoteIP())
 }
 
 // HackAttemptDetected adds given ip to Gramework Protection suspectedIP list.
@@ -353,6 +351,11 @@ func (ctx *Context) SuspectsHackAttempts() (attempts int32) {
 	return
 }
 
-func (app *App) hashIP(ip net.IP) uint64 {
-	return uint64(runtimer.BytesHash(ip, app.seed))
+func (app *App) prepareIPListKey(ip net.IP) string {
+	if ip == nil {
+		// we should ban any invalid remoteIP headers
+		// to ban this type of attacks
+		return ""
+	}
+	return ip.String()
 }

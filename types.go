@@ -19,7 +19,7 @@ import (
 
 type (
 	ipList struct {
-		list map[uint64]struct{}
+		list map[string]struct{}
 		mu   *sync.RWMutex
 	}
 
@@ -28,7 +28,7 @@ type (
 	}
 
 	suspectsList struct {
-		list map[uint64]*suspect
+		list map[string]*suspect
 		mu   *sync.RWMutex
 	}
 
