@@ -36,7 +36,7 @@ type (
 	App struct {
 		defaultRouter             *Router
 		domains                   map[string]*Router
-		errorHandler              func(func(*fasthttp.RequestCtx) error)
+		_                         [8]byte // callback
 		firewall                  *firewall
 		firewallInit              *sync.Once
 		Flags                     *Flags
@@ -130,7 +130,6 @@ type (
 		root        *Router
 		app         *App
 		mu          sync.RWMutex
-		submu       sync.Mutex
 	}
 
 	// SubRouter handles subs registration

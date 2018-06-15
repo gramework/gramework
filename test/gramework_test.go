@@ -105,8 +105,8 @@ func TestGrameworkHTTP(t *testing.T) {
 	errCheck(t, err)
 
 	go func() {
-		err := app.ListenAndServe(":9977")
-		errCheck(t, err)
+		listenErr := app.ListenAndServe(":9977")
+		errCheck(t, listenErr)
 	}()
 
 	time.Sleep(2 * time.Second)
@@ -168,9 +168,7 @@ func TestGrameworkDomainHTTP(t *testing.T) {
 	const text = "test one two three"
 	app.Domain("127.0.0.1:9978").GET("/", text)
 	var preCalled, mwCalled, postCalled bool
-	var err error
-
-	err = app.UsePre(func() {
+	var err = app.UsePre(func() {
 		preCalled = true
 	})
 	errCheck(t, err)
@@ -186,8 +184,8 @@ func TestGrameworkDomainHTTP(t *testing.T) {
 	errCheck(t, err)
 
 	go func() {
-		err := app.ListenAndServe(":9978")
-		errCheck(t, err)
+		listenErr := app.ListenAndServe(":9978")
+		errCheck(t, listenErr)
 	}()
 
 	time.Sleep(1 * time.Second)

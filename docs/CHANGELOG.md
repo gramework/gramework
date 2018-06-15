@@ -1,3 +1,14 @@
+# Major release candidate: 1.1.0-rc11: contains breaking change
+- **BREAKING CHANGE**: `client` and `sqlgen` experimental packages moved to `x` subpackage!
+- travis config updated: we supported go 1.9.2, 1.9.x, 1.10.x and `tip` before, now we removing obsolete versions and extend our support list:
+  - 1.9.4
+  - 1.9.5
+  - 1.9.6
+  - 1.9.x
+  - 1.10.1
+  - 1.10.2
+  - 1.10.3
+
 # Minor release candidade: 1.1.0-rc10
 - Gramework Protection now doesn't uses any hash algo to compute remote ip hash, if ip is valid we using the ip directly.
   This also fixes a minor security issue

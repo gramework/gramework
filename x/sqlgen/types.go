@@ -40,8 +40,8 @@ type (
 	// ColumnBuilder handles internal
 	// column info
 	ColumnBuilder struct {
-		name         string
-		sqlType      string
+		name string
+		// sqlType      string
 		tableBuilder *CreateTableBuilder
 	}
 
