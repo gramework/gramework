@@ -7,24 +7,17 @@ os:
   - linux
   - osx
 
-go:
-  - 1.9.4
-  - 1.9.5
-  - 1.9.6
-  - 1.9.x
-  - 1.10.1
-  - 1.10.2
-  - 1.10.x
-  - tip
-
-cache:
-  directories:
-    - $HOME/.longtestcache
-  timeout: 21600
+env:
+  - TRAVIS_GO_VERSION=1.9.4 GRAMEWORK_SHORT=1
+  - TRAVIS_GO_VERSION=1.9.5 GRAMEWORK_SHORT=1
+  - TRAVIS_GO_VERSION=1.9.6 GRAMEWORK_SHORT=1
+  - TRAVIS_GO_VERSION=1.9.x GRAMEWORK_SHORT=0
+  - TRAVIS_GO_VERSION=1.10.1 GRAMEWORK_SHORT=1
+  - TRAVIS_GO_VERSION=1.10.2 GRAMEWORK_SHORT=1
+  - TRAVIS_GO_VERSION=1.10.x GRAMEWORK_SHORT=0
+  - TRAVIS_GO_VERSION=tip GRAMEWORK_SHORT=1 TRAVIS_ALLOW_FAILURE=1
 
 matrix:
-  allow_failures:
-    - tip
   fast_finish: true
 
 before_install:

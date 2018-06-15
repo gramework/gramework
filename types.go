@@ -57,12 +57,18 @@ type (
 		HandleUnknownDomains      bool
 		seed                      uintptr
 
-		maxHackAttempts    *int32
-		protectedPrefixes  map[string]struct{}
+		// Gramework Protection's max detections of suspect before ban
+		maxHackAttempts *int32
+		// Gramework Protection's protected endpoint prefixes
+		protectedPrefixes map[string]struct{}
+		// Gramework Protection's protected paths of endpoints
 		protectedEndpoints map[string]struct{}
-		trustedIP          *ipList
-		untrustedIP        *ipList
-		suspectedIP        *suspectsList
+		// Gramework Protection's trusted ip list
+		trustedIP *ipList
+		// Gramework Protection's untrusted (banned) ip list
+		untrustedIP *ipList
+		// Gramework Protection's suspects ip list
+		suspectedIP *suspectsList
 	}
 
 	// Context is a gramework request context
