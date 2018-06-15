@@ -14,7 +14,7 @@ For example:
 app := gramework.New()
 app.GET("/internal/status", serveStatus) // will **not be** protected, .Protected() isn't called yet
 app.Protect("/internal")
-registerYourInternalRoutes(app.Sub("/internal")) // all routes here are protected
+registerYourInternalRoutes(app.Sub("/internal")) // all routes here **are** protected
 ```
 Any blacklisted ip can't access protected enpoints via any method.
 Blacklist can work automatically, manually or both. To disable automatic blacklist do App.MaxHackAttemts(-1).
