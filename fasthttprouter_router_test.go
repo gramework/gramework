@@ -9,7 +9,6 @@ package gramework
 import (
 	"bufio"
 	"bytes"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net"
@@ -24,13 +23,13 @@ import (
 )
 
 type (
-	handlerStruct struct {
-		handeled *bool
-	}
+	// handlerStruct struct {
+	// 	handeled *bool
+	// }
 
-	mockFileSystem struct {
-		opened bool
-	}
+	// mockFileSystem struct {
+	// 	opened bool
+	// }
 
 	readWriter struct {
 		net.Conn
@@ -83,9 +82,9 @@ func TestRouter(t *testing.T) {
 	}
 }
 
-func (h handlerStruct) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	*h.handeled = true
-}
+// func (h handlerStruct) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+// 	*h.handeled = true
+// }
 
 func TestRouterAPI(t *testing.T) {
 	var get, head, options, post, put, patch, deleted bool
@@ -901,10 +900,10 @@ func TestRouterLookup(t *testing.T) {
 	}
 }
 
-func (mfs *mockFileSystem) Open(name string) (http.File, error) {
-	mfs.opened = true
-	return nil, errors.New("this is just a mock")
-}
+// func (mfs *mockFileSystem) Open(name string) (http.File, error) {
+// 	mfs.opened = true
+// 	return nil, errors.New("this is just a mock")
+// }
 
 func TestRouterServeFiles(t *testing.T) {
 	router := New()

@@ -86,7 +86,7 @@ So - **why you may want to use it?**
 ### API status
 Stable, but not frozen: we add functions, packages or optional arguments, so you can use new features, but we never break your projects.
 
-**Go >= 1.8 is supported.**
+**Go >= 1.8 required. Go >= 1.9.4 is the oldest continously tested and supported version.**
 
 Please, fire an issue or pull request if you want any feature, you find a bug or know how to optimize gramework even more.
 

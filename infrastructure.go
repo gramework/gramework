@@ -15,10 +15,6 @@ import (
 	"github.com/gramework/gramework/infrastructure"
 )
 
-var infrastructureServiceRegistrationErr = map[string]string{
-	"error": "can't parse the query",
-}
-
 // ServeInfrastructure serves Infrastructure info
 // It's an integration of our module
 func (app *App) ServeInfrastructure(i *infrastructure.Infrastructure) {
