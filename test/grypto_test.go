@@ -23,6 +23,10 @@ const (
 
 // TestSalt128 makes sure the result is always 32 hex characters
 func TestSalt128(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+		return
+	}
 	var salt []byte
 	for i := 0; i < 1024; i++ {
 		salt = grypto.Salt128()
@@ -35,6 +39,10 @@ func TestSalt128(t *testing.T) {
 
 // TestPasswordSanity makes sure PasswordHash and ComparePassword work well together
 func TestPasswordSanity(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+		return
+	}
 	pw := make([]byte, 12)
 	pw2 := make([]byte, 12)
 	var hash, hash2 []byte
@@ -58,6 +66,10 @@ func TestPasswordSanity(t *testing.T) {
 
 // TestPasswordStringSanity makes sure PasswordHashString and ComparePassword work well together
 func TestPasswordStringSanity(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+		return
+	}
 	pw := make([]byte, 12)
 	pw2 := make([]byte, 12)
 	var hash, hash2 []byte
@@ -81,6 +93,10 @@ func TestPasswordStringSanity(t *testing.T) {
 
 // TestPasswordNeedsRehash makes sure TestPasswordNeedsRehash works well
 func TestPasswordNeedsRehash(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+		return
+	}
 	pw := make([]byte, 12)
 	for i := 0; i < 32; i++ {
 		grand.Read(pw)
@@ -100,6 +116,10 @@ func TestPasswordNeedsRehash(t *testing.T) {
 }
 
 func BenchmarkPassHashAndValidation(b *testing.B) {
+	if testing.Short() {
+		b.Skip("skipping test in short mode.")
+		return
+	}
 	pws := make([][]byte, b.N)
 	for i := 0; i < b.N; i++ {
 		pws[i] = make([]byte, 12)
@@ -119,6 +139,10 @@ func BenchmarkPassHashAndValidation(b *testing.B) {
 }
 
 func BenchmarkPassHash(b *testing.B) {
+	if testing.Short() {
+		b.Skip("skipping test in short mode.")
+		return
+	}
 	pws := make([][]byte, b.N)
 	for i := 0; i < b.N; i++ {
 		pws[i] = make([]byte, 12)
