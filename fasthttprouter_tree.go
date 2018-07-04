@@ -26,6 +26,7 @@ type (
 		priority  uint32
 		hits      uint32
 		router    *router
+		prefixes  []string
 	}
 )
 
@@ -88,7 +89,7 @@ func (n *node) incrementChildPrio(pos int) int {
 
 // addRoute adds a node with the given handle to the path.
 // Not concurrency-safe!
-func (n *node) addRoute(path string, handle RequestHandler, r *router) {
+func (n *node) addRoute(path string, handle RequestHandler, r *router, prefixes []string) {
 	fullPath := path
 	n.priority++
 	numParams := countParams(path)
@@ -125,6 +126,7 @@ func (n *node) addRoute(path string, handle RequestHandler, r *router) {
 					handle:    n.handle,
 					priority:  n.priority - one,
 					router:    n.router,
+					prefixes:  prefixes,
 				}
 
 				// Update maxParams (max of all children)
@@ -203,7 +205,7 @@ func (n *node) addRoute(path string, handle RequestHandler, r *router) {
 					n.incrementChildPrio(len(n.indices) - one)
 					n = child
 				}
-				n.insertChild(numParams, path, fullPath, handle)
+				n.insertChild(numParams, path, fullPath, handle, prefixes)
 				return
 
 			} else if i == len(path) { // Make node a (in-path) leaf
@@ -215,12 +217,12 @@ func (n *node) addRoute(path string, handle RequestHandler, r *router) {
 			return
 		}
 	} else { // Empty tree
-		n.insertChild(numParams, path, fullPath, handle)
+		n.insertChild(numParams, path, fullPath, handle, prefixes)
 		n.nType = root
 	}
 }
 
-func (n *node) insertChild(numParams uint8, path, fullPath string, handle RequestHandler) {
+func (n *node) insertChild(numParams uint8, path, fullPath string, handle RequestHandler, prefixes []string) {
 	var offset int // already handled bytes of the path
 
 	// find prefix until first wildcard (beginning with ':' or '*')
@@ -266,6 +268,7 @@ func (n *node) insertChild(numParams uint8, path, fullPath string, handle Reques
 				nType:     param,
 				maxParams: numParams,
 				router:    n.router,
+				prefixes:  prefixes,
 			}
 			n.children = []*node{child}
 			n.wildChild = true
@@ -283,6 +286,7 @@ func (n *node) insertChild(numParams uint8, path, fullPath string, handle Reques
 					maxParams: numParams,
 					priority:  one,
 					router:    n.router,
+					prefixes:  prefixes,
 				}
 				n.children = []*node{child}
 				n = child
@@ -311,6 +315,7 @@ func (n *node) insertChild(numParams uint8, path, fullPath string, handle Reques
 				nType:     catchAll,
 				maxParams: one,
 				router:    n.router,
+				prefixes:  prefixes,
 			}
 			n.children = []*node{child}
 			n.indices = string(path[i])
@@ -325,6 +330,7 @@ func (n *node) insertChild(numParams uint8, path, fullPath string, handle Reques
 				handle:    handle,
 				priority:  one,
 				router:    n.router,
+				prefixes:  prefixes,
 			}
 			n.children = []*node{child}
 
@@ -356,6 +362,9 @@ func (n *node) GetValue(reqPath string, ctx *Context, method string) (handle Req
 			}
 		}
 		return record.n.handle, record.tsr
+	}
+	if ctx != nil {
+		ctx.subPrefixes = n.prefixes
 	}
 	path := reqPath
 walk: // outer loop for walking the tree

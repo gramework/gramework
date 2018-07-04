@@ -82,6 +82,7 @@ type (
 		requestID string
 
 		middlewaresShouldStopProcessing bool
+		subPrefixes                     []string
 	}
 
 	// Cookies handles a typical cookie storage
@@ -141,12 +142,13 @@ type (
 	// SubRouter handles subs registration
 	// like app.Sub("v1").GET("someRoute", "hi")
 	SubRouter struct {
-		parent routerable
-		prefix string
+		parent   routerable
+		prefix   string
+		prefixes []string
 	}
 
 	routerable interface {
-		handleReg(method, route string, handler interface{})
+		handleReg(method, route string, handler interface{}, prefixes []string)
 		determineHandler(handler interface{}) func(*Context)
 	}
 

@@ -17,7 +17,7 @@ import (
 func (r *SubRouter) GET(route string, handler interface{}) *SubRouter {
 	route = r.prefixedRoute(route)
 	if r.parent != nil {
-		r.parent.handleReg(MethodGET, route, handler)
+		r.parent.handleReg(MethodGET, route, handler, r.prefixes)
 	}
 	return r
 }
@@ -32,7 +32,7 @@ func (r *SubRouter) JSON(route string, handler interface{}) *SubRouter {
 	route = r.prefixedRoute(route)
 	if r.parent != nil {
 		h := r.parent.determineHandler(handler)
-		r.parent.handleReg(MethodGET, route, jsonHandler(h))
+		r.parent.handleReg(MethodGET, route, jsonHandler(h), r.prefixes)
 	}
 
 	return r
@@ -42,7 +42,7 @@ func (r *SubRouter) JSON(route string, handler interface{}) *SubRouter {
 func (r *SubRouter) DELETE(route string, handler interface{}) *SubRouter {
 	route = r.prefixedRoute(route)
 	if r.parent != nil {
-		r.parent.handleReg(MethodDELETE, route, handler)
+		r.parent.handleReg(MethodDELETE, route, handler, r.prefixes)
 	}
 
 	return r
@@ -52,7 +52,7 @@ func (r *SubRouter) DELETE(route string, handler interface{}) *SubRouter {
 func (r *SubRouter) HEAD(route string, handler interface{}) *SubRouter {
 	route = r.prefixedRoute(route)
 	if r.parent != nil {
-		r.parent.handleReg(MethodHEAD, route, handler)
+		r.parent.handleReg(MethodHEAD, route, handler, r.prefixes)
 	}
 
 	return r
@@ -63,7 +63,7 @@ func (r *SubRouter) ServeFile(route, file string) *SubRouter {
 	route = r.prefixedRoute(route)
 	r.parent.handleReg(MethodGET, route, func(ctx *Context) {
 		ctx.SendFile(file)
-	})
+	}, r.prefixes)
 
 	return r
 }
@@ -72,7 +72,7 @@ func (r *SubRouter) ServeFile(route, file string) *SubRouter {
 func (r *SubRouter) OPTIONS(route string, handler interface{}) *SubRouter {
 	route = r.prefixedRoute(route)
 	if r.parent != nil {
-		r.parent.handleReg(MethodOPTIONS, route, handler)
+		r.parent.handleReg(MethodOPTIONS, route, handler, r.prefixes)
 	}
 
 	return r
@@ -82,7 +82,7 @@ func (r *SubRouter) OPTIONS(route string, handler interface{}) *SubRouter {
 func (r *SubRouter) PUT(route string, handler interface{}) *SubRouter {
 	route = r.prefixedRoute(route)
 	if r.parent != nil {
-		r.parent.handleReg(MethodPUT, route, handler)
+		r.parent.handleReg(MethodPUT, route, handler, r.prefixes)
 	}
 
 	return r
@@ -92,7 +92,7 @@ func (r *SubRouter) PUT(route string, handler interface{}) *SubRouter {
 func (r *SubRouter) POST(route string, handler interface{}) *SubRouter {
 	route = r.prefixedRoute(route)
 	if r.parent != nil {
-		r.parent.handleReg(MethodPOST, route, handler)
+		r.parent.handleReg(MethodPOST, route, handler, r.prefixes)
 	}
 
 	return r
@@ -102,14 +102,14 @@ func (r *SubRouter) POST(route string, handler interface{}) *SubRouter {
 func (r *SubRouter) PATCH(route string, handler interface{}) *SubRouter {
 	route = r.prefixedRoute(route)
 	if r.parent != nil {
-		r.parent.handleReg(MethodPATCH, route, handler)
+		r.parent.handleReg(MethodPATCH, route, handler, r.prefixes)
 	}
 
 	return r
 }
 
-func (r *SubRouter) handleReg(method, route string, handler interface{}) {
-	r.parent.handleReg(method, route, handler)
+func (r *SubRouter) handleReg(method, route string, handler interface{}, prefixes []string) {
+	r.parent.handleReg(method, route, handler, prefixes)
 }
 
 // Sub let you quickly register subroutes with given prefix
@@ -117,8 +117,9 @@ func (r *SubRouter) handleReg(method, route string, handler interface{}) {
 // that give you /v1/users/view/:id and /v1/users/delete/:id registered
 func (r *SubRouter) Sub(path string) *SubRouter {
 	return &SubRouter{
-		parent: r,
-		prefix: r.prefixedRoute(path),
+		parent:   r,
+		prefix:   r.prefixedRoute(path),
+		prefixes: append(r.prefixes, path),
 	}
 }
 
