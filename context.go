@@ -33,6 +33,11 @@ func (ctx *Context) Writef(format string, a ...interface{}) {
 	fmt.Fprintf(ctx, format, a...)
 }
 
+// SubPrefixes returns list of router's prefixes that was created using .Sub() feature
+func (ctx *Context) SubPrefixes() []string {
+	return ctx.subPrefixes
+}
+
 // Writeln is a fmt.Fprintln(context, format, a...) shortcut
 func (ctx *Context) Writeln(a ...interface{}) {
 	fmt.Fprintln(ctx, a...)

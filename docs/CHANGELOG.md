@@ -1,3 +1,6 @@
+# Minor release candidate: 1.1.0-rc12
+- Add to Context "knowledge" about Sub's (see issue #35)
+
 # Major release candidate: 1.1.0-rc11: contains breaking change
 - **BREAKING CHANGE**: `client` and `sqlgen` experimental packages moved to `x` subpackage!
 - travis config updated: we supported go 1.9.2, 1.9.x, 1.10.x and `tip` before, now we removing obsolete versions and extend our support list:

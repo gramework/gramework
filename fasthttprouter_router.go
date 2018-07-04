@@ -147,38 +147,38 @@ func newRouter() *router {
 }
 
 // GET is a shortcut for router.Handle("GET", path, handle)
-func (r *router) GET(path string, handle RequestHandler) {
-	r.Handle(GET, path, handle)
+func (r *router) GET(path string, handle RequestHandler, prefixes []string) {
+	r.Handle(GET, path, handle, prefixes)
 }
 
 // HEAD is a shortcut for router.Handle("HEAD", path, handle)
-func (r *router) HEAD(path string, handle RequestHandler) {
-	r.Handle(HEAD, path, handle)
+func (r *router) HEAD(path string, handle RequestHandler, prefixes []string) {
+	r.Handle(HEAD, path, handle, prefixes)
 }
 
 // OPTIONS is a shortcut for router.Handle("OPTIONS", path, handle)
-func (r *router) OPTIONS(path string, handle RequestHandler) {
-	r.Handle(OPTIONS, path, handle)
+func (r *router) OPTIONS(path string, handle RequestHandler, prefixes []string) {
+	r.Handle(OPTIONS, path, handle, prefixes)
 }
 
 // POST is a shortcut for router.Handle("POST", path, handle)
-func (r *router) POST(path string, handle RequestHandler) {
-	r.Handle(POST, path, handle)
+func (r *router) POST(path string, handle RequestHandler, prefixes []string) {
+	r.Handle(POST, path, handle, prefixes)
 }
 
 // PUT is a shortcut for router.Handle("PUT", path, handle)
-func (r *router) PUT(path string, handle RequestHandler) {
-	r.Handle(PUT, path, handle)
+func (r *router) PUT(path string, handle RequestHandler, prefixes []string) {
+	r.Handle(PUT, path, handle, prefixes)
 }
 
 // PATCH is a shortcut for router.Handle("PATCH", path, handle)
-func (r *router) PATCH(path string, handle RequestHandler) {
-	r.Handle(PATCH, path, handle)
+func (r *router) PATCH(path string, handle RequestHandler, prefixes []string) {
+	r.Handle(PATCH, path, handle, prefixes)
 }
 
 // DELETE is a shortcut for router.Handle("DELETE", path, handle)
-func (r *router) DELETE(path string, handle RequestHandler) {
-	r.Handle(DELETE, path, handle)
+func (r *router) DELETE(path string, handle RequestHandler, prefixes []string) {
+	r.Handle(DELETE, path, handle, prefixes)
 }
 
 // Handle registers a new request handle with the given path and method.
@@ -189,7 +189,7 @@ func (r *router) DELETE(path string, handle RequestHandler) {
 // This function is intended for bulk loading and to allow the usage of less
 // frequently used, non-standardized or custom methods (e.g. for internal
 // communication with a proxy).
-func (r *router) Handle(method, path string, handle RequestHandler) {
+func (r *router) Handle(method, path string, handle RequestHandler, prefixes []string) {
 	if path[0] != SlashByte {
 		panic("path must begin with '/' in path '" + path + "'")
 	}
@@ -209,7 +209,7 @@ func (r *router) Handle(method, path string, handle RequestHandler) {
 		r.Trees[method] = root
 	}
 
-	root.addRoute(path, handle, r)
+	root.addRoute(path, handle, r, prefixes)
 }
 
 // ServeFiles serves files from the given file system root.
@@ -220,7 +220,7 @@ func (r *router) Handle(method, path string, handle RequestHandler) {
 // Internally a http.FileServer is used, therefore http.NotFound is used instead
 // of the Router's NotFound handler.
 //     router.ServeFiles("/src/*filepath", "/var/www")
-func (r *router) ServeFiles(path string, rootPath string) {
+func (r *router) ServeFiles(path string, rootPath string, prefixes []string) {
 	if len(path) < 10 || path[len(path)-10:] != "/*filepath" {
 		panic("path must end with /*filepath in path '" + path + "'")
 	}
@@ -230,7 +230,7 @@ func (r *router) ServeFiles(path string, rootPath string) {
 
 	r.GET(path, func(ctx *Context) {
 		fileHandler(ctx.RequestCtx)
-	})
+	}, prefixes)
 }
 
 // Recv used to recover after panic. Called if PanicHandler was set

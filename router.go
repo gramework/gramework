@@ -94,12 +94,13 @@ func (r *Router) SPAIndex(path string) *Router {
 // registered
 func (r *Router) Sub(path string) *SubRouter {
 	return &SubRouter{
-		prefix: path,
-		parent: r,
+		prefix:   path,
+		parent:   r,
+		prefixes: []string{path},
 	}
 }
 
-func (r *Router) handleReg(method, route string, handler interface{}) {
+func (r *Router) handleReg(method, route string, handler interface{}, prefixes []string) {
 	r.initRouter()
 	r.app.Logger.Debugf("registering %s %s", method, route)
 	typedHandler := r.determineHandler(handler)
@@ -111,7 +112,7 @@ func (r *Router) handleReg(method, route string, handler interface{}) {
 			break
 		}
 	}
-	r.router.Handle(method, route, typedHandler)
+	r.router.Handle(method, route, typedHandler, prefixes)
 }
 
 func (r *Router) getEFuncStrHandler(h func() string) func(*Context) {
@@ -125,7 +126,7 @@ func (r *Router) getEFuncStrHandler(h func() string) func(*Context) {
 // This function is intended for bulk loading and to allow the usage of less frequently used,
 // non-standardized or custom methods (e.g. for internal communication with a proxy).
 func (r *Router) Handle(method, route string, handler interface{}) *Router {
-	r.handleReg(method, route, handler)
+	r.handleReg(method, route, handler, nil)
 	return r
 }
 
@@ -236,7 +237,7 @@ func (r *Router) HTTPS() *Router {
 // of the Router's NotFound handler.
 //     router.ServeFiles("/src/*filepath", "/var/www")
 func (r *Router) ServeFiles(path string, rootPath string) {
-	r.router.ServeFiles(path, rootPath)
+	r.router.ServeFiles(path, rootPath, nil)
 }
 
 // Lookup allows the manual lookup of a method + path combo.
