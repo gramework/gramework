@@ -71,6 +71,8 @@ type (
 		suspectedIP *suspectsList
 	}
 
+	contextKey string
+
 	// Context is a gramework request context
 	Context struct {
 		*fasthttp.RequestCtx
