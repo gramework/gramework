@@ -327,7 +327,12 @@ func TestSPAIndexHandler(t *testing.T) {
 	const text = "My Template"
 
 	app.SPAIndex(func(ctx *gramework.Context) {
-		ctx.WriteString(text)
+		_, err := ctx.WriteString(text)
+
+		if err != nil {
+			t.Fatalf("WriteString error: %s", err)
+			t.FailNow()
+		}
 	})
 
 	go func() {
