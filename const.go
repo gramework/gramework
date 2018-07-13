@@ -60,6 +60,7 @@ const (
 	temporaryRedirectCode             = 307
 	one                               = 1
 	zero                              = 0
-	ContextKey                        = "gramework:request:ctx"
+	// ContextKey defines where in context.Context will be stored gramework.Context for current request
+	ContextKey contextKey = "gramework:request:ctx"
 	// plainCT                        = "text/plain"
 )
