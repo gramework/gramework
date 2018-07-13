@@ -81,7 +81,7 @@ func (ctx *Context) DecodeGQL() (r *GQLRequest, err error) {
 	}
 
 	switch ctx.ContentType() {
-	case jsonCT:
+	case jsonCT, jsonCTshort:
 		if err = ctx.UnJSON(&r); err != nil {
 			return nil, err
 		}
