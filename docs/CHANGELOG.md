@@ -1,3 +1,6 @@
+# Minor release candidate: 1.1.0-rc13
+- Add ToContext, DecodeGQL and ContentType functions in Context
+
 # Minor release candidate: 1.1.0-rc12
 - Add to Context "knowledge" about Sub's (see issue #35)
 
