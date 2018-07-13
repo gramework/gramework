@@ -321,3 +321,46 @@ func TestGrameworkListenAll(t *testing.T) {
 		)
 	}
 }
+
+func TestSPAIndexHandler(t *testing.T) {
+	app := gramework.New()
+	const text = "My Template"
+
+	app.SPAIndex(func(ctx *gramework.Context) {
+		ctx.WriteString(text)
+	})
+
+	go func() {
+		listenErr := app.ListenAndServe(":9988")
+		errCheck(t, listenErr)
+	}()
+
+	time.Sleep(2 * time.Second)
+
+	resp, err := http.Get("http://127.0.0.1:9988")
+	if err != nil {
+		t.Fatalf("Gramework isn't working! Got error: %s", err)
+		t.FailNow()
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		t.Fatalf("Gramework isn't working! Can't read body: %s", err)
+		t.FailNow()
+	}
+
+	err = resp.Body.Close()
+	errCheck(t, err)
+
+	if string(body) != text {
+		t.Fatalf(
+			"Gramework returned unexpected body! Got %q, expected %q",
+			string(body),
+			text,
+		)
+		t.FailNow()
+	}
+
+	err = resp.Body.Close()
+	errCheck(t, err)
+}

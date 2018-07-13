@@ -80,12 +80,17 @@ func (r *Router) ServeFile(route, file string) *Router {
 	return r
 }
 
-// SPAIndex serves an index file on any unregistered route
-func (r *Router) SPAIndex(path string) *Router {
-	r.NotFound(func(ctx *Context) {
-		ctx.HTML()
-		ctx.SendFile(path)
-	})
+// SPAIndex serves an index file or handler on any unregistered route
+func (r *Router) SPAIndex(pathOrHandler interface{}) *Router {
+	switch v := pathOrHandler.(type) {
+	case string:
+		r.NotFound(func(ctx *Context) {
+			ctx.HTML()
+			ctx.SendFile(v)
+		})
+	default:
+		r.NotFound(r.determineHandler(v))
+	}
 	return r
 }
 
