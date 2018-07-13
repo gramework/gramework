@@ -87,6 +87,7 @@ type (
 		subPrefixes                     []string
 	}
 
+	// GQLRequest is a GraphQL request structure
 	GQLRequest struct {
 		Query         string                 `json:"query"`
 		OperationName string                 `json:"operationName"`
