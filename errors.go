@@ -19,4 +19,7 @@ var (
 
 	// ErrArgNotFound used when no route argument is found
 	ErrArgNotFound = errors.New("undefined argument")
+
+	// ErrInvalidGQLRequest used in DecodeGQL
+	ErrInvalidGQLRequest = errors.New("invalid gql request")
 )

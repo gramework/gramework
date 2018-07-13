@@ -85,6 +85,12 @@ type (
 		subPrefixes                     []string
 	}
 
+	GQLRequest struct {
+		Query         string                 `json:"query"`
+		OperationName string                 `json:"operationName"`
+		Variables     map[string]interface{} `json:"variables"`
+	}
+
 	// Cookies handles a typical cookie storage
 	Cookies struct {
 		Storage map[string]string

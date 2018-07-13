@@ -11,6 +11,7 @@ package gramework
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
@@ -36,6 +37,60 @@ func (ctx *Context) Writef(format string, a ...interface{}) {
 // SubPrefixes returns list of router's prefixes that was created using .Sub() feature
 func (ctx *Context) SubPrefixes() []string {
 	return ctx.subPrefixes
+}
+
+// ContentType returns Content-Type header for current request
+func (ctx *Context) ContentType() string {
+	return string(ctx.Request.Header.Peek(contentType))
+}
+
+// ToContext returns context.Context with gramework.Context stored
+// in context values as a pointer (see gramework.ContextKey to receive and use this value).
+//
+// By default this func will extend context.Background(), if parentCtx is not provided.
+func (ctx *Context) ToContext(parentCtx ...context.Context) context.Context {
+	if len(parentCtx) > 0 {
+		return context.WithValue(parentCtx[0], ContextKey, ctx)
+	}
+
+	return context.WithValue(context.Background(), ContextKey, ctx)
+}
+
+// DecodeGQL parses GraphQL request and returns data from it
+func (ctx *Context) DecodeGQL() (r *GQLRequest, err error) {
+	r = &GQLRequest{}
+
+	if string(ctx.Method()) == GET {
+		if len(ctx.GETParam("query")) == 0 {
+			return nil, ErrInvalidGQLRequest
+		}
+		r.Query = ctx.GETParam("query")[0]
+
+		if len(ctx.GETParam("operationName")) != 0 {
+			r.OperationName = ctx.GETParam("operationName")[0]
+		}
+
+		if len(ctx.GETParam("variables")) != 0 {
+			_, err = ctx.UnJSONBytes([]byte(ctx.GETParam("variables")[0]), &r.Variables)
+			if err != nil {
+				return nil, ErrInvalidGQLRequest
+			}
+		}
+
+		return r, nil
+	}
+
+	switch ctx.ContentType() {
+	case jsonCT:
+		if err = ctx.UnJSON(&r); err != nil {
+			return nil, err
+		}
+		return r, nil
+	case gqlCT:
+		r.Query = string(ctx.PostBody())
+		return
+	}
+	return nil, err
 }
 
 // Writeln is a fmt.Fprintln(context, format, a...) shortcut

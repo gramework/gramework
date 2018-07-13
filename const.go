@@ -40,6 +40,7 @@ const (
 	corsAccessControlAllowMethods     = "Access-Control-Allow-Methods"
 	corsAccessControlAllowOrigin      = "Access-Control-Allow-Origin"
 	corsCType                         = "Content-Type, *"
+	contentType                       = "Content-Type"
 	emptyString                       = ""
 	fmtV                              = "%v"
 	fmtS                              = "%s"
@@ -48,6 +49,7 @@ const (
 	htmlCT                            = "text/html; charset=utf8"
 	https                             = "https"
 	jsonCT                            = "application/json;charset=utf8"
+	gqlCT                             = "application/graphql"
 	methods                           = "GET,PUT,POST,DELETE"
 	trueStr                           = "true"
 	xmlCT                             = "text/xml"
@@ -58,5 +60,6 @@ const (
 	temporaryRedirectCode             = 307
 	one                               = 1
 	zero                              = 0
+	ContextKey                        = "gramework:request:ctx"
 	// plainCT                        = "text/plain"
 )
