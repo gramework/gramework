@@ -18,7 +18,6 @@ import (
 	"time"
 
 	"github.com/kirillDanshin/letsencrypt"
-	"github.com/valyala/fasthttp"
 	"golang.org/x/crypto/acme/autocert"
 )
 
@@ -93,13 +92,7 @@ func (app *App) ListenAndServeAutoTLS(addr string, cachePath ...string) error {
 		app.name = "gramework/" + Version
 	}
 
-	server := fasthttp.Server{
-		Handler: app.handler(),
-		Logger:  app.Logger.(fasthttp.Logger),
-		Name:    app.name,
-	}
-
-	if err = server.Serve(tlsLn); err != nil {
+	if err = app.server.Serve(tlsLn); err != nil {
 		app.Logger.Errorf("Can't serve: %s", err)
 	}
 
@@ -162,13 +155,8 @@ func (app *App) ListenAndServeAutoTLSDev(addr string, cachePath ...string) error
 
 	l := app.Logger.WithField("bind", addr)
 	l.Info("Starting HTTPS")
-	server := fasthttp.Server{
-		Handler: app.handler(),
-		Logger:  NewFastHTTPLoggerAdapter(&app.Logger),
-		Name:    "gramework/" + Version,
-	}
 
-	if err = server.Serve(tlsLn); err != nil {
+	if err = app.server.Serve(tlsLn); err != nil {
 		app.Logger.Errorf("Can't serve: %s", err)
 	}
 

@@ -12,8 +12,6 @@ package gramework
 import (
 	"errors"
 	"flag"
-
-	"github.com/valyala/fasthttp"
 )
 
 // ListenAndServe HTTP on given addr.
@@ -50,14 +48,8 @@ func (app *App) ListenAndServe(addr ...string) error {
 		app.name = "gramework/" + Version
 	}
 
-	s := fasthttp.Server{
-		Handler: app.handler(),
-		Logger:  NewFastHTTPLoggerAdapter(&app.Logger),
-		Name:    app.name,
-	}
-
 	var err error
-	if err = s.ListenAndServe(bind); err != nil {
+	if err = app.server.ListenAndServe(bind); err != nil {
 		l.Errorf("ListenAndServe failed: %s", err)
 	}
 

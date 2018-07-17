@@ -16,12 +16,13 @@ import (
 
 	"github.com/apex/log"
 	"github.com/apex/log/handlers/cli"
+	"github.com/valyala/fasthttp"
 )
 
 var defaultMaxHackAttempts int32 = 5
 
 // New App
-func New() *App {
+func New(opts ...func(*App)) *App {
 	logger := &log.Logger{
 		Level:   log.DebugLevel,
 		Handler: cli.New(os.Stdout),
@@ -55,9 +56,18 @@ func New() *App {
 		maxHackAttempts:           &maxHackAttempts,
 	}
 
+	app.server = &fasthttp.Server{
+		Handler: app.handler(),
+		Logger:  NewFastHTTPLoggerAdapter(&app.Logger),
+		Name:    app.name,
+	}
 	app.defaultRouter = &Router{
 		router: newRouter(),
 		app:    app,
+	}
+
+	for _, opt := range opts {
+		opt(app)
 	}
 
 	return app
