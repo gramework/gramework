@@ -7,6 +7,7 @@ func OptUseServer(s *fasthttp.Server) func(*App) {
 	return func(a *App) {
 		if a != nil && s != nil {
 			a.server = s
+			a.server.Handler = a.handler()
 		}
 	}
 }
