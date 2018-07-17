@@ -1,3 +1,6 @@
+# Minor release candidate: 1.1.0-rc14
+- `gramework.New()` now supports `Opts`. See `OptUseServer` and `OptMaxRequestBodySize` in opts.go for examples
+
 # Minor release candidate: 1.1.0-rc13
 - Add ToContext, DecodeGQL and ContentType functions in Context
 - SPAIndex now supports handlers, that will be useful with template engines of your choise

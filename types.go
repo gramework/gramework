@@ -69,6 +69,8 @@ type (
 		untrustedIP *ipList
 		// Gramework Protection's suspects ip list
 		suspectedIP *suspectsList
+
+		server *fasthttp.Server
 	}
 
 	contextKey string
