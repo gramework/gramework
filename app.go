@@ -14,6 +14,12 @@ func (app *App) SetName(name string) {
 	app.name = name
 }
 
+// SetCookieDomain allows you to implement SSO and other useful features
+// without additional pain
+func (app *App) SetCookieDomain(domain string) {
+	app.cookieDomain = domain
+}
+
 // ToTLSHandler returns handler that redirects user to HTTPS scheme
 func (app *App) ToTLSHandler() func(*Context) {
 	return func(ctx *Context) {
