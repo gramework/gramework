@@ -56,6 +56,7 @@ type (
 		flagsRegistered           bool
 		HandleUnknownDomains      bool
 		seed                      uintptr
+		cookieDomain              string
 
 		// Gramework Protection's max detections of suspect before ban
 		maxHackAttempts *int32

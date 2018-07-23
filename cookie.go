@@ -13,12 +13,21 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
+// GetCookieDomain returns previously configured cookie domain and if cookie domain
+// was configured at all
+func (ctx *Context) GetCookieDomain() (domain string, wasConfigured bool) {
+	return ctx.App.cookieDomain, len(ctx.App.cookieDomain) > 0
+}
+
 func (ctx *Context) saveCookies() {
 	ctx.Cookies.Mu.Lock()
 	for k, v := range ctx.Cookies.Storage {
 		c := fasthttp.AcquireCookie()
 		c.SetKey(k)
 		c.SetValue(v)
+		if len(ctx.App.cookieDomain) > 0 {
+			c.SetDomain(ctx.App.cookieDomain)
+		}
 		ctx.Response.Header.SetCookie(c)
 		fasthttp.ReleaseCookie(c)
 	}

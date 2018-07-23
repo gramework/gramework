@@ -18,6 +18,7 @@ import (
 	"strings"
 
 	"github.com/gocarina/gocsv"
+	"github.com/gramework/runtimer"
 	acceptParser "github.com/kirillDanshin/go-accept-headers"
 	"github.com/valyala/fasthttp"
 )
@@ -27,6 +28,18 @@ var ctypes = []string{
 	jsonCT,
 	xmlCT,
 	csvCT,
+}
+
+// ContextFromValue returns gramework.Context from context.Context value from gramework.ContextKey
+// in a more effective way, than standard eface.(*SomeType).
+// WARNING: this function may return nil, if ctx has no gramework.Context stored or ctx is nil.
+// This function will give a warning if you call it with nil context.Context.
+func ContextFromValue(ctx context.Context) *Context {
+	if ctx == nil {
+		Logger.Warn("ContextFromValue was called with nil context.Context, returning nil")
+		return nil
+	}
+	return (*Context)(runtimer.GetEfaceDataPtr(ctx.Value(ContextKey)))
 }
 
 // Writef is a fmt.Fprintf(context, format, a...) shortcut

@@ -1,3 +1,8 @@
+# Minor release candidate: 1.1.0-rc15
+- `app.SetCookieDomain()`, `ctx.GetCookieDomain()` and `ContextFromValue(context.Context)` bringed in.
+This features even more simplifies working with github.com/graph-gophers/graphql-go and give you
+ability to run your own SSO, if you'd like to.
+
 # Minor release candidate: 1.1.0-rc14
 - `gramework.New()` now supports `Opts`. See `OptUseServer` and `OptMaxRequestBodySize` in opts.go for examples
 
