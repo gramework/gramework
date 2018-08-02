@@ -1,3 +1,9 @@
+# Minor release candidate: 1.1.0-rc16
+- `mw/xhostname`: middleware package created and initialized with `xhostname`.
+  This middleware provides `X-Hostname` header in each request and
+  useful when using scalable container platform to see which host
+  sent you current response.
+
 # Minor release candidate: 1.1.0-rc15
 - `app.SetCookieDomain()`, `ctx.GetCookieDomain()` and `ContextFromValue(context.Context)` bringed in.
 This features even more simplifies working with github.com/graph-gophers/graphql-go and give you
@@ -15,7 +21,8 @@ ability to run your own SSO, if you'd like to.
 
 # Major release candidate: 1.1.0-rc11: contains breaking change
 - **BREAKING CHANGE**: `client` and `sqlgen` experimental packages moved to `x` subpackage!
-- travis config updated: we supported go 1.9.2, 1.9.x, 1.10.x and `tip` before, now we removing obsolete versions and extend our support list:
+- travis config updated: we supported go 1.9.2, 1.9.x, 1.10.x and `tip` before, now we removing
+  obsolete versions and extend our support list:
   - 1.9.4
   - 1.9.5
   - 1.9.6
@@ -29,7 +36,8 @@ ability to run your own SSO, if you'd like to.
   This also fixes a minor security issue
 
 # Minor release candidade: 1.1.0-rc9
-- `DisableFlags()` - DisableFlags globally disables default gramework flags, which is useful when using non-default flag libraries like pflag.
+- `DisableFlags()` - DisableFlags globally disables default gramework flags, which is useful
+  when using custom flag libraries like pflag.
 
 # Minor release candidade: 1.1.0-rc8
 Protect enables Gramework Protection for routes registered after Protect() call.
@@ -49,19 +57,33 @@ Automatic blacklist bans suspected IP after App.MaxHackAttempts(). This behaviou
 - Brand new Gramework Protection:
   - `app.Protect()`: enables Gramework Protection for routes registered after Protect() call.
   - `app.Whitelist()`: adds given ip to Gramework Protection trustedIP list.
-  - `app.Untrust()`: removes given ip from trustedIP list, that enables protection of Gramework Protection enabled endpoints for given ip too. Opposite of `app.Whitelist`.
-  - `app.Blacklist()`: adds given ip to untrustedIP list, if it's not whitelisted. Any ip blacklisted with Gramework Protection can't access protected enpoints via any method.
+  - `app.Untrust()`: removes given ip from trustedIP list, that enables protection
+    of Gramework Protection enabled endpoints for given ip too. Opposite of `app.Whitelist`.
+  - `app.Blacklist()`: adds given ip to untrustedIP list, if it's not whitelisted. Any
+    ip blacklisted with Gramework Protection can't access protected enpoints via any method.
   - `app.Suspect()`: adds given ip to Gramework Protection suspectedIP list.
-  - `app.MaxHackAttempts()`: sets new max hack attempts for blacklist triggering in the Gramework Protection. If 0 passed, MaxHackAttempts returns current value without setting a new one. If -1 passed, automatic blacklist disabled. See `ctx.Whitelist()`, `ctx.Blacklist()` and `ctx.Suspect()` for manual Gramework Protection control.
-  - `ctx.IsWhitelisted()`: checks if we have current client in Gramework Protection trustedIP list. Use ctx.Whitelist() to add current client to trusted list.
-  - `ctx.IsBlacklisted()`: checks if we have current client in Gramework Protection untrustedIP list. Use ctx.Blacklist() to add current client to untrustedIP list.
-  - `ctx.IsSuspect()`: checks if we have current client in Gramework Protection suspectedIP list. Use ctx.Suspect() to add current client to suspectedIP list.
-  - `ctx.Whitelist()`: adds given ip to trustedIP list of the Gramework Protection. To remove IP from whitelist, call App.Untrust()
-  - `ctx.Untrust()`: deletes given ip from trustedIP list, that enables protection of Gramework Protection enabled endpoints for given ip too. Opposite of `ctx.Whitelist()`.
-  - `ctx.Blacklist()`: adds given ip to untrustedIP list, if it's not whitelisted. Any blacklisted ip can't access protected enpoints via any method.
+  - `app.MaxHackAttempts()`: sets new max hack attempts for blacklist triggering in
+    the Gramework Protection. If 0 passed, MaxHackAttempts returns current value without setting a new one.
+    If -1 passed, automatic blacklist disabled. See `ctx.Whitelist()`, `ctx.Blacklist()` and `ctx.Suspect()`
+    for manual Gramework Protection control.
+  - `ctx.IsWhitelisted()`: checks if we have current client in Gramework Protection
+    trustedIP list. Use ctx.Whitelist() to add current client to trusted list.
+  - `ctx.IsBlacklisted()`: checks if we have current client in Gramework Protection untrustedIP list.
+    Use ctx.Blacklist() to add current client to untrustedIP list.
+  - `ctx.IsSuspect()`: checks if we have current client in Gramework Protection suspectedIP list.
+    Use ctx.Suspect() to add current client to suspectedIP list.
+  - `ctx.Whitelist()`: adds given ip to trustedIP list of the Gramework Protection.
+    To remove IP from whitelist, call App.Untrust()
+  - `ctx.Untrust()`: deletes given ip from trustedIP list, that enables protection
+    of Gramework Protection enabled endpoints for given ip too. Opposite of `ctx.Whitelist()`.
+  - `ctx.Blacklist()`: adds given ip to untrustedIP list, if it's not whitelisted.
+    Any blacklisted ip can't access protected enpoints via any method.
   - `ctx.Suspect()`: adds current client ip to Gramework Protection suspectedIP list.
-  - `ctx.HackAttemptDetected()`: Suspect adds given ip to Gramework Protection suspectedIP list. Use it when you detected app-level hack attempt from current client.
-  - `ctx.SuspectsHackAttempts()`: SuspectsHackAttempts returns hack attempts detected with Gramework Protection both automatically and manually by calling Context.HackAttemptDetected(). For any whitelisted ip this function will return 0.
+  - `ctx.HackAttemptDetected()`: Suspect adds given ip to Gramework Protection
+    suspectedIP list. Use it when you detected app-level hack attempt from current client.
+  - `ctx.SuspectsHackAttempts()`: SuspectsHackAttempts returns hack attempts detected with
+    Gramework Protection both automatically and manually by calling Context.HackAttemptDetected().
+    For any whitelisted ip this function will return 0.
 - Test fix: use letsencrypt stage environment instead of production one
 
 # Minor release candidade: 1.0.0-rc7

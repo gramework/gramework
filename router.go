@@ -111,7 +111,10 @@ func (r *Router) handleReg(method, route string, handler interface{}, prefixes [
 	typedHandler := r.determineHandler(handler)
 	for prefix := range r.app.protectedPrefixes {
 		if strings.HasPrefix(strings.TrimLeft(route, "/"), strings.TrimLeft(prefix, "/")) {
-			r.app.Logger.WithField("route", route).Info("[Gramework Protection] Protection enabled for a new route")
+			r.app.Logger.
+				WithField("route", route).
+				WithField("method", method).
+				Info("[Gramework Protection] Protection enabled for a new route")
 			r.app.protectedEndpoints[route] = struct{}{}
 			typedHandler = r.app.protectionMiddleware(typedHandler)
 			break
