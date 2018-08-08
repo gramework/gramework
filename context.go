@@ -42,6 +42,12 @@ func ContextFromValue(ctx context.Context) *Context {
 	return (*Context)(runtimer.GetEfaceDataPtr(ctx.Value(ContextKey)))
 }
 
+// MWKill kills current context and stop any user-defined processing.
+// This function intented for use in middlewares.
+func (ctx *Context) MWKill() {
+	ctx.middlewareKilledReq = true
+}
+
 // Writef is a fmt.Fprintf(context, format, a...) shortcut
 func (ctx *Context) Writef(format string, a ...interface{}) {
 	fmt.Fprintf(ctx, format, a...)

@@ -88,6 +88,7 @@ type (
 
 		middlewaresShouldStopProcessing bool
 		subPrefixes                     []string
+		middlewareKilledReq             bool
 	}
 
 	// GQLRequest is a GraphQL request structure
