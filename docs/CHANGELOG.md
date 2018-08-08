@@ -1,3 +1,7 @@
+# Minor release candidate: 1.1.0-rc17
+- `ctx.MWKill()` introduced. This function kills current context and stop any user-defined processing.
+  This function intented for use in middlewares.
+
 # Minor release candidate: 1.1.0-rc16
 - `mw/xhostname`: middleware package created and initialized with `xhostname`.
   This middleware provides `X-Hostname` header in each request and

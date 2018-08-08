@@ -51,6 +51,10 @@ func (app *App) handler() func(*fasthttp.RequestCtx) {
 		}
 
 		app.preMiddlewaresMu.RUnlock()
+		if ctx.middlewareKilledReq {
+			ctx.saveCookies()
+			return
+		}
 		ctx.middlewaresShouldStopProcessing = false
 		app.middlewaresMu.RLock()
 		for k := range app.middlewares {
@@ -61,6 +65,10 @@ func (app *App) handler() func(*fasthttp.RequestCtx) {
 		}
 
 		app.middlewaresMu.RUnlock()
+		if ctx.middlewareKilledReq {
+			ctx.saveCookies()
+			return
+		}
 		if len(app.domains) > 0 {
 			app.domainListLock.RLock()
 			if app.domains[string(ctx.URI().Host())] != nil {
