@@ -318,10 +318,12 @@ func UnJSONBytes(b []byte, v ...interface{}) (interface{}, error) {
 
 // BadRequest sends HTTP/1.1 400 Bad Request
 func (ctx *Context) BadRequest(err ...error) {
-	ctx.Error(badRequest, fasthttp.StatusBadRequest)
-	if len(err) == 1 {
-		ctx.Writeln(err[0])
+	e := badRequest
+	if len(err) > 0 {
+		e = err[0].Error()
 	}
+
+	ctx.Error(e, fasthttp.StatusBadRequest)
 }
 
 // Err500 sets Internal Server Error status
