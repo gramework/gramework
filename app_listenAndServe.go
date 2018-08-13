@@ -49,7 +49,8 @@ func (app *App) ListenAndServe(addr ...string) error {
 	}
 
 	var err error
-	if err = app.server.ListenAndServe(bind); err != nil {
+	srv := app.copyServer()
+	if err = srv.ListenAndServe(bind); err != nil {
 		l.Errorf("ListenAndServe failed: %s", err)
 	}
 

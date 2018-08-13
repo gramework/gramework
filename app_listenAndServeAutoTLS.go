@@ -92,7 +92,8 @@ func (app *App) ListenAndServeAutoTLS(addr string, cachePath ...string) error {
 		app.name = "gramework/" + Version
 	}
 
-	if err = app.server.Serve(tlsLn); err != nil {
+	srv := app.copyServer()
+	if err = srv.Serve(tlsLn); err != nil {
 		app.Logger.Errorf("Can't serve: %s", err)
 	}
 
@@ -156,7 +157,8 @@ func (app *App) ListenAndServeAutoTLSDev(addr string, cachePath ...string) error
 	l := app.Logger.WithField("bind", addr)
 	l.Info("Starting HTTPS")
 
-	if err = app.server.Serve(tlsLn); err != nil {
+	srv := app.copyServer()
+	if err = srv.Serve(tlsLn); err != nil {
 		app.Logger.Errorf("Can't serve: %s", err)
 	}
 

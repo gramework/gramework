@@ -20,7 +20,8 @@ func (app *App) Serve(ln net.Listener) error {
 	}
 
 	var err error
-	if err = app.server.Serve(ln); err != nil {
+	srv := app.copyServer()
+	if err = srv.Serve(ln); err != nil {
 		app.Logger.Errorf("ListenAndServe failed: %s", err)
 	}
 
