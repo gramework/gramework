@@ -3,6 +3,8 @@ package graphiql
 import "github.com/gramework/gramework"
 
 const (
+	// PackageVersion defines graphiql package version
+	// from npm, which we'll use in our unpkg.com links
 	PackageVersion = "0.11.11"
 )
 
