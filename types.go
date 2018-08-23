@@ -57,6 +57,9 @@ type (
 		HandleUnknownDomains      bool
 		seed                      uintptr
 		cookieDomain              string
+		NoDefaultPanicHandler     bool
+		PanicHandlerNoPoweredBy   bool
+		PanicHandlerCustomLayout  string
 
 		// Gramework Protection's max detections of suspect before ban
 		maxHackAttempts *int32

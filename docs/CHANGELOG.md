@@ -1,3 +1,11 @@
+# Minor release candidate: 1.1.0-rc18
+- Default panic handler introduced along with new app options:
+  - `NoDefaultPanicHandler     bool` - disables default panic handler. You may also overwrite it with custom panic handler by setting it in a classic way.
+  - `PanicHandlerNoPoweredBy   bool` - disables "Powered by Gramework" block
+  - `PanicHandlerCustomLayout  string` - Custom layout sent after default page layout. You may use it for analytics etc.
+- Requests are now traced by default. You can disable it by setting log level to anything better then `DebugLevel`.
+- GraphIQL released
+
 # Minor release candidate: 1.1.0-rc17
 - `ctx.MWKill()` introduced. This function kills current context and stop any user-defined processing.
   This function intented for use in middlewares.

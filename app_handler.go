@@ -10,6 +10,7 @@
 package gramework
 
 import (
+	"github.com/apex/log"
 	"github.com/google/uuid"
 	"github.com/valyala/fasthttp"
 )
@@ -30,9 +31,15 @@ func (app *App) handler() func(*fasthttp.RequestCtx) {
 			}
 		}
 
-		if app.defaultRouter.router.PanicHandler != nil {
+		tracer := ctx.Logger.
+			WithFields(log.Fields{
+				"method": BytesToString(ctx.Method()),
+				"path":   BytesToString(ctx.Path()),
+			})
+
+		if app.defaultRouter.router.PanicHandler != nil || !app.NoDefaultPanicHandler {
 			// unfortunately, we can't get rid of that defer
-			defer app.defaultRouter.router.Recv(ctx)
+			defer app.defaultRouter.router.Recv(ctx, tracer)
 		}
 
 		xReqID := ctx.Request.Header.Peek(xRequestID)
@@ -53,6 +60,9 @@ func (app *App) handler() func(*fasthttp.RequestCtx) {
 		app.preMiddlewaresMu.RUnlock()
 		if ctx.middlewareKilledReq {
 			ctx.saveCookies()
+			tracer.
+				WithField("status", ctx.Response.StatusCode()).
+				Debug("middleware stopped processing")
 			return
 		}
 		ctx.middlewaresShouldStopProcessing = false
@@ -67,6 +77,9 @@ func (app *App) handler() func(*fasthttp.RequestCtx) {
 		app.middlewaresMu.RUnlock()
 		if ctx.middlewareKilledReq {
 			ctx.saveCookies()
+			tracer.
+				WithField("status", ctx.Response.StatusCode()).
+				Debug("middleware stopped processing")
 			return
 		}
 		if len(app.domains) > 0 {
@@ -76,6 +89,9 @@ func (app *App) handler() func(*fasthttp.RequestCtx) {
 				app.domains[string(ctx.URI().Host())].handler(ctx)
 				app.runMiddlewaresAfterRequest(ctx)
 				ctx.saveCookies()
+				tracer.
+					WithField("status", ctx.Response.StatusCode()).
+					Debug("request processed")
 				return
 			}
 
@@ -84,6 +100,9 @@ func (app *App) handler() func(*fasthttp.RequestCtx) {
 				ctx.NotFound()
 				app.runMiddlewaresAfterRequest(ctx)
 				ctx.saveCookies()
+				tracer.
+					WithField("status", ctx.Response.StatusCode()).
+					Debug("request processed")
 				return
 			}
 		}
@@ -91,6 +110,9 @@ func (app *App) handler() func(*fasthttp.RequestCtx) {
 		app.defaultRouter.handler(ctx)
 		app.runMiddlewaresAfterRequest(ctx)
 		ctx.saveCookies()
+		tracer.
+			WithField("status", ctx.Response.StatusCode()).
+			Debug("request processed")
 	}
 }
 
