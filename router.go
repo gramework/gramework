@@ -369,7 +369,7 @@ func (r *Router) handler(ctx *Context) {
 
 func (r *Router) handle(path, method string, ctx *Context, handler func(ctx *Context), redirectTrailingSlashs bool, isRootRouter bool) (handlerFound bool) {
 	if r.router.PanicHandler != nil {
-		defer r.router.Recv(ctx)
+		defer r.router.Recv(ctx, nil)
 	}
 	if root := r.router.Trees[method]; root != nil {
 		if f, tsr := root.GetValue(path, ctx, string(ctx.Method())); f != nil {
