@@ -6,8 +6,8 @@ import "github.com/valyala/fasthttp"
 func OptUseServer(s *fasthttp.Server) func(*App) {
 	return func(a *App) {
 		if a != nil && s != nil {
-			a.server = s
-			a.server.Handler = a.handler()
+			a.serverBase = s
+			a.serverBase.Handler = a.handler()
 		}
 	}
 }
@@ -17,8 +17,8 @@ func OptUseServer(s *fasthttp.Server) func(*App) {
 // with a new one.
 func OptMaxRequestBodySize(new int) func(*App) {
 	return func(a *App) {
-		if a != nil && a.server != nil {
-			a.server.MaxRequestBodySize = new
+		if a != nil && a.serverBase != nil {
+			a.serverBase.MaxRequestBodySize = new
 		}
 	}
 }

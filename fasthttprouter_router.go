@@ -237,13 +237,16 @@ func (r *router) ServeFiles(path string, rootPath string, prefixes []string) {
 // Recv used to recover after panic. Called if PanicHandler was set
 func (r *router) Recv(ctx *Context, tracer *log.Entry) {
 	if rcv := recover(); rcv != nil {
-		if tracer != nil {
-			tracer.Error("request caused panic")
-		}
 		if r.PanicHandler != nil {
 			r.PanicHandler(ctx, rcv)
 		} else {
 			DefaultPanicHandler(ctx, rcv)
+		}
+		if tracer != nil {
+			tracer.WithFields(log.Fields{
+				"reason": rcv,
+				"code":   ctx.Response.StatusCode(),
+			}).Error("request caused panic")
 		}
 	}
 }

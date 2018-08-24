@@ -50,6 +50,12 @@ func (app *App) ListenAndServe(addr ...string) error {
 
 	var err error
 	srv := app.copyServer()
+	app.runningServersMu.Lock()
+	app.runningServers = append(app.runningServers, runningServerInfo{
+		bind: bind,
+		srv:  srv,
+	})
+	app.runningServersMu.Unlock()
 	if err = srv.ListenAndServe(bind); err != nil {
 		l.Errorf("ListenAndServe failed: %s", err)
 	}

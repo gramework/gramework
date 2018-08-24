@@ -93,6 +93,12 @@ func (app *App) ListenAndServeAutoTLS(addr string, cachePath ...string) error {
 	}
 
 	srv := app.copyServer()
+	app.runningServersMu.Lock()
+	app.runningServers = append(app.runningServers, runningServerInfo{
+		bind: addr,
+		srv:  srv,
+	})
+	app.runningServersMu.Unlock()
 	if err = srv.Serve(tlsLn); err != nil {
 		app.Logger.Errorf("Can't serve: %s", err)
 	}
@@ -158,6 +164,12 @@ func (app *App) ListenAndServeAutoTLSDev(addr string, cachePath ...string) error
 	l.Info("Starting HTTPS")
 
 	srv := app.copyServer()
+	app.runningServersMu.Lock()
+	app.runningServers = append(app.runningServers, runningServerInfo{
+		bind: addr,
+		srv:  srv,
+	})
+	app.runningServersMu.Unlock()
 	if err = srv.Serve(tlsLn); err != nil {
 		app.Logger.Errorf("Can't serve: %s", err)
 	}
