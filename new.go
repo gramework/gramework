@@ -54,9 +54,10 @@ func New(opts ...func(*App)) *App {
 		preMiddlewares:            make([]func(*Context), 0),
 		seed:                      uintptr(time.Now().Nanosecond()),
 		maxHackAttempts:           &maxHackAttempts,
+		runningServersMu:          new(sync.Mutex),
 	}
 
-	app.server = &fasthttp.Server{
+	app.serverBase = &fasthttp.Server{
 		Handler: app.handler(),
 		Logger:  NewFastHTTPLoggerAdapter(&app.Logger),
 		Name:    app.name,

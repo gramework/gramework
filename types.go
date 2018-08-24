@@ -74,7 +74,14 @@ type (
 		// Gramework Protection's suspects ip list
 		suspectedIP *suspectsList
 
-		server *fasthttp.Server
+		serverBase       *fasthttp.Server
+		runningServers   []runningServerInfo
+		runningServersMu *sync.Mutex
+	}
+
+	runningServerInfo struct {
+		bind string
+		srv  *fasthttp.Server
 	}
 
 	contextKey string

@@ -12,7 +12,8 @@ var errGotPanic = struct {
 
 // DefaultPanicHandler serves error page or error response depending on ctx.ContentType()
 func DefaultPanicHandler(ctx *Context, panicReason interface{}) {
-	if strings.HasPrefix(ctx.ContentType(), htmlCT) {
+	ctx.SetStatusCode(500)
+	if strings.HasPrefix(string(ctx.Request.Header.Peek("Accept")), "text/html") || strings.Contains(ctx.ContentType(), "text/html") {
 		ctx.HTML().WriteString(handledPanic)
 		if !ctx.App.PanicHandlerNoPoweredBy {
 			ctx.WriteString(poweredBy)
@@ -36,6 +37,8 @@ const handledPanic = `<!doctype html>
 html {
 	position: relative;
 	font-family: sans-serif;
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
 }
 body, html,
 .mainWrapper {
@@ -114,5 +117,5 @@ a {
 `
 
 const poweredBy = `<div class="poweredBy">
-<p>Powered by <a href="https://github.com/gramework/gramework">Gramework</a>.</p>
+	<p>Powered by <a target=_blank href="https://github.com/gramework/gramework">Gramework</a>.</p>
 </div>`

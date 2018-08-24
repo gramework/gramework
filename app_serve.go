@@ -21,6 +21,12 @@ func (app *App) Serve(ln net.Listener) error {
 
 	var err error
 	srv := app.copyServer()
+	app.runningServersMu.Lock()
+	app.runningServers = append(app.runningServers, runningServerInfo{
+		bind: ln.Addr().String(),
+		srv:  srv,
+	})
+	app.runningServersMu.Unlock()
 	if err = srv.Serve(ln); err != nil {
 		app.Logger.Errorf("ListenAndServe failed: %s", err)
 	}
