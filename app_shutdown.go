@@ -8,10 +8,10 @@ func (app *App) Shutdown() (err error) {
 
 	newRunningList := []runningServerInfo{}
 	for _, info := range app.runningServers {
-		app.Logger.WithField("bind", info.bind).Warn("shutting down server")
+		app.internalLog.WithField("bind", info.bind).Warn("shutting down server")
 		err = info.srv.Shutdown()
 		if err != nil {
-			app.Logger.WithError(err).Error("could not shutdown server")
+			app.internalLog.WithError(err).Error("could not shutdown server")
 			newRunningList = append(newRunningList, info)
 			continue
 		}
@@ -20,9 +20,9 @@ func (app *App) Shutdown() (err error) {
 	app.runningServers = newRunningList
 
 	if err == nil {
-		app.Logger.Warn("application servers shutted down successfully")
+		app.internalLog.Warn("application servers shutted down successfully")
 		return
 	}
-	app.Logger.WithError(err).WithField("stillRunning", len(app.runningServers)).Warn("could not stop servers")
+	app.internalLog.WithError(err).WithField("stillRunning", len(app.runningServers)).Warn("could not stop servers")
 	return
 }

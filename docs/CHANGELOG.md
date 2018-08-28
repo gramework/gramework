@@ -1,3 +1,9 @@
+# Minor release candidate: 1.1.0-rc19
+- Fix internal logger
+- Log handler names
+- Support methods for handlers
+- Environment support
+
 # Minor release candidate: 1.1.0-rc18
 - Default panic handler introduced along with new app options:
   - `NoDefaultPanicHandler     bool` - disables default panic handler. You may also overwrite it with custom panic handler by setting it in a classic way.

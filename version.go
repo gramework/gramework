@@ -1,4 +1,4 @@
-// Copyright 2017 Kirill Danshin and Gramework contributors
+// Copyright 2017-present Kirill Danshin and Gramework contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -10,4 +10,4 @@
 package gramework
 
 // Version gives you the gramework version you use now
-const Version = "1.1.0-rc18"
+const Version = "1.1.0-rc19"

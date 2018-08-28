@@ -1,4 +1,4 @@
-// Copyright 2017 Kirill Danshin and Gramework contributors
+// Copyright 2017-present Kirill Danshin and Gramework contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ func (app *App) ListenAndServeAutoTLS(addr string, cachePath ...string) error {
 
 	ln, err = net.Listen("tcp4", addr)
 	if err != nil {
-		app.Logger.Errorf("Can't serve: %s", err)
+		app.internalLog.Errorf("Can't serve: %s", err)
 		return err
 	}
 
@@ -77,7 +77,7 @@ func (app *App) ListenAndServeAutoTLS(addr string, cachePath ...string) error {
 		var cert *tls.Certificate
 		cert, err = m.GetCertificate(hello)
 		if err != nil {
-			app.Logger.Errorf("can't get cert: %s", err)
+			app.internalLog.Errorf("can't get cert: %s", err)
 		}
 
 		return cert, err
@@ -85,7 +85,7 @@ func (app *App) ListenAndServeAutoTLS(addr string, cachePath ...string) error {
 
 	tlsLn := tls.NewListener(ln, tlsConfig)
 
-	l := app.Logger.WithField("bind", addr)
+	l := app.internalLog.WithField("bind", addr)
 	l.Info("Starting HTTPS")
 
 	if len(app.name) == 0 {
@@ -100,7 +100,7 @@ func (app *App) ListenAndServeAutoTLS(addr string, cachePath ...string) error {
 	})
 	app.runningServersMu.Unlock()
 	if err = srv.Serve(tlsLn); err != nil {
-		app.Logger.Errorf("Can't serve: %s", err)
+		app.internalLog.Errorf("Can't serve: %s", err)
 	}
 
 	return err
@@ -120,7 +120,7 @@ func (app *App) ListenAndServeAutoTLSDev(addr string, cachePath ...string) error
 	var err error
 	ln, err = net.Listen("tcp4", addr)
 	if err != nil {
-		app.Logger.Errorf("Can't serve: %s", err)
+		app.internalLog.Errorf("Can't serve: %s", err)
 		return err
 	}
 
@@ -142,7 +142,7 @@ func (app *App) ListenAndServeAutoTLSDev(addr string, cachePath ...string) error
 
 	if letscache != "" {
 		if err = m.CacheFile(letscache); err != nil {
-			app.Logger.Errorf("Can't serve: %s", err)
+			app.internalLog.Errorf("Can't serve: %s", err)
 			return err
 		}
 	}
@@ -152,7 +152,7 @@ func (app *App) ListenAndServeAutoTLSDev(addr string, cachePath ...string) error
 		var cert *tls.Certificate
 		cert, err = m.GetCertificate(hello)
 		if err != nil {
-			app.Logger.Errorf("can't get cert: %s", err)
+			app.internalLog.Errorf("can't get cert: %s", err)
 		}
 
 		return cert, err
@@ -160,7 +160,7 @@ func (app *App) ListenAndServeAutoTLSDev(addr string, cachePath ...string) error
 
 	tlsLn := tls.NewListener(ln, tlsConfig)
 
-	l := app.Logger.WithField("bind", addr)
+	l := app.internalLog.WithField("bind", addr)
 	l.Info("Starting HTTPS")
 
 	srv := app.copyServer()
@@ -171,7 +171,7 @@ func (app *App) ListenAndServeAutoTLSDev(addr string, cachePath ...string) error
 	})
 	app.runningServersMu.Unlock()
 	if err = srv.Serve(tlsLn); err != nil {
-		app.Logger.Errorf("Can't serve: %s", err)
+		app.internalLog.Errorf("Can't serve: %s", err)
 	}
 
 	return err

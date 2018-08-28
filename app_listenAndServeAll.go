@@ -1,4 +1,4 @@
-// Copyright 2017 Kirill Danshin and Gramework contributors
+// Copyright 2017-present Kirill Danshin and Gramework contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@ package gramework
 func (app *App) ListenAndServeAll(httpAddr ...string) {
 	go func() {
 		err := app.ListenAndServeAutoTLS(":443")
-		app.Logger.Fatalf("can't serve tls: %s", err)
+		app.internalLog.Fatalf("can't serve tls: %s", err)
 	}()
 
 	if err := app.ListenAndServe(httpAddr...); err != nil {
-		app.Logger.Fatalf("can't serve http: %s", err)
+		app.internalLog.Fatalf("can't serve http: %s", err)
 	}
 }
 
@@ -32,11 +32,11 @@ func (app *App) ListenAndServeAll(httpAddr ...string) {
 func (app *App) ListenAndServeAllDev(httpAddr ...string) {
 	go func() {
 		if err := app.ListenAndServeAutoTLSDev(":443"); err != nil {
-			app.Logger.Fatalf("can't serve tls: %s", err)
+			app.internalLog.Fatalf("can't serve tls: %s", err)
 		}
 	}()
 
 	if err := app.ListenAndServe(httpAddr...); err != nil {
-		app.Logger.Fatalf("can't serve http: %s", err)
+		app.internalLog.Fatalf("can't serve http: %s", err)
 	}
 }

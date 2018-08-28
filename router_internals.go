@@ -1,4 +1,4 @@
-// Copyright 2017 Kirill Danshin and Gramework contributors
+// Copyright 2017-present Kirill Danshin and Gramework contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@ import (
 func (r *Router) getErrorHandler(h func(*Context) error) func(*Context) {
 	return func(ctx *Context) {
 		if err := h(ctx); err != nil {
-			r.app.Logger.WithField("url", ctx.URI()).Errorf("Error occurred: %s", err)
+			r.app.internalLog.WithField("url", ctx.URI()).Errorf("Error occurred: %s", err)
 			ctx.Error("Internal Server Error", fasthttp.StatusInternalServerError)
 		}
 	}
@@ -41,7 +41,7 @@ func (r *Router) getGrameDumbHandler(h func()) func(*Context) {
 func (r *Router) getGrameDumbErrorHandler(h func() error) func(*Context) {
 	return func(ctx *Context) {
 		if err := h(); err != nil {
-			r.app.Logger.WithField("url", ctx.URI()).Errorf("Error occurred: %s", err)
+			r.app.internalLog.WithField("url", ctx.URI()).Errorf("Error occurred: %s", err)
 			ctx.Error("Internal Server Error", fasthttp.StatusInternalServerError)
 		}
 	}
@@ -50,7 +50,7 @@ func (r *Router) getGrameDumbErrorHandler(h func() error) func(*Context) {
 func (r *Router) getGrameErrorHandler(h func(*fasthttp.RequestCtx) error) func(*Context) {
 	return func(ctx *Context) {
 		if err := h(ctx.RequestCtx); err != nil {
-			r.app.Logger.WithField("url", ctx.URI()).Errorf("Error occurred: %s", err)
+			r.app.internalLog.WithField("url", ctx.URI()).Errorf("Error occurred: %s", err)
 			ctx.Error("Internal Server Error", fasthttp.StatusInternalServerError)
 		}
 	}
