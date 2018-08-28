@@ -6,6 +6,30 @@ The Good Framework
 
 _Gramework long-term testing stand metrics screenshot made with [Gramework Stats Dashboard](https://grafana.com/dashboards/3422) and [metrics middleware](https://github.com/gramework/gramework/tree/dev/metrics)_
 
+### What is it?
+Fast, highly effective, reliable SPA-first go-way web framework made by fasthttp maintainer. You get the simple yet powerful API, we handle optimizations internally.
+We glad to see your feature requests and PRs.
+
+-----
+
+**Reasons to use Gramework**
+
+- Gramework has stable API
+- Gramework is battle-tested
+- Gramework made by fasthttp maintainer
+- Gramework is one of the rare frameworks that can help you to use server's resources effectively
+- Gramework make your projects' infrastructure costs more effective by using as less memory as possible
+- Gramework helps you serve requests faster, and so it helps you increase conversions ([source 1](https://blog.kissmetrics.com/speed-is-a-killer/), [source 2](https://blog.hubspot.com/marketing/page-load-time-conversion-rates))
+- With Gramework you can build software faster using simple yet optimized API
+- With Gramework you can get agile support and get answers to your questions
+- At Gramework team we respect our users
+- You can contact me and donate for high priority feature
+- You can be sure that all license questions are OK with gramework
+- You can buy a corporate-grade support
+
+**Go >= 1.9.6 is the oldest continously tested and supported version.**
+
+
 ### Useful links and info
 If you find it, you can submit vulnerability via k@gramework.win.
 
@@ -13,6 +37,8 @@ If you find it, you can submit vulnerability via k@gramework.win.
 |---	|---		|
 | Docs  | [GoDoc](https://godoc.org/github.com/gramework/gramework) |
 | Our Jira | [Jira](https://gramework.atlassian.net) |
+| License Report | [Report](https://github.com/gramework/gramework/tree/dev/third_party_licenses/REPORT.md) |
+| Changelog | [Changelog](https://github.com/gramework/gramework/tree/dev/docs/CHANGELOG.md) |
 | Support us with a donation or become a sponsor | [OpenCollective](https://opencollective.com/gramework) |
 | Our Telegram chat | [@gramework](https://t.me/gramework) |
 | We have #gramework channel in the Gophers Slack | https://gophers.slack.com |
@@ -24,75 +50,6 @@ If you find it, you can submit vulnerability via k@gramework.win.
 | CII Best Practices | [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/1203/badge)](https://bestpractices.coreinfrastructure.org/projects/1203) |
 | Gramework Stats Dashboard for Grafana | https://grafana.com/dashboards/3422 |
 
-### What is it?
-Fast, highly effective and go-way web framework. You get the simple yet powerful API, we handle optimizations internally.
-We glad to see your feature requests and PRs, that are implemented as fast as possible while keeping framework high quality.
-SPA-first, so [template engine support is WIP](https://github.com/gramework/gramework/issues/5).
-
-### Gramework is trusted by such projects as:
-[![Confideal banner](https://10357-5.s.cdn13.com/docs/confideal_banner.jpg)](https://confideal.io)
-
-Confideal is a service for making fast and safe international deals through smart contracts on Ethereum blockchain.
-
-> With Gramework, we have made a number of improvements:
-> - reduced boilerplate code;
-> - expedited the development process without cutting neither scope nor performance requirements;
-> - reduced the code that needs to be maintained;
-> - saved hundreds of hours by using functionality that comes as a part of the framework;
-> - optimized costs  of service maintenance;
-> - took advantage of services' and the implementation code's being scalable.
-
------
-
-### Project history and "Why?"
-Basically, before I've started the project, I need a simple, powerful framework with fair license policy.
-First I consulted with lawyers, which license to choose, based on the list of packages that I need to use.
-Next, we discussed what to do in order to do everything as correctly as possible.
-
-Nowadays, `net/http`-based projects are slow and cost-ineffective, so I just write the basic version.
-
-**But.**
-
-Those support HTTP/2, but theoretically we can make it work even with fasthttp.
-
-Those also support websockets, but this is already was done.
-
-**But.** Again.
-
-All our company's solutions are based on fasthttp, so we can use our already stable, optimized solutions.
-
-We can provide stable, faster and more effective functionality with really simple API.
-
-We can support `net/http` handlers with compatibility layer.
-
-We can support multiple handler signature, allow runtime route registration etc.
-
-And even more `We can`.
-
----
-
-So - **why you may want to use it?**
-
-- Gramework is battle-tested
-- Gramework is one of the rare frameworks that can help you serve up to 800k rps even on a 4Gb RAM/i5@2.9GHz/2x1Gbit server
-- Gramework make your projects' infrastructure costs more effective by using as less memory as possible
-- Gramework helps you serve requests faster, and so it helps you increase conversions ([source 1](https://blog.kissmetrics.com/speed-is-a-killer/), [source 2](https://blog.hubspot.com/marketing/page-load-time-conversion-rates))
-- You can build software faster with simple API
-- You can achieve agile support and get answers to your questions
-- You can just ask a feature and most likely it will be implemented and built in
-- You can contact me and donate for high priority feature
-- You can be sure that all license questions are OK with gramework
-- You can buy a corporate-grade support
-
-### API status
-Stable, but not frozen: we add functions, packages or optional arguments, so you can use new features, but we never break your projects.
-
-**Go >= 1.8 required. Go >= 1.9.4 is the oldest continously tested and supported version.**
-
-Please, fire an issue or pull request if you want any feature, you find a bug or know how to optimize gramework even more.
-
-Using Gramework with `dep` is highly recommended.
-
 # TOC
 - [Benchmarks](#benchmarks)
 - [3rd-party license info](#3rd-party-license-info)
@@ -100,11 +57,8 @@ Using Gramework with `dep` is highly recommended.
   - [Hello world](#hello-world)
   - [Serving a dir](#serving-a-dir)
   - [Serving prepared bytes](#serving-prepared-bytes)
-  - [Using dynamic handlers, part 1](#using-dynamic-handlers-part-1)
-  - [Using dynamic handlers, part 2](#using-dynamic-handlers-part-2)
-  - [Using dynamic handlers, part 3](#using-dynamic-handlers-part-3)
-  - [Using dynamic handlers, part 4](#using-dynamic-handlers-part-4)
-  - [Using dynamic handlers, part 5](#using-dynamic-handlers-part-5)
+  - [Using dynamic handlers, example 1](#using-dynamic-handlers-example-1)
+  - [Using dynamic handlers, example 2](#using-dynamic-handlers-example-2)
 
 # Benchmarks
 [![benchmark](https://raw.githubusercontent.com/smallnest/go-web-framework-benchmark/master/benchmark.png)](https://github.com/smallnest/go-web-framework-benchmark)
@@ -260,8 +214,8 @@ func main() {
 }
 ```
 
-### Using dynamic handlers, part 1. Simple JSON response.
-The example below will serve JSON:
+### Using dynamic handlers, example 1.
+This example show you some ways to send response, how to use preconfigured logger etc.
 
 ```go
 package main
@@ -270,86 +224,74 @@ import (
 	"github.com/gramework/gramework"
 )
 
-func main() {
-	app := gramework.New()
-
-	app.GET("/someJSON", func(ctx *gramework.Context) {
-		m := map[string]interface{}{
-			"name": "Grame",
-			"age": 20,
-		}
-
-		if err := ctx.JSON(m); err != nil {
-			ctx.Err500()
-		}
-	})
-
-	app.ListenAndServe()
+type SomeData struct {
+	Name string
+	Age  uint8
 }
-```
-
-### Using dynamic handlers, part 2. Simple JSON response with service-wide CORS enabled.
-The example below will serve JSON with CORS enabled for all routes:
-
-```go
-package main
-
-import (
-	"github.com/gramework/gramework"
-)
 
 func main() {
 	app := gramework.New()
 
+	d := SomeData{
+		Name: "Grame",
+		Age: 20,
+	}
+
+	// service-wide CORS. you can also instead of using middleware
+	// call ctx.CORS() manually
 	app.Use(app.CORSMiddleware())
 
 	app.GET("/someJSON", func(ctx *gramework.Context) {
-		m := map[string]interface{}{
-			"name": "Grame",
-			"age": 20,
-		}
-
-		if err := ctx.JSON(m); err != nil {
+		// send json, no metter if user asked for json, xml or anything else.
+		if err := ctx.JSON(d); err != nil {
+			// you can return err instead of manual checks and Err500() call.
+			// See next handler for example.
 			ctx.Err500()
 		}
 	})
 
-	app.ListenAndServe()
-}
-```
-
-### Using dynamic handlers, part 3. Simple JSON response with handler-wide CORS enabled.
-The example below will serve JSON with CORS enabled in the handler:
-
-```go
-package main
-
-import (
-	"github.com/gramework/gramework"
-)
-
-func main() {
-	app := gramework.New()
-
-	app.GET("/someJSON", func(ctx *gramework.Context) {
-		ctx.CORS()
-
-		m := map[string]interface{}{
-			"name": "Grame",
-			"age": 20,
-		}
-
-		if err := ctx.JSON(m); err != nil {
-			ctx.Err500()
-		}
+	app.GET("/simpleJSON", func(ctx *gramework.Context) error {
+		return ctx.JSON(d)
 	})
 
+	app.GET("/someData", func(ctx *gramework.Context) error {
+		// send data in one of supported encodings user asked for.
+		// Now we support json, xml and csv. More coming soon.
+		sentType, err := ctx.Encode(d)
+		if err != nil {
+			ctx.Logger.WithError(err).Error("could not process request")
+			return err
+		}
+		ctx.Logger.WithField("sentType", sentType).Debug("some request-related message")
+		return nil
+	})
+
+	// you can omit context if you want, return `interface{}`, `error` or both.
+	app.GET("/simplestJSON", func() interface{} {
+		return d
+	})
+
+	// you can also use one of built-in types as a handler, we got you covered too
+	app.GET("/hostnameJSON", fmt.Sprintf(`{"hostname": %q}`, os.Hostname()))
+
+	wait := make(chan struct{})
+	go func() {
+		time.Sleep(10 * time.Minute)
+		app.Shutdown()
+		wait <- struct{}{}
+	}()
+
 	app.ListenAndServe()
+
+	// allow Shutdown() to stop the app properly.
+	// ListenAndServe will return before Shutdown(), so we should wait.
+	<- wait
 }
 ```
 
-### Using dynamic handlers, part 4. Simple FastHTTP-compatible handlers.
-The example below will serve a string:
+### Using dynamic handlers, example 2. Simple FastHTTP-compatible handlers.
+This example shows you how to migrate from fasthttp to gramework
+without rewriting all your handlers.
 
 ```go
 package main
@@ -363,28 +305,6 @@ func main() {
 
 	app.GET("/someJSON", func(ctx *fasthttp.RequestCtx) {
 		ctx.WriteString("another data")
-	})
-
-	app.ListenAndServe()
-}
-```
-
-### Using dynamic handlers, part 5. Access to fasthttp.RequestCtx from gramework.Context
-The example below shows how you can get fasthttp.RequestCtx from gramework.Context and use it:
-
-```go
-package main
-
-import (
-	"github.com/gramework/gramework"
-)
-
-func main() {
-	app := gramework.New()
-
-	app.GET("/someJSON", func(ctx *gramework.Context) {
-		// same as ctx.WriteString("another data")
-		ctx.RequestCtx.WriteString("another data")
 	})
 
 	app.ListenAndServe()

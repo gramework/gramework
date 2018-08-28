@@ -1,4 +1,4 @@
-// Copyright 2017 Kirill Danshin and Gramework contributors
+// Copyright 2017-present Kirill Danshin and Gramework contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -55,6 +55,7 @@ func New(opts ...func(*App)) *App {
 		seed:                      uintptr(time.Now().Nanosecond()),
 		maxHackAttempts:           &maxHackAttempts,
 		runningServersMu:          new(sync.Mutex),
+		internalLog:               internalLog,
 	}
 
 	app.serverBase = &fasthttp.Server{

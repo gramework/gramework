@@ -1,4 +1,4 @@
-// Copyright 2017 Kirill Danshin and Gramework contributors
+// Copyright 2017-present Kirill Danshin and Gramework contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ func (app *App) ListenAndServe(addr ...string) error {
 		return errors.New("No bind address provided")
 	}
 
-	l := app.Logger.WithField("bind", bind)
+	l := app.internalLog.WithField("bind", bind)
 	l.Info("Starting HTTP")
 
 	if len(app.name) == 0 {

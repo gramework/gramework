@@ -1,4 +1,4 @@
-// Copyright 2017 Kirill Danshin and Gramework contributors
+// Copyright 2017-present Kirill Danshin and Gramework contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ func (app *App) Serve(ln net.Listener) error {
 	})
 	app.runningServersMu.Unlock()
 	if err = srv.Serve(ln); err != nil {
-		app.Logger.Errorf("ListenAndServe failed: %s", err)
+		app.internalLog.Errorf("ListenAndServe failed: %s", err)
 	}
 
 	return err

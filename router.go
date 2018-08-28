@@ -1,4 +1,4 @@
-// Copyright 2017 Kirill Danshin and Gramework contributors
+// Copyright 2017-present Kirill Danshin and Gramework contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,8 +11,11 @@ package gramework
 
 import (
 	"fmt"
+	"reflect"
+	"runtime"
 	"strings"
 
+	"github.com/apex/log"
 	"github.com/valyala/fasthttp"
 )
 
@@ -107,11 +110,11 @@ func (r *Router) Sub(path string) *SubRouter {
 
 func (r *Router) handleReg(method, route string, handler interface{}, prefixes []string) {
 	r.initRouter()
-	r.app.Logger.Debugf("registering %s %s", method, route)
+	r.app.internalLog.Debugf("registering %s %s", method, route)
 	typedHandler := r.determineHandler(handler)
 	for prefix := range r.app.protectedPrefixes {
 		if strings.HasPrefix(strings.TrimLeft(route, "/"), strings.TrimLeft(prefix, "/")) {
-			r.app.Logger.
+			r.app.internalLog.
 				WithField("route", route).
 				WithField("method", method).
 				Info("[Gramework Protection] Protection enabled for a new route")
@@ -129,11 +132,27 @@ func (r *Router) getEFuncStrHandler(h func() string) func(*Context) {
 	}
 }
 
+func handlerName(h interface{}) string {
+	v := reflect.ValueOf(h)
+	if v.Kind() != reflect.Func {
+		return fmt.Sprintf("<raw %T>", h)
+	}
+	funcDesc := runtime.FuncForPC(v.Pointer())
+	file, line := funcDesc.FileLine(v.Pointer())
+	name := fmt.Sprintf("%s@%s:%v", funcDesc.Name(), file, line)
+	return name
+}
+
 // Handle registers a new request handle with the given path and method.
 // For GET, POST, PUT, PATCH and DELETE requests the respective shortcut functions can be used.
 // This function is intended for bulk loading and to allow the usage of less frequently used,
 // non-standardized or custom methods (e.g. for internal communication with a proxy).
 func (r *Router) Handle(method, route string, handler interface{}) *Router {
+	r.app.internalLog.WithFields(log.Fields{
+		"handler": handlerName(handler),
+		"method":  method,
+		"route":   route,
+	}).Debug("registering route")
 	r.handleReg(method, route, handler, nil)
 	return r
 }

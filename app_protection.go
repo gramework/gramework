@@ -196,7 +196,7 @@ func (app *App) Suspect(ip net.IP) (ok bool) {
 func (app *App) MaxHackAttempts(attempts int32) (oldValue int32) {
 	oldValue = atomic.LoadInt32(app.maxHackAttempts)
 	if attempts != 0 && atomic.CompareAndSwapInt32(app.maxHackAttempts, oldValue, attempts) {
-		app.Logger.
+		app.internalLog.
 			WithField("old", oldValue).
 			WithField("new", attempts).
 			Infof("[Gramework Protection] Updated max hack attemts")

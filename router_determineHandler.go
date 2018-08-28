@@ -1,4 +1,4 @@
-// Copyright 2017 Kirill Danshin and Gramework contributors
+// Copyright 2017-present Kirill Danshin and Gramework contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,8 +11,64 @@ package gramework
 
 import "github.com/valyala/fasthttp"
 
+type reqHandlerDefault interface {
+	Handler(*Context)
+}
+
+type reqHandlerWithError interface {
+	Handler(*Context) error
+}
+
+type reqHandlerWithEfaceError interface {
+	Handler(*Context) (interface{}, error)
+}
+
+type reqHandlerWithEface interface {
+	Handler(*Context) interface{}
+}
+
+type reqHandlerNoCtx interface {
+	Handler()
+}
+
+type reqHandlerWithErrorNoCtx interface {
+	Handler() error
+}
+
+type reqHandlerWithEfaceErrorNoCtx interface {
+	Handler() (interface{}, error)
+}
+
+type reqHandlerWithEfaceNoCtx interface {
+	Handler() interface{}
+}
+
 func (r *Router) determineHandler(handler interface{}) func(*Context) {
+	// copy handler, we don't want to mutate our arguments
+	rawHandler := handler
+
+	// prepare handler in case if it one of our supported interfaces
 	switch h := handler.(type) {
+	case reqHandlerDefault:
+		rawHandler = h.Handler
+	case reqHandlerWithError:
+		rawHandler = h.Handler
+	case reqHandlerWithEfaceError:
+		rawHandler = h.Handler
+	case reqHandlerWithEface:
+		rawHandler = h.Handler
+	case reqHandlerNoCtx:
+		rawHandler = h.Handler
+	case reqHandlerWithErrorNoCtx:
+		rawHandler = h.Handler
+	case reqHandlerWithEfaceErrorNoCtx:
+		rawHandler = h.Handler
+	case reqHandlerWithEfaceNoCtx:
+		rawHandler = h.Handler
+	}
+
+	// finally, process the handler
+	switch h := rawHandler.(type) {
 	case func(*Context):
 		return h
 	case RequestHandler:
@@ -54,7 +110,7 @@ func (r *Router) determineHandler(handler interface{}) func(*Context) {
 	case func(*Context) (map[string]interface{}, error):
 		return r.getCtxHandlerEncoderErr(h)
 	default:
-		r.app.Logger.Warnf("Unknown handler type: %T, serving fmt.Sprintf(%%v)", h)
+		r.app.internalLog.Warnf("Unknown handler type: %T, serving fmt.Sprintf(%%v)", h)
 		return r.getFmtVHandler(h)
 	}
 }

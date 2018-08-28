@@ -8,12 +8,10 @@ os:
   - osx
 
 env:
-  - TRAVIS_GO_VERSION=1.9.4 GRAMEWORK_SHORT=1
-  - TRAVIS_GO_VERSION=1.9.5 GRAMEWORK_SHORT=1
   - TRAVIS_GO_VERSION=1.9.6 GRAMEWORK_SHORT=1
   - TRAVIS_GO_VERSION=1.9.x GRAMEWORK_SHORT=0
-  - TRAVIS_GO_VERSION=1.10.1 GRAMEWORK_SHORT=1
   - TRAVIS_GO_VERSION=1.10.2 GRAMEWORK_SHORT=1
+  - TRAVIS_GO_VERSION=1.10.3 GRAMEWORK_SHORT=1
   - TRAVIS_GO_VERSION=1.10.x GRAMEWORK_SHORT=0
   - TRAVIS_GO_VERSION=1.11 GRAMEWORK_SHORT=0
   - TRAVIS_GO_VERSION=tip GRAMEWORK_SHORT=1 TRAVIS_ALLOW_FAILURE=1
@@ -31,7 +29,7 @@ before_install:
 
 script:
   # fail if a .go file hasn't been formatted with goimports
-  - test -z $(goimports -l $GO_FILES)
+  # - test -z $(goimports -l $GO_FILES)s
   # check if it even compiles
   - go build
   # run the official Go static analyzer

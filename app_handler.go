@@ -1,4 +1,4 @@
-// Copyright 2017 Kirill Danshin and Gramework contributors
+// Copyright 2017-present Kirill Danshin and Gramework contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,10 +31,19 @@ func (app *App) handler() func(*fasthttp.RequestCtx) {
 			}
 		}
 
+		xReqID := ctx.Request.Header.Peek(xRequestID)
+		if len(xReqID) > 0 {
+			ctx.requestID = string(xReqID)
+		} else {
+			ctx.requestID = uuid.New().String()
+		}
+
 		tracer := ctx.Logger.
 			WithFields(log.Fields{
-				"method": BytesToString(ctx.Method()),
-				"path":   BytesToString(ctx.Path()),
+				"package":  "gramework",
+				"method":   BytesToString(ctx.Method()),
+				"path":     BytesToString(ctx.Path()),
+				xRequestID: ctx.requestID,
 			})
 
 		if app.defaultRouter.router.PanicHandler != nil || !app.NoDefaultPanicHandler {
@@ -42,12 +51,6 @@ func (app *App) handler() func(*fasthttp.RequestCtx) {
 			defer app.defaultRouter.router.Recv(ctx, tracer)
 		}
 
-		xReqID := ctx.Request.Header.Peek(xRequestID)
-		if len(xReqID) > 0 {
-			ctx.requestID = string(xReqID)
-		} else {
-			ctx.requestID = uuid.New().String()
-		}
 		ctx.Response.Header.Add(xRequestID, ctx.requestID)
 		ctx.Logger = ctx.Logger.WithField(xRequestID, ctx.requestID)
 

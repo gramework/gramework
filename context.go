@@ -1,4 +1,4 @@
-// Copyright 2017 Kirill Danshin and Gramework contributors
+// Copyright 2017-present Kirill Danshin and Gramework contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ var ctypes = []string{
 // This function will give a warning if you call it with nil context.Context.
 func ContextFromValue(ctx context.Context) *Context {
 	if ctx == nil {
-		Logger.Warn("ContextFromValue was called with nil context.Context, returning nil")
+		internalLog.Warn("ContextFromValue was called with nil context.Context, returning nil")
 		return nil
 	}
 	return (*Context)(runtimer.GetEfaceDataPtr(ctx.Value(ContextKey)))
