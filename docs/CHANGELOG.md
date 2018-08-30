@@ -2,6 +2,11 @@
 - Minor vendor fixes
 - Fix router bug
 
+# Minor release candidate: 1.1.0
+- Env fix
+- Router issue fixed
+- GQLHandler now can deny introspection requests
+
 # Minor release candidate: 1.1.0-rc19
 - Fix internal logger
 - Log handler names

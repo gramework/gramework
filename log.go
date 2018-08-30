@@ -51,6 +51,8 @@ func (e Environment) String() string {
 }
 
 func init() {
+	var initEnv int32 = -1
+	currentEnvironment = &initEnv
 	genv := os.Getenv("GRAMEWORK_ENV")
 	if strings.HasPrefix(strings.ToLower(genv), "prod") {
 		SetEnv(PROD)
