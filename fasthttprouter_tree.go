@@ -450,6 +450,7 @@ walk: // outer loop for walking the tree
 							v: path,
 						})
 						ctx.SetUserValue(n.path[2:], path)
+						_ = params // solve false positive
 					}
 					handle = n.handle
 					n.hits++
