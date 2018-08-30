@@ -74,7 +74,6 @@ func (c *cache) Put(path string, n *node, tsr bool, method string) {
 
 func (c *cache) PutWild(path string, n *node, tsr bool, values map[string]string, method string) {
 	msc := c.getOrInitMSC(method)
-	println(path, values)
 	msc.mu.Lock()
 	msc.v[path] = &cacheRecord{
 		n:              n,
