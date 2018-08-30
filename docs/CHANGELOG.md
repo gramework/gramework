@@ -1,3 +1,7 @@
+# Minor release candidate: 1.1.0-rc20
+- Minor vendor fixes
+- Fix router bug
+
 # Minor release candidate: 1.1.0-rc19
 - Fix internal logger
 - Log handler names
