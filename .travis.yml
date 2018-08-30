@@ -39,7 +39,7 @@ script:
   # "go vet on steroids" + linter
   - megacheck ./...
   # forbid code with huge functions
-  - gocyclo -over 50 $GO_FILES
+  - gocyclo -over 55 $GO_FILES
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
