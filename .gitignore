@@ -41,3 +41,6 @@ test_key.pem
 disabled
 nettls_*
 .idea
+
+# unvendor some packages
+vendor/github.com/graph-gophers/graphql-go
