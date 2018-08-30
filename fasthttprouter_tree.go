@@ -355,17 +355,21 @@ func (n *node) GetValue(reqPath string, ctx *Context, method string) (handle Req
 	if n.router.cache == nil {
 		panic("no cache!")
 	}
-	if record, ok := n.router.cache.Get(reqPath, method); ok {
-		if ctx != nil {
-			for name, value := range record.values {
-				ctx.SetUserValue(name, value)
+	if ctx != nil {
+		if record, ok := n.router.cache.Get(reqPath, method); ok {
+			if record != nil {
+				for name, value := range record.values {
+					ctx.SetUserValue(name, value)
+				}
+				if ctx != nil {
+					ctx.subPrefixes = record.n.prefixes
+				}
+				return record.n.handle, record.tsr
 			}
 		}
-		return record.n.handle, record.tsr
-	}
-	if ctx != nil {
 		ctx.subPrefixes = n.prefixes
 	}
+	params := []struct{ k, v string }{}
 	path := reqPath
 walk: // outer loop for walking the tree
 	for {
@@ -403,6 +407,10 @@ walk: // outer loop for walking the tree
 
 					// handle calls to Router.allowed method with nil context
 					if ctx != nil {
+						params = append(params, struct{ k, v string }{
+							k: n.path[one:],
+							v: path[:end],
+						})
 						ctx.SetUserValue(n.path[one:], path[:end])
 					}
 
@@ -437,6 +445,10 @@ walk: // outer loop for walking the tree
 				case catchAll:
 					if ctx != nil {
 						// save param value
+						params = append(params, struct{ k, v string }{
+							k: n.path[2:],
+							v: path,
+						})
 						ctx.SetUserValue(n.path[2:], path)
 					}
 					handle = n.handle
@@ -454,7 +466,19 @@ walk: // outer loop for walking the tree
 			// We should have reached the node containing the handle.
 			// Check if this node has a handle registered.
 			if handle = n.handle; handle != nil {
+				ctx.Logger.Warn("put default")
+				if len(params) != 0 {
+					values := map[string]string{}
+					for _, v := range params {
+						values[v.k] = v.v
+					}
+					n.router.cache.PutWild(reqPath, n, tsr, values, method)
+					return
+				}
 				n.router.cache.Put(reqPath, n, tsr, method)
+				tsr = (len(n.path) == one && n.handle != nil) ||
+					(n.nType == catchAll && n.children[zero].handle != nil) ||
+					(path == PathSlash && n.wildChild && n.nType != root)
 				return
 			}
 
