@@ -1,6 +1,8 @@
 package gqlhandler
 
 import (
+	"strings"
+
 	"github.com/gramework/gramework"
 	graphql "github.com/graph-gophers/graphql-go"
 	"github.com/pkg/errors"
@@ -13,7 +15,8 @@ var (
 
 // State is the GQL handler state
 type State struct {
-	schema *graphql.Schema
+	NoIntrospection bool
+	schema          *graphql.Schema
 }
 
 // New returns gql handler state based on given schema
@@ -41,6 +44,11 @@ func (s *State) Handler(ctx *gramework.Context) {
 	if err != nil {
 		ctx.Logger.Warn("gql request decoding failed")
 		ctx.Error("Invalid request", 400)
+		return
+	}
+
+	if s.NoIntrospection && strings.HasPrefix(strings.TrimSpace(req.Query), "query IntrospectionQuery") {
+		ctx.Forbidden()
 		return
 	}
 
