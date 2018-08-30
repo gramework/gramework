@@ -40,8 +40,6 @@ script:
   - megacheck ./...
   # forbid code with huge functions
   - gocyclo -over 50 $GO_FILES
-  # one last linter
-  - golint -set_exit_status $(go list ./...)
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
