@@ -43,4 +43,8 @@ nettls_*
 .idea
 
 # unvendor some packages
-vendor/github.com/graph-gophers/graphql-go
+vendor/github.com/graph-gophers
+vendor/github.com/apex
+vendor/github.com/opentracing
+vendor/github.com/prometeus
+
