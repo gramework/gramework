@@ -39,7 +39,10 @@ func init() {
 
 // Setup registers middleware in the provided app
 func Setup(app *gramework.App) {
-	app.UseAfterRequest(serveXHost)
+	err := app.UseAfterRequest(serveXHost)
+	if err != nil {
+		app.Logger.WithError(err).WithField("package", "mw/xhostname").Error("could not register middleware")
+	}
 }
 
 func serveXHost(ctx *gramework.Context) {

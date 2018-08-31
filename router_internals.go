@@ -78,9 +78,7 @@ func (r *Router) getHandlerEncoder(h func() map[string]interface{}) func(*Contex
 			return
 		}
 		if err := ctx.JSON(r); err != nil {
-			if err := ctx.JSONError(err); err != nil {
-				ctx.Err500()
-			}
+			ctx.jsonErrorLog(err)
 		}
 	}
 }
@@ -93,7 +91,7 @@ func (r *Router) getCtxHandlerEncoder(h func(*Context) map[string]interface{}) f
 			return
 		}
 		if err := ctx.JSON(r); err != nil {
-			ctx.JSONError(err)
+			ctx.jsonErrorLog(err)
 		}
 	}
 }
@@ -102,7 +100,7 @@ func (r *Router) getHandlerEncoderErr(h func() (map[string]interface{}, error)) 
 	return func(ctx *Context) {
 		r, err := h()
 		if err != nil {
-			ctx.JSONError(err)
+			ctx.jsonErrorLog(err)
 			return
 		}
 		if r == nil { // err == nil here
@@ -110,7 +108,7 @@ func (r *Router) getHandlerEncoderErr(h func() (map[string]interface{}, error)) 
 			return
 		}
 		if err = ctx.JSON(r); err != nil {
-			ctx.JSONError(err)
+			ctx.jsonErrorLog(err)
 		}
 	}
 }
@@ -119,7 +117,7 @@ func (r *Router) getCtxHandlerEncoderErr(h func(*Context) (map[string]interface{
 	return func(ctx *Context) {
 		r, err := h(ctx)
 		if err != nil {
-			ctx.JSONError(err)
+			ctx.jsonErrorLog(err)
 			return
 		}
 		if r == nil { // err == nil here
@@ -127,7 +125,7 @@ func (r *Router) getCtxHandlerEncoderErr(h func(*Context) (map[string]interface{
 			return
 		}
 		if err = ctx.JSON(r); err != nil {
-			ctx.JSONError(err)
+			ctx.jsonErrorLog(err)
 		}
 	}
 }
@@ -140,7 +138,7 @@ func (r *Router) getEfaceEncoder(h func() interface{}) func(*Context) {
 			return
 		}
 		if err := ctx.JSON(r); err != nil {
-			ctx.JSONError(err)
+			ctx.jsonErrorLog(err)
 		}
 	}
 }
@@ -149,7 +147,7 @@ func (r *Router) getEfaceErrEncoder(h func() (interface{}, error)) func(*Context
 	return func(ctx *Context) {
 		r, err := h()
 		if err != nil {
-			ctx.JSONError(err)
+			ctx.jsonErrorLog(err)
 			return
 		}
 		if r == nil { // err == nil here
@@ -157,7 +155,7 @@ func (r *Router) getEfaceErrEncoder(h func() (interface{}, error)) func(*Context
 			return
 		}
 		if err = ctx.JSON(r); err != nil {
-			ctx.JSONError(err)
+			ctx.jsonErrorLog(err)
 		}
 	}
 }
@@ -170,7 +168,7 @@ func (r *Router) getEfaceCtxEncoder(h func(*Context) interface{}) func(*Context)
 			return
 		}
 		if err := ctx.JSON(r); err != nil {
-			ctx.JSONError(err)
+			ctx.jsonErrorLog(err)
 		}
 	}
 }
@@ -179,7 +177,7 @@ func (r *Router) getEfaceCtxErrEncoder(h func(*Context) (interface{}, error)) fu
 	return func(ctx *Context) {
 		r, err := h(ctx)
 		if err != nil {
-			ctx.JSONError(err)
+			ctx.jsonErrorLog(err)
 			return
 		}
 		if r == nil { // err == nil here
@@ -187,7 +185,7 @@ func (r *Router) getEfaceCtxErrEncoder(h func(*Context) (interface{}, error)) fu
 			return
 		}
 		if err = ctx.JSON(r); err != nil {
-			ctx.JSONError(err)
+			ctx.jsonErrorLog(err)
 		}
 	}
 }
