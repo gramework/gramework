@@ -78,7 +78,9 @@ func (r *Router) getHandlerEncoder(h func() map[string]interface{}) func(*Contex
 			return
 		}
 		if err := ctx.JSON(r); err != nil {
-			ctx.JSONError(err)
+			if err := ctx.JSONError(err); err != nil {
+				ctx.Err500()
+			}
 		}
 	}
 }
