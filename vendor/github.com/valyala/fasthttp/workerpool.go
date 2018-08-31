@@ -35,6 +35,8 @@ type workerPool struct {
 	stopCh chan struct{}
 
 	workerChanPool sync.Pool
+
+	connState func(net.Conn, ConnState)
 }
 
 type workerChan struct {
@@ -216,8 +218,11 @@ func (wp *workerPool) workerFunc(ch *workerChan) {
 				wp.Logger.Printf("error when serving connection %q<->%q: %s", c.LocalAddr(), c.RemoteAddr(), err)
 			}
 		}
-		if err != errHijacked {
+		if err == errHijacked {
+			wp.connState(c, StateHijacked)
+		} else {
 			c.Close()
+			wp.connState(c, StateClosed)
 		}
 		c = nil
 

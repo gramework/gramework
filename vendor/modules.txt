@@ -66,13 +66,13 @@ github.com/prometheus/procfs/xfs
 github.com/prometheus/procfs/internal/util
 # github.com/valyala/bytebufferpool v0.0.0-20160817181652-e746df99fe4a
 github.com/valyala/bytebufferpool
-# github.com/valyala/fasthttp v0.0.0-20180828195509-57b1f46d158c
+# github.com/valyala/fasthttp v0.0.0-20180831062205-5f6439b6df1c
 github.com/valyala/fasthttp
 github.com/valyala/fasthttp/fasthttputil
 github.com/valyala/fasthttp/stackless
 # github.com/xenolf/lego v0.3.2-0.20170618175828-28ead50ff1ca
 github.com/xenolf/lego/acme
-# golang.org/x/crypto v0.0.0-20180820150726-614d502a4dac
+# golang.org/x/crypto v0.0.0-20180830192347-182538f80094
 golang.org/x/crypto/acme/autocert
 golang.org/x/crypto/bcrypt
 golang.org/x/crypto/acme

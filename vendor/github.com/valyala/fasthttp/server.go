@@ -276,6 +276,11 @@ type Server struct {
 	// value is explicitly provided during a request.
 	NoDefaultServerHeader bool
 
+	// ConnState specifies an optional callback function that is
+	// called when a client connection changes state. See the
+	// ConnState type and associated constants for details.
+	ConnState func(net.Conn, ConnState)
+
 	// Logger, which is used by RequestCtx.Logger().
 	//
 	// By default standard logger from log package is used.
@@ -1372,6 +1377,7 @@ func (s *Server) Serve(ln net.Listener) error {
 		MaxWorkersCount: maxWorkersCount,
 		LogAllErrors:    s.LogAllErrors,
 		Logger:          s.logger(),
+		connState:       s.setState,
 	}
 	wp.Start()
 
@@ -1383,12 +1389,14 @@ func (s *Server) Serve(ln net.Listener) error {
 			}
 			return err
 		}
+		s.setState(c, StateNew)
 		s.wg.Add(1)
 		if !wp.Serve(c) {
 			s.wg.Done()
 			s.writeFastError(c, StatusServiceUnavailable,
 				"The connection cannot be served because Server.Concurrency limit exceeded")
 			c.Close()
+			s.setState(c, StateClosed)
 			if time.Since(lastOverflowErrorTime) > time.Minute {
 				s.logger().Printf("The incoming connection cannot be served, because %d concurrent connections are served. "+
 					"Try increasing Server.Concurrency", maxWorkersCount)
@@ -1537,11 +1545,13 @@ func (s *Server) ServeConn(c net.Conn) error {
 
 	if err != errHijacked {
 		err1 := c.Close()
+		s.setState(c, StateClosed)
 		if err == nil {
 			err = err1
 		}
 	} else {
 		err = nil
+		s.setState(c, StateHijacked)
 	}
 	return err
 }
@@ -1634,6 +1644,10 @@ func (s *Server) serveConn(c net.Conn) error {
 			}
 			// reading Headers and Body
 			err = ctx.Request.readLimitBody(br, maxRequestBodySize, s.GetOnly)
+			if br.Buffered() > 0 {
+				// If we read any bytes off the wire, we're active.
+				s.setState(c, StateActive)
+			}
 			if br.Buffered() == 0 || err != nil {
 				releaseReader(s, br)
 				br = nil
@@ -1783,6 +1797,7 @@ func (s *Server) serveConn(c net.Conn) error {
 		}
 
 		currentTime = time.Now()
+		s.setState(c, StateIdle)
 	}
 
 	if br != nil {
@@ -1793,6 +1808,12 @@ func (s *Server) serveConn(c net.Conn) error {
 	}
 	s.releaseCtx(ctx)
 	return err
+}
+
+func (s *Server) setState(nc net.Conn, state ConnState) {
+	if hook := s.ConnState; hook != nil {
+		hook(nc, state)
+	}
 }
 
 func (s *Server) updateReadDeadline(c net.Conn, ctx *RequestCtx, lastDeadlineTime time.Time) time.Time {
@@ -2137,4 +2158,56 @@ func writeErrorResponse(bw *bufio.Writer, ctx *RequestCtx, serverName []byte, er
 	writeResponse(ctx, bw)
 	bw.Flush()
 	return bw
+}
+
+// A ConnState represents the state of a client connection to a server.
+// It's used by the optional Server.ConnState hook.
+type ConnState int
+
+const (
+	// StateNew represents a new connection that is expected to
+	// send a request immediately. Connections begin at this
+	// state and then transition to either StateActive or
+	// StateClosed.
+	StateNew ConnState = iota
+
+	// StateActive represents a connection that has read 1 or more
+	// bytes of a request. The Server.ConnState hook for
+	// StateActive fires before the request has entered a handler
+	// and doesn't fire again until the request has been
+	// handled. After the request is handled, the state
+	// transitions to StateClosed, StateHijacked, or StateIdle.
+	// For HTTP/2, StateActive fires on the transition from zero
+	// to one active request, and only transitions away once all
+	// active requests are complete. That means that ConnState
+	// cannot be used to do per-request work; ConnState only notes
+	// the overall state of the connection.
+	StateActive
+
+	// StateIdle represents a connection that has finished
+	// handling a request and is in the keep-alive state, waiting
+	// for a new request. Connections transition from StateIdle
+	// to either StateActive or StateClosed.
+	StateIdle
+
+	// StateHijacked represents a hijacked connection.
+	// This is a terminal state. It does not transition to StateClosed.
+	StateHijacked
+
+	// StateClosed represents a closed connection.
+	// This is a terminal state. Hijacked connections do not
+	// transition to StateClosed.
+	StateClosed
+)
+
+var stateName = map[ConnState]string{
+	StateNew:      "new",
+	StateActive:   "active",
+	StateIdle:     "idle",
+	StateHijacked: "hijacked",
+	StateClosed:   "closed",
+}
+
+func (c ConnState) String() string {
+	return stateName[c]
 }
