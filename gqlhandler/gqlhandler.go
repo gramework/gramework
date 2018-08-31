@@ -60,6 +60,8 @@ func (s *State) Handler(ctx *gramework.Context) {
 	}
 
 	ctx.Logger.Info("processing request")
-	ctx.Encode(s.schema.Exec(ctx.ToContext(), req.Query, req.OperationName, req.Variables))
+	if _, err := ctx.Encode(s.schema.Exec(ctx.ToContext(), req.Query, req.OperationName, req.Variables)); err != nil {
+		ctx.SetStatusCode(415)
+	}
 	ctx.Logger.Info("processing request done")
 }

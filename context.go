@@ -349,6 +349,13 @@ func (ctx *Context) JSONError(v interface{}) error {
 	return ctx.JSON(v)
 }
 
+func (ctx *Context) jsonErrorLog(v interface{}) {
+	ctx.Err500()
+	if err := ctx.JSON(v); err != nil {
+		ctx.Logger.WithError(err).Error("JSONError err")
+	}
+}
+
 // RequestID return request ID for current context's request
 func (ctx *Context) RequestID() string {
 	return ctx.requestID

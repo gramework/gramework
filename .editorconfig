@@ -1,0 +1,3 @@
+[*.go]
+space_width = 4
+space_style = tab
