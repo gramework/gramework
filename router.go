@@ -178,7 +178,10 @@ func (r *Router) getStringServer(str string) func(*Context) {
 func (r *Router) getHTMLServer(str HTML) func(*Context) {
 	b := []byte(str)
 	return func(ctx *Context) {
-		ctx.HTML().Write(b)
+		if _, err := ctx.HTML().Write(b); err != nil {
+			// connection broken
+			ctx.Error("", 500)
+		}
 	}
 }
 
