@@ -2,6 +2,7 @@
 - Codestyle fixes
 - Log gramework version and system information on startup
 - Handler name: show path to file starting from GOPATH
+- Gramework now supports serving static pre-defined HTML as a handler, see `gramework.HTML` for more info
 
 # Minor release: 1.1.0
 - Minor vendor fixes
