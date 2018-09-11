@@ -34,7 +34,9 @@ func DefaultPanicHandler(ctx *Context, panicReason interface{}) {
 		return
 	}
 
-	ctx.Encode(errGotPanic)
+	if _, err := ctx.Encode(errGotPanic); err != nil {
+		ctx.Error("", 500)
+	}
 }
 
 const handledPanic = `<!doctype html>
