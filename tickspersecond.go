@@ -9,5 +9,15 @@
 
 package gramework
 
-// Version gives you the gramework version you use now
-const Version = "1.1.1"
+import (
+	_ "unsafe" // required to use //go:linkname
+)
+
+// TicksPerSecond reports cpu ticks per second counter
+func TicksPerSecond() int64 {
+	return tickspersecond()
+}
+
+//go:noescape
+//go:linkname tickspersecond runtime.tickspersecond
+func tickspersecond() int64

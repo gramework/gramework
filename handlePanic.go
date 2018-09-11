@@ -14,7 +14,11 @@ var errGotPanic = struct {
 func DefaultPanicHandler(ctx *Context, panicReason interface{}) {
 	ctx.SetStatusCode(500)
 	if strings.HasPrefix(string(ctx.Request.Header.Peek("Accept")), "text/html") || strings.Contains(ctx.ContentType(), "text/html") {
-		ctx.HTML().WriteString(handledPanic)
+		_, err := ctx.HTML().WriteString(handledPanic)
+		if err != nil {
+			ctx.Logger.WithError(err).Error("could not serve default panic page")
+			return
+		}
 		if !ctx.App.PanicHandlerNoPoweredBy {
 			ctx.WriteString(poweredBy)
 		}

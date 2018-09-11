@@ -139,6 +139,10 @@ func handlerName(h interface{}) string {
 	}
 	funcDesc := runtime.FuncForPC(v.Pointer())
 	file, line := funcDesc.FileLine(v.Pointer())
+	pathidx := strings.Index(file, "/go/src/")
+	if strings.Contains(file, "/go/src") && len(file) > pathidx+len("/go/src/") {
+		file = file[strings.Index(file, "/go/src/")+8:]
+	}
 	name := fmt.Sprintf("%s@%s:%v", funcDesc.Name(), file, line)
 	return name
 }
@@ -168,6 +172,13 @@ func (r *Router) getStringServer(str string) func(*Context) {
 	b := []byte(str)
 	return func(ctx *Context) {
 		ctx.Write(b)
+	}
+}
+
+func (r *Router) getHTMLServer(str HTML) func(*Context) {
+	b := []byte(str)
+	return func(ctx *Context) {
+		ctx.HTML().Write(b)
 	}
 }
 
