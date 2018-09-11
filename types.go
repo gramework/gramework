@@ -11,7 +11,6 @@ package gramework
 
 import (
 	"fmt"
-	"io/ioutil"
 	"sync"
 
 	"github.com/apex/log"
@@ -205,4 +204,7 @@ type (
 )
 
 // crazy hack to solve nocopy false positive
-var _, _ = ioutil.Discard.Write([]byte(fmt.Sprintf("%v", (Context{}).nocopy)))
+var _ = fmt.Sprintf("%v", func() interface{} {
+	ctx := Context{}
+	return &ctx.nocopy
+}())

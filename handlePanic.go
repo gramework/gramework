@@ -20,10 +20,16 @@ func DefaultPanicHandler(ctx *Context, panicReason interface{}) {
 			return
 		}
 		if !ctx.App.PanicHandlerNoPoweredBy {
-			ctx.WriteString(poweredBy)
+			if _, err := ctx.WriteString(poweredBy); err != nil {
+				// connection broken
+				ctx.Error("", 500)
+			}
 		}
 		if len(ctx.App.PanicHandlerCustomLayout) > 0 {
-			ctx.WriteString(ctx.App.PanicHandlerCustomLayout)
+			if _, err := ctx.WriteString(ctx.App.PanicHandlerCustomLayout); err != nil {
+				// connection broken
+				ctx.Error("", 500)
+			}
 		}
 		return
 	}
