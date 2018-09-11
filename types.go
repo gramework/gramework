@@ -10,6 +10,8 @@
 package gramework
 
 import (
+	"fmt"
+	"io/ioutil"
 	"sync"
 
 	"github.com/apex/log"
@@ -196,4 +198,11 @@ type (
 
 		ctx *Context
 	}
+
+	// HTML type used to determine prerendered strings
+	// as an HTML and give proper content-type
+	HTML string
 )
+
+// crazy hack to solve nocopy false positive
+var _, _ = ioutil.Discard.Write([]byte(fmt.Sprintf("%v", (Context{}).nocopy)))

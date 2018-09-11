@@ -332,7 +332,10 @@ func (ctx *Context) Err500(message ...interface{}) *Context {
 	for k := range message {
 		switch v := message[k].(type) {
 		case string:
-			ctx.WriteString(v)
+			_, err := ctx.WriteString(v)
+			if err != nil {
+				ctx.Logger.WithError(err).Error("Err500 serving error")
+			}
 		case error:
 			ctx.Writef(fmtS, v)
 		default:
