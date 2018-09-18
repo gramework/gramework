@@ -49,6 +49,10 @@ If you find it, you can submit vulnerability via k@gramework.win.
 | Dev branch status | [![Build Status](https://travis-ci.org/gramework/gramework.svg?branch=dev)](https://travis-ci.org/gramework/gramework) |
 | CII Best Practices | [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/1203/badge)](https://bestpractices.coreinfrastructure.org/projects/1203) |
 | Gramework Stats Dashboard for Grafana | https://grafana.com/dashboards/3422 |
+| **Support contacts** | Via email:   k@gramework.win |
+| | Via phone (**urgent support only**): +1 484-666-0990 |
+| | Via Telegram: [@gramework_support](https://t.me/gramework_support) |
+| | Via Telegram community: [@gramework](https://t.me/gramework) |
 
 # TOC
 - [Benchmarks](#benchmarks)
