@@ -412,6 +412,10 @@ func (r *Router) handle(path, method string, ctx *Context, handler func(ctx *Con
 	if r.router.PanicHandler != nil {
 		defer r.router.Recv(ctx, nil)
 	}
+	if f, ok := r.router.StaticHandlers[method][path]; ok {
+		f(ctx)
+		return true
+	}
 	if root := r.router.Trees[method]; root != nil {
 		if f, tsr := root.GetValue(path, ctx, string(ctx.Method())); f != nil {
 			f(ctx)
