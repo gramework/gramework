@@ -16,7 +16,8 @@ import (
 // Router is a http.Handler which can be used to dispatch requests to different
 // handler functions via configurable routes
 type router struct {
-	Trees map[string]*node
+	Trees          map[string]*node
+	StaticHandlers map[string]map[string]RequestHandler
 
 	// Enables automatic redirection if the current route can't be matched but a
 	// handler for the path with (without) the trailing slash exists.
@@ -142,6 +143,15 @@ func newRouter() *router {
 				},
 			},
 		},
+		StaticHandlers: map[string]map[string]RequestHandler{
+			MethodGET:     make(map[string]RequestHandler),
+			MethodDELETE:  make(map[string]RequestHandler),
+			MethodHEAD:    make(map[string]RequestHandler),
+			MethodOPTIONS: make(map[string]RequestHandler),
+			MethodPATCH:   make(map[string]RequestHandler),
+			MethodPOST:    make(map[string]RequestHandler),
+			MethodPUT:     make(map[string]RequestHandler),
+		},
 	}
 	go r.cache.maintain()
 	return r
@@ -182,6 +192,16 @@ func (r *router) DELETE(path string, handle RequestHandler, prefixes []string) {
 	r.Handle(DELETE, path, handle, prefixes)
 }
 
+func (r *router) routeIsStatic(path string) (isStatic bool) {
+	isStatic = false
+	for _, sym := range path {
+		if sym == '*' || sym == ':' {
+			return
+		}
+	}
+	return true
+}
+
 // Handle registers a new request handle with the given path and method.
 //
 // For GET, POST, PUT, PATCH and DELETE requests the respective shortcut
@@ -193,6 +213,11 @@ func (r *router) DELETE(path string, handle RequestHandler, prefixes []string) {
 func (r *router) Handle(method, path string, handle RequestHandler, prefixes []string) {
 	if path[0] != SlashByte {
 		panic("path must begin with '/' in path '" + path + "'")
+	}
+
+	if r.routeIsStatic(path) {
+		r.StaticHandlers[method][path] = handle
+		return
 	}
 
 	if path != Slash {
@@ -257,6 +282,9 @@ func (r *router) Recv(ctx *Context, tracer *log.Entry) {
 // values. Otherwise the third return value indicates whether a redirection to
 // the same path with an extra / without the trailing slash should be performed.
 func (r *router) Lookup(method, path string, ctx *Context) (RequestHandler, bool) {
+	if handler, ok := r.StaticHandlers[method][path]; ok {
+		return handler, false
+	}
 	if root := r.Trees[method]; root != nil {
 		return root.GetValue(path, ctx, method)
 	}
