@@ -216,6 +216,9 @@ func (r *router) Handle(method, path string, handle RequestHandler, prefixes []s
 	}
 
 	if r.routeIsStatic(path) {
+		if r.StaticHandlers[method] == nil {
+			r.StaticHandlers[method] = make(map[string]RequestHandler)
+		}
 		r.StaticHandlers[method][path] = handle
 		return
 	}
@@ -282,8 +285,8 @@ func (r *router) Recv(ctx *Context, tracer *log.Entry) {
 // values. Otherwise the third return value indicates whether a redirection to
 // the same path with an extra / without the trailing slash should be performed.
 func (r *router) Lookup(method, path string, ctx *Context) (RequestHandler, bool) {
-	if handler, ok := r.StaticHandlers[method][path]; ok {
-		return handler, false
+	if handlers, ok := r.StaticHandlers[method]; ok {
+		return handlers[path], false
 	}
 	if root := r.Trees[method]; root != nil {
 		return root.GetValue(path, ctx, method)
