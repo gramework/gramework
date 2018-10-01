@@ -16,14 +16,14 @@ We're always glad to see your feature requests and PRs.
 
 - Gramework has a stable API.
 - Gramework is battle-tested.
-- Gramework is made by the [maintainer](https://github.com/valyala) of [fasthttp](https://github.com/valyala/fasthttp).
+- Gramework is made by a [maintainer](https://github.com/kirillDanshin) of [fasthttp](https://github.com/valyala/fasthttp).
 - Gramework is one of the rare frameworks that can help you use your server's resources more efficiently.
 - Gramework lowers your infrastructure costs by using as little memory as possible.
 - Gramework helps you serve requests faster, and so it helps you increase conversions ([source 1](https://blog.kissmetrics.com/speed-is-a-killer/), [source 2](https://blog.hubspot.com/marketing/page-load-time-conversion-rates)).
 - With Gramework you can build software faster using a simple yet powerful and highly optimized API.
 - With Gramework you get enterprise-grade support and answers to all your questions. 
 - At the Gramework team, we respect our users.
-- You can directly contact the [maintainer](https://github.com/valyala) and [donate](https://opencollective.com/gramework) for high priority feature.
+- You can directly contact the [maintainer](https://github.com/kirillDanshin) and [donate](https://opencollective.com/gramework) for high priority feature.
 - You can be sure that all license questions are OK with gramework.
 
 **Go >= 1.9.6 is the oldest continously tested and supported version.**
