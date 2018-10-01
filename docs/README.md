@@ -7,7 +7,7 @@ The Good Framework
 _Gramework long-term testing stand metrics screenshot made with [Gramework Stats Dashboard](https://grafana.com/dashboards/3422) and [metrics middleware](https://github.com/gramework/gramework/tree/dev/metrics)_
 
 ### What is it?
-Gramework is a fast, highly effective, reliable, SPA-first, go-way web framework made by the [fasthttp](https://github.com/valyala/fasthttp) maintainer. You get the simple yet powerful API, we handle optimizations internally.
+Gramework is a fast, highly effective, reliable, SPA-first, go-way web framework made by a [fasthttp](https://github.com/valyala/fasthttp) [maintainer](https://github.com/kirillDanshin). You get the simple yet powerful API, we handle optimizations internally.
 We're always glad to see your feature requests and PRs.
 
 -----
