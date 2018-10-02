@@ -1,4 +1,4 @@
-# gramework  [![codecov](https://codecov.io/gh/gramework/gramework/branch/master/graph/badge.svg)](https://codecov.io/gh/gramework/gramework) [![Build Status](https://travis-ci.org/gramework/gramework.svg?branch=master)](https://travis-ci.org/gramework/gramework) [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/1203/badge)](https://bestpractices.coreinfrastructure.org/projects/1203) [![Backers on Open Collective](https://opencollective.com/gramework/backers/badge.svg)](#backers) [![Sponsors on Open Collective](https://opencollective.com/gramework/sponsors/badge.svg)](#sponsors) [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fgramework%2Fgramework.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fgramework%2Fgramework?ref=badge_shield)
+# Gramework  [![codecov](https://codecov.io/gh/gramework/gramework/branch/master/graph/badge.svg)](https://codecov.io/gh/gramework/gramework) [![Build Status](https://travis-ci.org/gramework/gramework.svg?branch=master)](https://travis-ci.org/gramework/gramework) [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/1203/badge)](https://bestpractices.coreinfrastructure.org/projects/1203) [![Backers on Open Collective](https://opencollective.com/gramework/backers/badge.svg)](#backers) [![Sponsors on Open Collective](https://opencollective.com/gramework/sponsors/badge.svg)](#sponsors) [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fgramework%2Fgramework.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fgramework%2Fgramework?ref=badge_shield)
 
 The Good Framework
 
@@ -7,31 +7,30 @@ The Good Framework
 _Gramework long-term testing stand metrics screenshot made with [Gramework Stats Dashboard](https://grafana.com/dashboards/3422) and [metrics middleware](https://github.com/gramework/gramework/tree/dev/metrics)_
 
 ### What is it?
-Fast, highly effective, reliable SPA-first go-way web framework made by fasthttp maintainer. You get the simple yet powerful API, we handle optimizations internally.
-We glad to see your feature requests and PRs.
+Gramework is a fast, highly effective, reliable, SPA-first, go-way web framework made by a [fasthttp](https://github.com/valyala/fasthttp) [maintainer](https://github.com/kirillDanshin). You get the simple yet powerful API, we handle optimizations internally.
+We're always glad to see your feature requests and PRs.
 
 -----
 
 **Reasons to use Gramework**
 
-- Gramework has stable API
-- Gramework is battle-tested
-- Gramework made by fasthttp maintainer
-- Gramework is one of the rare frameworks that can help you to use server's resources effectively
-- Gramework make your projects' infrastructure costs more effective by using as less memory as possible
-- Gramework helps you serve requests faster, and so it helps you increase conversions ([source 1](https://blog.kissmetrics.com/speed-is-a-killer/), [source 2](https://blog.hubspot.com/marketing/page-load-time-conversion-rates))
-- With Gramework you can build software faster using simple yet optimized API
-- With Gramework you can get agile support and get answers to your questions
-- At Gramework team we respect our users
-- You can contact me and donate for high priority feature
-- You can be sure that all license questions are OK with gramework
-- You can buy a corporate-grade support
+- Gramework has a stable API.
+- Gramework is battle-tested.
+- Gramework is made by a [maintainer](https://github.com/kirillDanshin) of [fasthttp](https://github.com/valyala/fasthttp).
+- Gramework is one of the rare frameworks that can help you use your server's resources more efficiently.
+- Gramework lowers your infrastructure costs by using as little memory as possible.
+- Gramework helps you serve requests faster, and so it helps you increase conversions ([source 1](https://blog.kissmetrics.com/speed-is-a-killer/), [source 2](https://blog.hubspot.com/marketing/page-load-time-conversion-rates)).
+- With Gramework you can build software faster using a simple yet powerful and highly optimized API.
+- With Gramework you get enterprise-grade support and answers to all your questions. 
+- At the Gramework team, we respect our users.
+- You can directly contact the [maintainer](https://github.com/kirillDanshin) and [donate](https://opencollective.com/gramework) for high priority feature.
+- You can be sure that all license questions are OK with gramework.
 
 **Go >= 1.9.6 is the oldest continously tested and supported version.**
 
 
 ### Useful links and info
-If you find it, you can submit vulnerability via k@gramework.win.
+If you encounter any vulnerabilities then please feel free to submit them via k@gramework.win.
 
 | Name  | Link/Badge  	|
 |---	|---		|
@@ -41,7 +40,7 @@ If you find it, you can submit vulnerability via k@gramework.win.
 | Changelog | [Changelog](https://github.com/gramework/gramework/tree/dev/docs/CHANGELOG.md) |
 | Support us with a donation or become a sponsor | [OpenCollective](https://opencollective.com/gramework) |
 | Our Telegram chat | [@gramework](https://t.me/gramework) |
-| We have #gramework channel in the Gophers Slack | https://gophers.slack.com |
+| Our #gramework channel in the Gophers Slack | https://gophers.slack.com |
 | Our Discord Server | https://discord.gg/HkW8DsD |
 | Master branch coverage | [![codecov](https://codecov.io/gh/gramework/gramework/branch/master/graph/badge.svg)](https://codecov.io/gh/gramework/gramework) |
 | Master branch status | [![Build Status](https://travis-ci.org/gramework/gramework.svg?branch=master)](https://travis-ci.org/gramework/gramework) |
@@ -54,7 +53,7 @@ If you find it, you can submit vulnerability via k@gramework.win.
 | | Via Telegram: [@gramework_support](https://t.me/gramework_support) |
 | | Via Telegram community: [@gramework](https://t.me/gramework) |
 
-# TOC
+# Table of Contents
 - [Benchmarks](#benchmarks)
 - [3rd-party license info](#3rd-party-license-info)
 - [Basic usage](#basic-usage)
@@ -68,7 +67,7 @@ If you find it, you can submit vulnerability via k@gramework.win.
 [![benchmark](https://raw.githubusercontent.com/smallnest/go-web-framework-benchmark/master/benchmark.png)](https://github.com/smallnest/go-web-framework-benchmark)
 
 ## Contributors
-This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
+This project exists thanks to our awesome contributors! [[Contribute](CONTRIBUTING.md)].
 <a href="graphs/contributors"><img src="https://opencollective.com/gramework/contributors.svg?width=890&button=false" /></a>
 
 ## Backers
@@ -91,20 +90,19 @@ Support this project by becoming a sponsor. Your logo will show up here with a l
 <a href="https://opencollective.com/gramework/sponsor/9/website" target="_blank"><img src="https://opencollective.com/gramework/sponsor/9/avatar.svg"></a>
 
 # 3rd-party license info
-- Gramework is now powered by [fasthttp](https://github.com/valyala/fasthttp) and custom fasthttprouter, that is embedded now.
-  You can find licenses in `/third_party_licenses/fasthttp` and `/third_party_licenses/fasthttprouter`.
+- Gramework is now powered by [fasthttp](https://github.com/valyala/fasthttp) and an embedded custom fasthttprouter.
+  You will find the according licenses in `/third_party_licenses/fasthttp` and `/third_party_licenses/fasthttprouter`.
 - The 3rd autoTLS implementation, placed in `nettls_*.go`, is an integrated version of
-  [caddytls](https://github.com/mholt/caddy/tree/d85e90a7b4c06d1698d0b96b695b05d41833fcd3/caddytls), because using it by simple import isn't an option:
-  gramework based on `fasthttp`, that is incompatible with `net/http`.
+  [caddytls](https://github.com/mholt/caddy/tree/d85e90a7b4c06d1698d0b96b695b05d41833fcd3/caddytls), because using it through a simple import isn't an option, gramework is based on `fasthttp`, which is incompatible with `net/http`.
   In [the commit I based on](https://github.com/mholt/caddy/tree/d85e90a7b4c06d1698d0b96b695b05d41833fcd3), caddy is `Apache-2.0` licensed.
-  It's license placed in `/third_party_licenses/caddy`. @mholt [allow us](https://github.com/mholt/caddy/issues/1520#issuecomment-286907851) to copy the code in this repo.
+  Its license placed in `/third_party_licenses/caddy`. @mholt [allow us](https://github.com/mholt/caddy/issues/1520#issuecomment-286907851) to copy the code in this repo.
 
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fgramework%2Fgramework.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fgramework%2Fgramework?ref=badge_large)
 
 # Basic usage
 ### Hello world
-The example below will serve "hello, grameworld". Gramework will register flag "bind" for you, that allows you to choose another ip/port that gramework should listen:
+The example below will serve "hello, grameworld". Gramework will register the `bind` flag for you, that allows you to choose another ip/port that gramework should listen on:
 
 ```go
 package main
@@ -122,14 +120,14 @@ func main() {
 }
 ```
 
-If you don't want support `bind` flag, pass the optional address argument to `ListenAndServe`.
+If you don't want to support the `bind` flag then pass the optional address argument to `ListenAndServe`.
 
-**NOTE**: all examples below will register `bind` flag.
+**NOTE**: all examples below will register the `bind` flag.
 
 ### JSON world ;) Part 1
 From version: 1.1.0-rc1
 
-The example below will serve `{"hello":"grameworld"}` from the map. Gramework will register flag "bind" for you, that allows you to choose another ip/port that gramework should listen:
+The example below will serve `{"hello":"grameworld"}` from the map. Gramework will register the `bind` flag for you, that allows you to choose another ip/port that gramework should listen on:
 
 ```go
 package main
@@ -154,7 +152,7 @@ func main() {
 ### JSON world. Part 2
 From version: 1.1.0-rc1
 
-The example below will serve `{"hello":"grameworld"}` from the struct. Gramework will register flag "bind" for you, that allows you to choose another ip/port that gramework should listen:
+The example below will serve `{"hello":"grameworld"}` from the struct. Gramework will register the `bind` flag for you, that allows you to choose another ip/port that gramework should listen on:
 
 ```go
 package main
@@ -181,7 +179,7 @@ func main() {
 ```
 
 ### Serving a dir
-The example below will serve static files from ./files:
+The example below will serve static files from `./files`:
 
 ```go
 package main
@@ -200,7 +198,7 @@ func main() {
 ```
 
 ### Serving prepared bytes
-The example below will serve byte slice:
+The example below will serve a byte slice:
 
 ```go
 package main
@@ -219,7 +217,9 @@ func main() {
 ```
 
 ### Using dynamic handlers, example 1.
-This example show you some ways to send response, how to use preconfigured logger etc.
+This example demonstrates:
+- some ways of serving responses
+- how to use preconfigured loggers etc.
 
 ```go
 package main
@@ -294,8 +294,8 @@ func main() {
 ```
 
 ### Using dynamic handlers, example 2. Simple FastHTTP-compatible handlers.
-This example shows you how to migrate from fasthttp to gramework
-without rewriting all your handlers.
+This example demonstrates how to migrate from fasthttp to gramework
+without rewriting your handlers.
 
 ```go
 package main
