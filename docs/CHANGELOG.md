@@ -1,4 +1,8 @@
-# Patch releases: 1.1.1
+# Minor release: 1.2.0
+- Add support for `PORT` environment
+- Add support for Gramework Envoronments. We have three environments: `DEV`, `STAGE` and `PROD`. You can switch them with `GRAMEWORK_ENV` or via gramework.SetEnv().
+
+# Patch release: 1.1.1
 - Codestyle fixes
 - Log gramework version and system information on startup
 - Handler name: show path to file starting from GOPATH
