@@ -24,11 +24,9 @@ func (app *App) ListenAndServe(addr ...string) error {
 	if len(addr) > 0 {
 		bind = addr[0]
 	} else {
-		if bind == "" {
-			bind = os.Getenv("PORT")
-			if len(bind) > 0 && !strings.Contains(bind, ":") {
-				bind = ":" + bind
-			}
+		bind = os.Getenv("PORT")
+		if len(bind) > 0 && !strings.Contains(bind, ":") {
+			bind = ":" + bind
 		}
 		if bind == "" && !app.flagsRegistered {
 			app.RegFlags()
