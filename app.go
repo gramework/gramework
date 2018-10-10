@@ -9,9 +9,18 @@
 
 package gramework
 
+import "time"
+
 // SetName for the server
 func (app *App) SetName(name string) {
 	app.name = name
+}
+
+// SetCookieExpire allows you set cookie expire time
+func (app *App) SetCookieExpire(d time.Duration) {
+	if d != 0 {
+		app.cookieExpire = d
+	}
 }
 
 // SetCookieDomain allows you to implement SSO and other useful features

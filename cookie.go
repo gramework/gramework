@@ -10,6 +10,8 @@
 package gramework
 
 import (
+	"time"
+
 	"github.com/valyala/fasthttp"
 )
 
@@ -28,6 +30,7 @@ func (ctx *Context) saveCookies() {
 		if len(ctx.App.cookieDomain) > 0 {
 			c.SetDomain(ctx.App.cookieDomain)
 		}
+		c.SetExpire(time.Now().Add(ctx.App.cookieExpire))
 		ctx.Response.Header.SetCookie(c)
 		fasthttp.ReleaseCookie(c)
 	}
