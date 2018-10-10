@@ -34,10 +34,7 @@ func (ctx *Context) saveCookies() {
 		}
 		if len(ctx.App.cookieDomain) > 0 {
 			c.SetPath(ctx.App.cookiePath)
-		} else {
-			c.SetPath(defaultCookiePath)
 		}
-
 		c.SetExpire(time.Now().Add(ctx.App.cookieExpire))
 		ctx.Response.Header.SetCookie(c)
 		fasthttp.ReleaseCookie(c)
