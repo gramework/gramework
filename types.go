@@ -12,6 +12,7 @@ package gramework
 import (
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/apex/log"
 	"github.com/gramework/utils/nocopy"
@@ -62,6 +63,8 @@ type (
 		PanicHandlerNoPoweredBy   bool
 		PanicHandlerCustomLayout  string
 		internalLog               *log.Entry
+
+		cookieExpire time.Duration
 
 		// Gramework Protection's max detections of suspect before ban
 		maxHackAttempts *int32

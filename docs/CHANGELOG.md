@@ -1,3 +1,6 @@
+# Patch release: 1.2.1
+- Introduce app.SetCookieExpire() and fix cookie logic.
+
 # Minor release: 1.2.0
 - Add support for `PORT` environment
 - Add support for Gramework Envoronments. We have three environments: `DEV`, `STAGE` and `PROD`. You can switch them with `GRAMEWORK_ENV` or via gramework.SetEnv().

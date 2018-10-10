@@ -56,6 +56,7 @@ func New(opts ...func(*App)) *App {
 		maxHackAttempts:           &maxHackAttempts,
 		runningServersMu:          new(sync.Mutex),
 		internalLog:               internalLog,
+		cookieExpire:              6 * time.Hour,
 	}
 
 	app.serverBase = &fasthttp.Server{
