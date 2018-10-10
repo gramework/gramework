@@ -1,3 +1,6 @@
+# Patch release: 1.2.2
+- Introduce app.SetCookiePath().
+
 # Patch release: 1.2.1
 - Introduce app.SetCookieExpire() and fix cookie logic.
 

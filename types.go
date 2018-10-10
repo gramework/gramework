@@ -59,6 +59,7 @@ type (
 		HandleUnknownDomains      bool
 		seed                      uintptr
 		cookieDomain              string
+		cookiePath                string
 		NoDefaultPanicHandler     bool
 		PanicHandlerNoPoweredBy   bool
 		PanicHandlerCustomLayout  string

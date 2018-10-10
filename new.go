@@ -57,6 +57,7 @@ func New(opts ...func(*App)) *App {
 		runningServersMu:          new(sync.Mutex),
 		internalLog:               internalLog,
 		cookieExpire:              6 * time.Hour,
+		cookiePath:                defaultCookiePath,
 	}
 
 	app.serverBase = &fasthttp.Server{

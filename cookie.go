@@ -15,6 +15,8 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
+const defaultCookiePath = "/"
+
 // GetCookieDomain returns previously configured cookie domain and if cookie domain
 // was configured at all
 func (ctx *Context) GetCookieDomain() (domain string, wasConfigured bool) {
@@ -29,6 +31,9 @@ func (ctx *Context) saveCookies() {
 		c.SetValue(v)
 		if len(ctx.App.cookieDomain) > 0 {
 			c.SetDomain(ctx.App.cookieDomain)
+		}
+		if len(ctx.App.cookieDomain) > 0 {
+			c.SetPath(ctx.App.cookiePath)
 		}
 		c.SetExpire(time.Now().Add(ctx.App.cookieExpire))
 		ctx.Response.Header.SetCookie(c)

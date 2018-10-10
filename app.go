@@ -23,6 +23,11 @@ func (app *App) SetCookieExpire(d time.Duration) {
 	}
 }
 
+// SetCookiePath allows you set cookie path
+func (app *App) SetCookiePath(path string) {
+	app.cookiePath = path
+}
+
 // SetCookieDomain allows you to implement SSO and other useful features
 // without additional pain
 func (app *App) SetCookieDomain(domain string) {
