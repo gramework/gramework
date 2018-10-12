@@ -185,6 +185,14 @@ func (r *Router) getHTMLServer(str HTML) func(*Context) {
 	}
 }
 
+func (r *Router) getJSONServer(str JSON) func(*Context) {
+	b := []byte(str)
+	return func(ctx *Context) {
+		ctx.SetContentType(jsonCTshort)
+		ctx.Write(b)
+	}
+}
+
 func (r *Router) getBytesServer(b []byte) func(*Context) {
 	return func(ctx *Context) {
 		ctx.Write(b)
