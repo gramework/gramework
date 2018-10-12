@@ -205,6 +205,10 @@ type (
 	// HTML type used to determine prerendered strings
 	// as an HTML and give proper content-type
 	HTML string
+
+	// JSON type used to determine prerendered strings
+	// as an JSON and give proper content-type
+	JSON string
 )
 
 // crazy hack to solve nocopy false positive

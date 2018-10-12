@@ -71,6 +71,8 @@ func (r *Router) determineHandler(handler interface{}) func(*Context) {
 	switch h := rawHandler.(type) {
 	case HTML:
 		return r.getHTMLServer(h)
+	case JSON:
+		return r.getJSONServer(h)
 	case func(*Context):
 		return h
 	case RequestHandler:

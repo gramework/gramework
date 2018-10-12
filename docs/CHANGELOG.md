@@ -1,3 +1,6 @@
+# Patch release: 1.2.3
+- Gramework serving static pre-defined JSON as a handler, see `gramework.JSON` for more info
+
 # Patch release: 1.2.2
 - Introduce app.SetCookiePath().
 
