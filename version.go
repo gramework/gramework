@@ -10,4 +10,4 @@
 package gramework
 
 // Version gives you the gramework version you use now
-const Version = "1.2.3"
+const Version = "1.3.0"

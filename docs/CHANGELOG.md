@@ -1,3 +1,6 @@
+# Minor release: 1.3.0
+- Introduce reflect handler support. Can be useful for any POSTs, including multi-typed JSON requests etc.
+
 # Patch release: 1.2.3
 - Gramework serving static pre-defined JSON as a handler, see `gramework.JSON` for more info
 
