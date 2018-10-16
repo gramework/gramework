@@ -22,7 +22,7 @@ matrix:
 before_install:
   - GO_FILES=$(find . -iname '*.go' -type f | grep -v /vendor/)
   - go get -t -v ./...
-  - go get -v github.com/golang/lint/golint
+  - go get -v golang.org/x/lint/golint
   - go get -v honnef.co/go/tools/cmd/megacheck
   - go get -v github.com/fzipp/gocyclo
   - go get -v golang.org/x/tools/cmd/goimports
