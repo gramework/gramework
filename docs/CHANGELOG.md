@@ -1,27 +1,28 @@
 # Patch release: 1.3.1
 - Fix healthcheck formatting
+- Unify docs/CHANGELOG.md style.
 
 # Minor release: 1.3.0
 - Introduce reflect handler support. Can be useful for any POSTs, including multi-typed JSON requests etc.
 
 # Patch release: 1.2.3
-- Gramework serving static pre-defined JSON as a handler, see `gramework.JSON` for more info
+- Gramework serving static pre-defined JSON as a handler, see `gramework.JSON()` for more info
 
 # Patch release: 1.2.2
-- Introduce app.SetCookiePath().
+- Introduce `app.SetCookiePath()`.
 
 # Patch release: 1.2.1
-- Introduce app.SetCookieExpire() and fix cookie logic.
+- Introduce `app.SetCookieExpire()` and fix cookie logic.
 
 # Minor release: 1.2.0
 - Add support for `PORT` environment
-- Add support for Gramework Envoronments. We have three environments: `DEV`, `STAGE` and `PROD`. You can switch them with `GRAMEWORK_ENV` or via gramework.SetEnv().
+- Add support for Gramework Envoronments. We have three environments: `DEV`, `STAGE` and `PROD`. You can switch them with `GRAMEWORK_ENV` or via `gramework.SetEnv()`.
 
 # Patch release: 1.1.1
 - Codestyle fixes
 - Log gramework version and system information on startup
 - Handler name: show path to file starting from GOPATH
-- Gramework now supports serving static pre-defined HTML as a handler, see `gramework.HTML` for more info
+- Gramework now supports serving static pre-defined HTML as a handler, see `gramework.HTML()` for more info
 
 # Minor release: 1.1.0
 - Minor vendor fixes
