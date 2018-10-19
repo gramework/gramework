@@ -62,7 +62,7 @@ func init() {
 func siFmt(n uint64) string {
 	prefix := siRaw
 	x := float64(n)
-	for ; x > 1000; x = x / 1000 {
+	for ; x > 1000; x = x / 1024 {
 		prefix++
 	}
 

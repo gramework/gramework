@@ -1,4 +1,5 @@
 # Patch release: 1.3.1
+- Fix healthcheck formatting
 - Unify docs/CHANGELOG.md style.
 
 # Minor release: 1.3.0
