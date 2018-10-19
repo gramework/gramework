@@ -1,3 +1,6 @@
+# Patch release: 1.3.1
+- Fix healthcheck formatting
+
 # Minor release: 1.3.0
 - Introduce reflect handler support. Can be useful for any POSTs, including multi-typed JSON requests etc.
 
