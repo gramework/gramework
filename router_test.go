@@ -183,6 +183,13 @@ func TestGrameRouter(t *testing.T) {
 		t.FailNow()
 	}
 
+	app.Sub("/abc").Handle("GET", "/def", "abcdef")
+
+	if h, _ := app.defaultRouter.Lookup("GET", "/abc/def", nil); h == nil {
+		t.Log("GET /abc/def should return handler after registration")
+		t.FailNow()
+	}
+
 	app.Handle("CONNECT", "/ws", "")
 	app.PanicHandler(nil)
 	app.NotFound(nil)

@@ -108,6 +108,18 @@ func (r *SubRouter) PATCH(route string, handler interface{}) *SubRouter {
 	return r
 }
 
+// Handle registers a new request handle with the given path and method.
+// For GET, POST, PUT, PATCH and DELETE requests the respective shortcut functions can be used.
+// This function is intended for bulk loading and to allow the usage of less frequently used,
+// non-standardized or custom methods (e.g. for internal communication with a proxy).
+func (r *SubRouter) Handle(method, route string, handler interface{}) *SubRouter {
+	route = r.prefixedRoute(route)
+	if r.parent != nil {
+		r.parent.handleReg(method, route, handler, r.prefixes)
+	}
+	return r
+}
+
 func (r *SubRouter) handleReg(method, route string, handler interface{}, prefixes []string) {
 	r.parent.handleReg(method, route, handler, prefixes)
 }
