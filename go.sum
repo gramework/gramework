@@ -10,8 +10,8 @@ github.com/fasthttp-contrib/websocket v0.0.0-20160511215533-1f3b11f56072 h1:Dddq
 github.com/fasthttp-contrib/websocket v0.0.0-20160511215533-1f3b11f56072/go.mod h1:duJ4Jxv5lDcvg4QuQr0oowTf7dz4/CR8NtyCooz9HL8=
 github.com/fsnotify/fsnotify v1.4.7 h1:IXs+QLmnXW2CcXuY+8Mzv/fWEsPGWxqefPtCP5CnV9I=
 github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
-github.com/gocarina/gocsv v0.0.0-20180809181117-b8c38cb1ba36 h1:IlBbYij72r3CoD3fKTbP5jD0NJjrvemKsaxkW/QUdGE=
-github.com/gocarina/gocsv v0.0.0-20180809181117-b8c38cb1ba36/go.mod h1:/oj50ZdPq/cUjA02lMZhijk5kR31SEydKyqah1OgBuo=
+github.com/gocarina/gocsv/v2 v2.0.0-20181019111052-71f99b1720d2 h1:LQxkZQfspEn5ou0fel1VIusa1AJKPrxcDYkhA2rfE10=
+github.com/gocarina/gocsv/v2 v2.0.0-20181019111052-71f99b1720d2/go.mod h1:g7SrNGzi3lNWhpogl2lrJ6qaoQDLAwPRiWedc4B0Grs=
 github.com/golang/protobuf v1.2.0 h1:P3YflyNX/ehuJFLhxviNdFxQPkGK5cDcApsge1SqnvM=
 github.com/golang/protobuf v1.2.0/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
 github.com/google/uuid v1.0.0 h1:b4Gk+7WdP/d3HZH8EJsZpvV7EtDOgaZLtnaNGIu1adA=
