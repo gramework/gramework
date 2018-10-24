@@ -17,7 +17,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/gocarina/gocsv"
+	"github.com/gocarina/gocsv/v2"
 	"github.com/gramework/runtimer"
 	acceptParser "github.com/kirillDanshin/go-accept-headers"
 	"github.com/valyala/fasthttp"
