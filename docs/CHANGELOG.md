@@ -1,3 +1,6 @@
+# Patch release 1.3.2
+- Added `SubRouter.Handle()` method similar to `Router.Handle()` & `App.Handle()`.
+
 # Patch release: 1.3.1
 - Fix healthcheck formatting
 - Unify docs/CHANGELOG.md style.
