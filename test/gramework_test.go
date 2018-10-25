@@ -229,7 +229,7 @@ func TestGrameworkHTTPS(t *testing.T) {
 	app.TLSEmails = []string{"k@guava.by"}
 
 	go func() {
-		err := app.ListenAndServeAutoTLSDev(":9443")
+		err := app.ListenAndServeAutoTLS(":9443")
 		errCheck(t, err)
 	}()
 
@@ -269,7 +269,7 @@ func TestGrameworkListenAll(t *testing.T) {
 	app.TLSEmails = []string{"k@guava.by"}
 
 	go func() {
-		app.ListenAndServeAllDev(":9449")
+		app.ListenAndServeAll(":9449")
 	}()
 
 	time.Sleep(3 * time.Second)

@@ -29,14 +29,7 @@ func (app *App) ListenAndServeAll(httpAddr ...string) {
 // HTTPS is served on :443.
 // If it can't serve http or https, it logs an error and
 // exit the server with app.Logger.Fatalf().
+// Deprecated: Use ListenAndServeAll() instead
 func (app *App) ListenAndServeAllDev(httpAddr ...string) {
-	go func() {
-		if err := app.ListenAndServeAutoTLSDev(":443"); err != nil {
-			app.internalLog.Fatalf("can't serve tls: %s", err)
-		}
-	}()
-
-	if err := app.ListenAndServe(httpAddr...); err != nil {
-		app.internalLog.Fatalf("can't serve http: %s", err)
-	}
+	app.ListenAndServeAll(httpAddr...)
 }
