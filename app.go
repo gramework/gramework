@@ -12,12 +12,14 @@ package gramework
 import "time"
 
 // SetName for the server
+// Deprecated: Use New() with OptAppName option instead
 func (app *App) SetName(name string) {
 	if len(name) > 0 {
 		app.name = name
 	} else {
 		app.name = DefaultAppName
 	}
+	app.serverBase.Name = app.name
 }
 
 // SetCookieExpire allows you set cookie expire time

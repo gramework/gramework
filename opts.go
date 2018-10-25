@@ -11,6 +11,15 @@ package gramework
 
 import "github.com/valyala/fasthttp"
 
+func OptAppName(n string) func(*App) {
+	return func(a *App) {
+		if a != nil && a.serverBase != nil {
+			a.name = n
+			a.serverBase.Name = n
+		}
+	}
+}
+
 // OptUseServer sets fasthttp.Server instance to use
 func OptUseServer(s *fasthttp.Server) func(*App) {
 	return func(a *App) {

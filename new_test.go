@@ -11,6 +11,8 @@ package gramework
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewShouldNeverReturnNil(t *testing.T) {
@@ -35,4 +37,21 @@ func TestNewShouldNeverReturnNil(t *testing.T) {
 		t.FailNow()
 		return
 	}
+}
+
+func TestNewWithName(t *testing.T) {
+	newApp := func(n string) {
+		app := New(OptAppName(n))
+		assert.Equal(t, n, app.name)
+		assert.Equal(t, n, app.serverBase.Name)
+	}
+	t.Run("DefaultName", func(t *testing.T) {
+		newApp(DefaultAppName)
+	})
+	t.Run("CustomName", func(t *testing.T) {
+		newApp("test_app")
+	})
+	t.Run("EmptyName", func(t *testing.T) {
+		newApp("")
+	})
 }

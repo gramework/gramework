@@ -37,7 +37,6 @@ func New(opts ...func(*App)) *App {
 		Flags:          flags,
 		flagsQueue:     flagsToRegister,
 		Logger:         logger,
-		name:           DefaultAppName,
 		domainListLock: new(sync.RWMutex),
 		firewall: &firewall{
 			blockList:      make(map[string]int64),
