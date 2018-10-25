@@ -95,10 +95,6 @@ func (app *App) ListenAndServeAutoTLS(addr string, cachePath ...string) error {
 	l := app.internalLog.WithField("bind", addr)
 	l.Info("Starting HTTPS")
 
-	if len(app.name) == 0 {
-		app.name = "gramework/" + Version
-	}
-
 	srv := app.copyServer()
 	app.runningServersMu.Lock()
 	app.runningServers = append(app.runningServers, runningServerInfo{

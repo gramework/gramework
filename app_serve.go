@@ -15,10 +15,6 @@ import (
 
 // Serve app on given listener
 func (app *App) Serve(ln net.Listener) error {
-	if len(app.name) == 0 {
-		app.name = "gramework/" + Version
-	}
-
 	var err error
 	srv := app.copyServer()
 	app.runningServersMu.Lock()

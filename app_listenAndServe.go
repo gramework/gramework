@@ -44,15 +44,11 @@ func (app *App) ListenAndServe(addr ...string) error {
 	}
 
 	if bind == "" {
-		return errors.New("No bind address provided")
+		return errors.New("no bind address provided")
 	}
 
 	l := app.internalLog.WithField("bind", bind)
 	l.Info("Starting HTTP")
-
-	if len(app.name) == 0 {
-		app.name = "gramework/" + Version
-	}
 
 	var err error
 	srv := app.copyServer()
