@@ -13,7 +13,11 @@ import "time"
 
 // SetName for the server
 func (app *App) SetName(name string) {
-	app.name = name
+	if len(name) > 0 {
+		app.name = name
+	} else {
+		app.name = DefaultAppName
+	}
 }
 
 // SetCookieExpire allows you set cookie expire time
