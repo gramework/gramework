@@ -10,8 +10,9 @@
 package gramework
 
 import (
+	"crypto/ecdsa"
+	"crypto/elliptic"
 	"crypto/rand"
-	"crypto/rsa"
 	"crypto/tls"
 	"crypto/x509"
 	"crypto/x509/pkix"
@@ -27,7 +28,7 @@ func selfSignedCertificate(clientHello *tls.ClientHelloInfo) (*tls.Certificate, 
 		return nil, fmt.Errorf("self-signed certificate for %q not permitted", clientHello.ServerName)
 	}
 
-	priv, err := rsa.GenerateKey(rand.Reader, 1024)
+	priv, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	if err != nil {
 		return nil, err
 	}
