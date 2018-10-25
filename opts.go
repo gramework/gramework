@@ -11,6 +11,7 @@ package gramework
 
 import "github.com/valyala/fasthttp"
 
+// OptAppName sets app.name and app.serverBase.Name
 func OptAppName(n string) func(*App) {
 	return func(a *App) {
 		if a != nil && a.serverBase != nil {
