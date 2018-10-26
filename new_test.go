@@ -55,3 +55,9 @@ func TestNewWithName(t *testing.T) {
 		newApp("")
 	})
 }
+
+func TestNewWithoutName(t *testing.T) {
+	app := New()
+	assert.Equal(t, DefaultAppName, app.name)
+	assert.Equal(t, DefaultAppName, app.serverBase.Name)
+}

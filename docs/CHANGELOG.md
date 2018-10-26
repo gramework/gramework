@@ -1,3 +1,6 @@
+# Patch release: 1.4.1
+- Regression fixed: empty app name. Now if no `OptAppName` provided `App.name` will be set to default 
+
 # Minor release: 1.4.0
 - Added `OptAppName` option for App initializer
 - Fixed ability to set empty `""` server name
