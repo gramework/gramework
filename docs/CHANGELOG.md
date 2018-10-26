@@ -1,3 +1,11 @@
+# Minor release: 1.4.0
+- Added `OptAppName` option for App initializer
+- Fixed ability to set empty `""` server name
+- Fixed  `fasthttp.Server` name set via `App.SetName()`
+- Method `App.SetName()` market as deprecated in favor of `OptAppName`
+- Methods `App.ListenAndServeAllDev()` & `App.ListenAndServeAutoTLSDev()` marked as deprecated and from now is simple aliases of `App.ListenAndServeAll()` & `App.ListenAndServeAutoTLS()` accordingly
+- Fixed `go.mod` dependencies and `go mod vendor` applied to support older versions of GO  
+
 # Patch release: 1.3.2
 - Added `SubRouter.Handle()` method similar to `Router.Handle()` & `App.Handle()`.
 
