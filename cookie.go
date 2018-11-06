@@ -32,7 +32,7 @@ func (ctx *Context) saveCookies() {
 		if len(ctx.App.cookieDomain) > 0 {
 			c.SetDomain(ctx.App.cookieDomain)
 		}
-		if len(ctx.App.cookieDomain) > 0 {
+		if len(ctx.App.cookiePath) > 0 {
 			c.SetPath(ctx.App.cookiePath)
 		}
 		c.SetExpire(time.Now().Add(ctx.App.cookieExpire))

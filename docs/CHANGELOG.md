@@ -1,3 +1,6 @@
+# Patch release: 1.4.2
+- Setting of cookie path fixed 
+
 # Patch release: 1.4.1
 - Regression fixed: empty app name. Now if no `OptAppName` provided `App.name` will be set to default 
 
