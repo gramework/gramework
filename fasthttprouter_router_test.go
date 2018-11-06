@@ -666,23 +666,29 @@ func TestRouterNotFound(t *testing.T) {
 	router.GET("/path", handlerFunc)
 	router.GET("/dir/", handlerFunc)
 	router.GET("/", handlerFunc)
+	router.GET("/path/:user", handlerFunc)
+	router.Sub("/abc").GET("/:user", handlerFunc)
 
 	testRoutes := []struct {
-		route string
-		code  int
+		route    string
+		code     int
+		location string
 	}{
-		{"/path/", 301},          // TSR -/
-		{"/dir", 200},            // TSR -/
-		{"/", 200},               // TSR +/
-		{"/PATH", 301},           // Fixed Case
-		{"/DIR", 301},            // Fixed Case
-		{"/PATH/", 301},          // Fixed Case -/
-		{"/DIR/", 301},           // Fixed Case +/
-		{"/paTh/?name=foo", 301}, // Fixed Case With Params +/
-		{"/paTh?name=foo", 301},  // Fixed Case With Params +/
-		{"/../path", 200},        // CleanPath
-		{"/nope", 404},           // NotFound
-		{"/path/?name=foo", 301}, // TSR Case With Params
+		{"/path/", 301, "/path"},                       // TSR -/
+		{"/dir", 200, ""},                              // TSR -/
+		{"/", 200, ""},                                 // TSR +/
+		{"/PATH", 301, "/path"},                        // Fixed Case
+		{"/DIR", 301, "/dir"},                          // Fixed Case
+		{"/PATH/", 301, "/path"},                       // Fixed Case -/
+		{"/DIR/", 301, "/dir"},                         // Fixed Case +/
+		{"/paTh/?name=foo", 301, "/path?name=foo"},     // Fixed Case With Params +/
+		{"/paTh?name=foo", 301, "/path?name=foo"},      // Fixed Case With Params +/
+		{"/../path", 200, ""},                          // CleanPath
+		{"/nope", 404, ""},                             // NotFound
+		{"/path/?name=foo", 301, "/path?name=foo"},     // TSR Case With Params
+		{"/path/u/?name=foo", 301, "/path/u?name=foo"}, // Dynamic TSR -/
+		{"/abc/u/?name=foo", 301, "/abc/u?name=foo"},   // Sub Dynamic TSR -/
+		{"/AbC/u/?name=foo", 301, "/abc/u?name=foo"},   // Sub Dynamic Fixed Case -/
 	}
 
 	s := &fasthttp.Server{
@@ -713,6 +719,11 @@ func TestRouterNotFound(t *testing.T) {
 		if !(resp.Header.StatusCode() == tr.code) {
 			t.Errorf("NotFound handling route %s failed: Code=%d want=%d",
 				tr.route, resp.Header.StatusCode(), tr.code)
+		}
+		respLocation := string(resp.Header.Peek("Location"))
+		if tr.code == 301 && respLocation != tr.location {
+			t.Errorf("Wrong location header %s failed: Location=%s want=%s",
+				tr.route, respLocation, tr.location)
 		}
 	}
 	t.Log("not found test")

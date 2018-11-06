@@ -200,6 +200,40 @@ func TestGrameRouter(t *testing.T) {
 	http.Get("http://127.0.0.1:65023") // just should not panic
 }
 
+func TestSubRouter(t *testing.T) {
+	app := New()
+
+	app.Sub("/abc").Handle("GET", "/def", "abcdef")
+	if h, _ := app.defaultRouter.Lookup("GET", "/abc/def", nil); h == nil {
+		t.Log("GET /abc/def should return handler after registration")
+		t.FailNow()
+	}
+
+	app.Sub("/abc").Handle("GET", "/def2/", "abcdef")
+	if h, _ := app.defaultRouter.Lookup("GET", "/abc/def2", nil); h == nil {
+		t.Log("GET /abc/def should return handler after registration")
+		t.FailNow()
+	}
+
+	app.Sub("/cba").Handle("GET", "/def/:user", "abcdef")
+	if h, _ := app.defaultRouter.Lookup("GET", "/cba/def/usr", nil); h == nil {
+		t.Log("GET /cba/def/usr should return handler after registration")
+		t.FailNow()
+	}
+
+	app.Sub("/hello").Sub("/world").Handle("POST", "/def", "defdef")
+	if h, _ := app.defaultRouter.Lookup("POST", "/hello/world/def", nil); h == nil {
+		t.Log("GET /hello/world/def/usr should return handler after registration")
+		t.FailNow()
+	}
+
+	app.Sub("/hello").Sub("/world").Handle("POST", "/def/:user", "user")
+	if h, _ := app.defaultRouter.Lookup("POST", "/hello/world/def/usr", nil); h == nil {
+		t.Log("GET /hello/world/def/usr should return handler after registration")
+		t.FailNow()
+	}
+}
+
 func TestDomainRouter(t *testing.T) {
 	app := New()
 	r := app.Domain("example.com")

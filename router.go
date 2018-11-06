@@ -336,8 +336,11 @@ func (r *Router) handler(ctx *Context) {
 						if method != GET {
 							code = temporaryRedirectCode
 						}
+
+						uri := r.pathAppendQueryFromCtx([]byte(fixedPath), ctx)
+
 						ctx.SetStatusCode(code)
-						ctx.Response.Header.AddBytesV("Location", fixedPath)
+						ctx.Response.Header.SetBytesV("Location", uri)
 						return
 					}
 				}
@@ -367,8 +370,10 @@ func (r *Router) handler(ctx *Context) {
 						if method != GET {
 							code = temporaryRedirectCode
 						}
+						uri := r.pathAppendQueryFromCtx([]byte(fixedPath), ctx)
+
 						ctx.SetStatusCode(code)
-						ctx.Response.Header.AddBytesV("Location", fixedPath)
+						ctx.Response.Header.SetBytesV("Location", uri)
 						return
 					}
 				}
@@ -395,8 +400,11 @@ func (r *Router) handler(ctx *Context) {
 				if method != GET {
 					code = temporaryRedirectCode
 				}
+
+				uri := r.pathAppendQueryFromCtx([]byte(fixedPath), ctx)
+
 				ctx.SetStatusCode(code)
-				ctx.Response.Header.AddBytesV("Location", fixedPath)
+				ctx.Response.Header.SetBytesV("Location", uri)
 				return
 			}
 		}
@@ -450,7 +458,7 @@ func (r *Router) handle(path, method string, ctx *Context, handler func(ctx *Con
 					uri := r.pathAppendQueryFromCtx([]byte(fixedPath), ctx)
 
 					ctx.SetStatusCode(code)
-					ctx.Response.Header.Add("Location", string(uri))
+					ctx.Response.Header.SetBytesV("Location", uri)
 					return ok
 				}
 			}
@@ -467,7 +475,7 @@ func (r *Router) handle(path, method string, ctx *Context, handler func(ctx *Con
 				uri := r.pathAppendQueryFromCtx([]byte(fixedPath), ctx)
 
 				ctx.SetStatusCode(code)
-				ctx.Response.Header.Add("Location", string(uri))
+				ctx.Response.Header.SetBytesV("Location", uri)
 				return true
 			}
 		}
@@ -490,7 +498,7 @@ func (r *Router) handle(path, method string, ctx *Context, handler func(ctx *Con
 					fixedPath := r.pathAppendQueryFromCtx([]byte(trimmedPath), ctx)
 
 					ctx.SetStatusCode(code)
-					ctx.Response.Header.Add("Location", string(fixedPath))
+					ctx.Response.Header.SetBytesV("Location", fixedPath)
 					return false
 				}
 			}
@@ -505,7 +513,7 @@ func (r *Router) handle(path, method string, ctx *Context, handler func(ctx *Con
 				if found && len(fixedPath) > 0 {
 					fixedPath = r.pathAppendQueryFromCtx(fixedPath, ctx)
 					ctx.SetStatusCode(code)
-					ctx.Response.Header.Add("Location", string(fixedPath))
+					ctx.Response.Header.SetBytesV("Location", fixedPath)
 					return true
 				}
 			}
