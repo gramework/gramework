@@ -10,8 +10,6 @@ import (
 	"github.com/gramework/gramework/internal/gfmt"
 )
 
-type routerable interface{}
-
 type hc struct {
 	CPUClock string  `json:"cpu_clock"`
 	RAM      ramJSON `json:"ram_usage"`
