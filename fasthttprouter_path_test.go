@@ -34,10 +34,10 @@ func TestCleanPath(t *testing.T) {
 	if res := CleanPath("./HeLLo/////world"); res != "/HeLLo/world" {
 		t.Errorf("expected: /hello/world actual: %s", res)
 	}
-	if res := CleanPath("./hello/////world///abs//"); res != "/hello/world/abc" {
-		t.Errorf("expected: /hello/world actual: %s", res)
+	if res := CleanPath("./hello/////world///abс//"); res != "/hello/world/abс/" {
+		t.Errorf("expected: /hello/world/abc/ actual: %s", res)
 	}
-	if res := CleanPath("./hello/////world/..//abs//"); res != "/hello/abc" {
-		t.Errorf("expected: /hello/abc actual: %s", res)
+	if res := CleanPath("./hello/////world//../abс//"); res != "/hello/abс/" {
+		t.Errorf("expected: /hello/abc/ actual: %s", res)
 	}
 }
