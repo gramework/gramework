@@ -136,7 +136,7 @@ func (r *SubRouter) Sub(path string) *SubRouter {
 }
 
 func (r *SubRouter) prefixedRoute(route string) string {
-	if r.prefix[len(r.prefix)-1] != '/' && route[0] != '/' {
+	if len(r.prefix) > 0 && r.prefix[len(r.prefix)-1] != '/' && route[0] != '/' {
 		return fmt.Sprintf("%s/%s", r.prefix, route)
 	}
 

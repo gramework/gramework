@@ -70,12 +70,7 @@ func (app *App) ListenAndServeAutoTLS(addr string, cachePath ...string) error {
 	}
 
 	tlsConfig := getDefaultTLSConfig()
-	tlsConfig.GetCertificate = func(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
-		var (
-			cert *tls.Certificate
-			err  error
-		)
-
+	tlsConfig.GetCertificate = func(hello *tls.ClientHelloInfo) (cert *tls.Certificate, err error) {
 		if len(hello.ServerName) == 0 || hello.ServerName == localhost {
 			hello.ServerName = localhost
 			cert, err = selfSignedCertificate(hello)

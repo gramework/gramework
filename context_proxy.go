@@ -14,9 +14,13 @@ import (
 )
 
 // Proxy request to given url
-func (ctx *Context) Proxy(url string) error {
+func (ctx *Context) Proxy(url string) (err error) {
 	proxyReq := fasthttp.AcquireRequest()
 	ctx.Request.CopyTo(proxyReq)
 	proxyReq.SetRequestURI(url)
-	return fasthttp.Do(proxyReq, &ctx.Response)
+
+	err = fasthttp.Do(proxyReq, &ctx.Response)
+
+	fasthttp.ReleaseRequest(proxyReq)
+	return
 }
