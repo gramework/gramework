@@ -215,16 +215,16 @@ func (r *router) Handle(method, path string, handle RequestHandler, prefixes []s
 		panic("path must begin with '/' in path '" + path + "'")
 	}
 
+	if path != Slash {
+		path = strings.TrimRight(path, Slash)
+	}
+
 	if r.routeIsStatic(path) {
 		if r.StaticHandlers[method] == nil {
 			r.StaticHandlers[method] = make(map[string]RequestHandler)
 		}
 		r.StaticHandlers[method][path] = handle
 		return
-	}
-
-	if path != Slash {
-		path = strings.TrimRight(path, Slash)
 	}
 
 	if r.Trees == nil {
@@ -285,8 +285,10 @@ func (r *router) Recv(ctx *Context, tracer *log.Entry) {
 // values. Otherwise the third return value indicates whether a redirection to
 // the same path with an extra / without the trailing slash should be performed.
 func (r *router) Lookup(method, path string, ctx *Context) (RequestHandler, bool) {
-	if handlers, ok := r.StaticHandlers[method]; ok {
-		return handlers[path], false
+	if paths, ok := r.StaticHandlers[method]; ok {
+		if handler, ok := paths[path]; ok {
+			return handler, false
+		}
 	}
 	if root := r.Trees[method]; root != nil {
 		return root.GetValue(path, ctx, method)
@@ -297,6 +299,19 @@ func (r *router) Lookup(method, path string, ctx *Context) (RequestHandler, bool
 // Allowed returns Allow header's value used in OPTIONS responses
 func (r *router) Allowed(path, reqMethod string) (allow string) {
 	if path == PathAny || path == PathSlashAny { // server-wide
+		for method := range r.StaticHandlers {
+			if method == OPTIONS {
+				continue
+			}
+
+			// add request method to list of allowed methods
+			if len(allow) == 0 {
+				allow = method
+			} else {
+				allow += ", " + method
+			}
+		}
+
 		for method := range r.Trees {
 			if method == OPTIONS {
 				continue
@@ -310,6 +325,22 @@ func (r *router) Allowed(path, reqMethod string) (allow string) {
 			}
 		}
 	} else { // specific path
+		for method, paths := range r.StaticHandlers {
+			// static methods first
+			if method == reqMethod || method == OPTIONS {
+				continue
+			}
+
+			if hander, ok := paths[path]; ok && hander != nil {
+				// add request method to list of allowed methods
+				if len(allow) == 0 {
+					allow = method
+				} else {
+					allow += ", " + method
+				}
+			}
+		}
+
 		for method := range r.Trees {
 			// Skip the requested method - we already tried this one
 			if method == reqMethod || method == OPTIONS {

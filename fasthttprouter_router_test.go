@@ -597,7 +597,7 @@ func TestRouterNotAllowed(t *testing.T) {
 		t.Fatalf("Unexpected error when reading response: %s", err)
 	}
 	if !(resp.Header.StatusCode() == fasthttp.StatusMethodNotAllowed) {
-		t.Errorf("NotAllowed handling failed: Code=%d", resp.Header.StatusCode())
+		t.Errorf("NotAllowed handling failed: Code=%d. Actual=%d", resp.Header.StatusCode(), fasthttp.StatusMethodNotAllowed)
 	} else if allow := string(resp.Header.Peek("Allow")); allow != "POST, OPTIONS" {
 		t.Error("unexpected Allow header value: " + allow)
 	}
@@ -623,7 +623,7 @@ func TestRouterNotAllowed(t *testing.T) {
 		t.Fatalf("Unexpected error when reading response: %s", err)
 	}
 	if !(resp.Header.StatusCode() == fasthttp.StatusMethodNotAllowed) {
-		t.Errorf("NotAllowed handling failed: Code=%d", resp.Header.StatusCode())
+		t.Errorf("NotAllowed handling failed: Code=%d. Actual=%d", resp.Header.StatusCode(), fasthttp.StatusMethodNotAllowed)
 	} else if allow := string(resp.Header.Peek("Allow")); allow != "POST, DELETE, OPTIONS" && allow != "DELETE, POST, OPTIONS" {
 		t.Error("unexpected Allow header value: " + allow)
 	}
@@ -682,6 +682,7 @@ func TestRouterNotFound(t *testing.T) {
 		{"/paTh?name=foo", 301},  // Fixed Case With Params +/
 		{"/../path", 200},        // CleanPath
 		{"/nope", 404},           // NotFound
+		{"/path/?name=foo", 301}, // TSR Case With Params
 	}
 
 	s := &fasthttp.Server{

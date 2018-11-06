@@ -408,14 +408,71 @@ func (r *Router) handler(ctx *Context) {
 	ctx.Error(fasthttp.StatusMessage(fasthttp.StatusNotFound), fasthttp.StatusNotFound)
 }
 
+// pathAppendQueryFromCtx append query string to path in bytes
+func (r *Router) pathAppendQueryFromCtx(path []byte, ctx *Context) []byte {
+	queryBuf := ctx.URI().QueryString()
+	if len(queryBuf) > zero {
+		path = append(path, QuestionMark...)
+		path = append(path, queryBuf...)
+	}
+
+	return path
+}
+
+// pathAppendQueryFromCtx append query string to path in bytes
+func (r *Router) trimTrailingSlash(path string) (string, bool) {
+	if len(path) > one && path[len(path)-one] == SlashByte {
+		return path[:len(path)-one], true
+	}
+
+	return path, false
+}
+
 func (r *Router) handle(path, method string, ctx *Context, handler func(ctx *Context), redirectTrailingSlashs bool, isRootRouter bool) (handlerFound bool) {
 	if r.router.PanicHandler != nil {
 		defer r.router.Recv(ctx, nil)
 	}
+
 	if f, ok := r.router.StaticHandlers[method][path]; ok {
 		f(ctx)
 		return true
+	} else if method != CONNECT && path != PathSlash {
+		code := redirectCode // Permanent redirect, request with GET method
+		if method != GET {
+			// Temporary redirect, request with same method
+			// As of Go 1.3, Go does not support status code 308.
+			code = temporaryRedirectCode
+		}
+
+		if r.router.RedirectTrailingSlash {
+			if fixedPath, ok := r.trimTrailingSlash(path); ok {
+				if _, ok := r.router.StaticHandlers[method][fixedPath]; ok {
+					uri := r.pathAppendQueryFromCtx([]byte(fixedPath), ctx)
+
+					ctx.SetStatusCode(code)
+					ctx.Response.Header.Add("Location", string(uri))
+					return ok
+				}
+			}
+		}
+
+		if r.router.RedirectFixedPath {
+			fixedPath := CleanPath(strings.ToLower(path))
+
+			if r.router.RedirectTrailingSlash {
+				fixedPath, _ = r.trimTrailingSlash(fixedPath)
+			}
+
+			if _, ok := r.router.StaticHandlers[method][fixedPath]; ok {
+				uri := r.pathAppendQueryFromCtx([]byte(fixedPath), ctx)
+
+				ctx.SetStatusCode(code)
+				ctx.Response.Header.Add("Location", string(uri))
+				return true
+			}
+		}
 	}
+
 	if root := r.router.Trees[method]; root != nil {
 		if f, tsr := root.GetValue(path, ctx, string(ctx.Method())); f != nil {
 			f(ctx)
@@ -429,17 +486,13 @@ func (r *Router) handle(path, method string, ctx *Context, handler func(ctx *Con
 			}
 
 			if tsr && r.router.RedirectTrailingSlash {
-				var uri string
-				if len(path) > one && path[len(path)-one] == SlashByte {
-					uri = path[:len(path)-one]
-				} else {
-					uri = path + PathSlash
-				}
-				if uri != emptyString {
+				if trimmedPath, ok := r.trimTrailingSlash(path); ok {
+					fixedPath := r.pathAppendQueryFromCtx([]byte(trimmedPath), ctx)
+
 					ctx.SetStatusCode(code)
-					ctx.Response.Header.Add("Location", uri)
+					ctx.Response.Header.Add("Location", string(fixedPath))
+					return false
 				}
-				return false
 			}
 
 			// Try to fix the request path
@@ -450,14 +503,9 @@ func (r *Router) handle(path, method string, ctx *Context, handler func(ctx *Con
 				)
 
 				if found && len(fixedPath) > 0 {
-					queryBuf := ctx.URI().QueryString()
-					if len(queryBuf) > zero {
-						fixedPath = append(fixedPath, QuestionMark...)
-						fixedPath = append(fixedPath, queryBuf...)
-					}
-					uri := string(fixedPath)
+					fixedPath = r.pathAppendQueryFromCtx(fixedPath, ctx)
 					ctx.SetStatusCode(code)
-					ctx.Response.Header.Add("Location", uri)
+					ctx.Response.Header.Add("Location", string(fixedPath))
 					return true
 				}
 			}
