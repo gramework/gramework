@@ -109,7 +109,7 @@ func (app *App) HandleOPTIONS(newValue bool) (oldValue bool) {
 }
 
 // Sub let you quickly register subroutes with given prefix
-// like app.Sub("v1").Sub("users").GET("view/:id", "hi").DELETE("delete/:id", "hi"),
+// like app.Sub("/v1").Sub("/users").GET("/view/:id", "hi").DELETE("/delete/:id", "hi"),
 // that give you /v1/users/view/:id and /v1/users/delete/:id registered
 func (app *App) Sub(path string) *SubRouter {
 	return app.defaultRouter.Sub(path)
