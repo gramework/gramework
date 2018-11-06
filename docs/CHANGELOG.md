@@ -1,4 +1,4 @@
-# Patch release: 1.5.0
+# Minor release: 1.5.0
 - Separate store static route. Allows both `/post/:id` and `/post/about` routes
 - Healtchecks module added
 - Fix resource usage leak in ctx.Proxy()
