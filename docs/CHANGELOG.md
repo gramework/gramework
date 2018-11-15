@@ -1,6 +1,11 @@
+# Patch release: 1.5.1
+- Modify context.go to make it clearer
+- Fix typos
+- Unify docs/CHANGELOG.md
+
 # Minor release: 1.5.0
 - Separate store static route. Allows both `/post/:id` and `/post/about` routes
-- Healtchecks module added
+- Healthchecks module added
 - Fix resource usage leak in ctx.Proxy()
 - `Sub()` now allows to convert `App`'s root router to a SubRouter type
 
@@ -11,15 +16,15 @@
 - Regression fixed: empty app name. Now if no `OptAppName` provided `App.name` will fallback to default setting
 
 # Minor release: 1.4.0
-- Added `OptAppName` option for App initializer
-- Fixed ability to set empty `""` server name
-- Fixed `fasthttp.Server` name set via `App.SetName()`
+- Add `OptAppName` option for App initializer
+- Fix ability to set empty `""` server name
+- Fix `fasthttp.Server` name set via `App.SetName()`
 - Method `App.SetName()` market as deprecated in favor of `OptAppName`
 - `App.ListenAndServeAllDev()` and `App.ListenAndServeAutoTLSDev()` methods marked as deprecated and from now is simple aliases of `App.ListenAndServeAll()` and `App.ListenAndServeAutoTLS()` accordingly
-- Fixed `go.mod` dependencies and `go mod vendor` applied to support older versions of GO  
+- Fix `go.mod` dependencies and `go mod vendor` apply to support older versions of GO
 
 # Patch release: 1.3.2
-- Added `SubRouter.Handle()` method with the same behaviour as `Router.Handle()` and `App.Handle()`.
+- Add `SubRouter.Handle()` method with the same behaviour as `Router.Handle()` and `App.Handle()`.
 
 # Patch release: 1.3.1
 - Fix healthcheck formatting
