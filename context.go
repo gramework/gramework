@@ -49,8 +49,8 @@ func (ctx *Context) MWKill() {
 }
 
 // Writef is a fmt.Fprintf(context, format, a...) shortcut
-func (ctx *Context) Writef(format string, a ...interface{}) {
-	fmt.Fprintf(ctx, format, a...)
+func (ctx *Context) Writef(format string, a ...interface{}) (int, error) {
+	return fmt.Fprintf(ctx, format, a...)
 }
 
 // SubPrefixes returns list of router's prefixes that was created using .Sub() feature
@@ -76,22 +76,22 @@ func (ctx *Context) ToContext(parentCtx ...context.Context) context.Context {
 }
 
 // DecodeGQL parses GraphQL request and returns data from it
-func (ctx *Context) DecodeGQL() (r *GQLRequest, err error) {
-	r = &GQLRequest{}
+func (ctx *Context) DecodeGQL() (*GQLRequest, error) {
+	r := &GQLRequest{}
 
 	if string(ctx.Method()) == GET {
-		if len(ctx.GETParam("query")) == 0 {
+		query := ctx.GETParam("query")
+		if len(query) == 0 {
 			return nil, ErrInvalidGQLRequest
 		}
-		r.Query = ctx.GETParam("query")[0]
+		r.Query = query[0]
 
-		if len(ctx.GETParam("operationName")) != 0 {
-			r.OperationName = ctx.GETParam("operationName")[0]
+		if operationName := ctx.GETParam("operationName"); len(operationName) != 0 {
+			r.OperationName = operationName[0]
 		}
 
-		if len(ctx.GETParam("variables")) != 0 {
-			_, err = ctx.UnJSONBytes([]byte(ctx.GETParam("variables")[0]), &r.Variables)
-			if err != nil {
+		if variables := ctx.GETParam("variables"); len(variables) != 0 {
+			if _, err := ctx.UnJSONBytes([]byte(variables[0]), &r.Variables); err != nil {
 				return nil, ErrInvalidGQLRequest
 			}
 		}
@@ -101,20 +101,19 @@ func (ctx *Context) DecodeGQL() (r *GQLRequest, err error) {
 
 	switch ctx.ContentType() {
 	case jsonCT, jsonCTshort:
-		if err = ctx.UnJSON(&r); err != nil {
+		if err := ctx.UnJSON(&r); err != nil {
 			return nil, err
 		}
-		return r, nil
 	case gqlCT:
 		r.Query = string(ctx.PostBody())
-		return
 	}
-	return nil, err
+
+	return r, nil
 }
 
 // Writeln is a fmt.Fprintln(context, format, a...) shortcut
-func (ctx *Context) Writeln(a ...interface{}) {
-	fmt.Fprintln(ctx, a...)
+func (ctx *Context) Writeln(a ...interface{}) (int, error) {
+	return fmt.Fprintln(ctx, a...)
 }
 
 // RouteArg returns an argument value as a string or empty string
@@ -126,15 +125,15 @@ func (ctx *Context) RouteArg(argName string) string {
 	return v
 }
 
-// Encode automatically determies accepted formats
+// Encode automatically determines accepted formats
 // and choose preferred one
-func (ctx *Context) Encode(v interface{}) (sentType string, err error) {
+func (ctx *Context) Encode(v interface{}) (string, error) {
 	accept := ctx.Request.Header.Peek(acceptHeader)
 	accepted := acceptParser.Parse(BytesToString(accept))
 
-	sentType, err = accepted.Negotiate(ctypes...)
+	sentType, err := accepted.Negotiate(ctypes...)
 	if err != nil {
-		return
+		return emptyString, err
 	}
 
 	switch sentType {
@@ -146,7 +145,7 @@ func (ctx *Context) Encode(v interface{}) (sentType string, err error) {
 		err = ctx.CSV(v)
 	}
 
-	return
+	return sentType, err
 }
 
 // CSV sends text/csv content type (see rfc4180, sec 3) and csv-encoded value to client
@@ -162,9 +161,8 @@ func (ctx *Context) CSV(v interface{}) error {
 }
 
 // ToCSV encodes csv-encoded value to client
-func (ctx *Context) ToCSV(v interface{}) (b []byte, err error) {
-	b, err = gocsv.MarshalBytes(v)
-	return
+func (ctx *Context) ToCSV(v interface{}) ([]byte, error) {
+	return gocsv.MarshalBytes(v)
 }
 
 // XML sends text/xml content type (see rfc3023, sec 3) and xml-encoded value to client
