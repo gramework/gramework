@@ -53,19 +53,27 @@ func (e Environment) String() string {
 func init() {
 	var initEnv int32 = -1
 	currentEnvironment = &initEnv
-	genv := os.Getenv("GRAMEWORK_ENV")
-	if strings.HasPrefix(strings.ToLower(genv), "prod") {
-		SetEnv(PROD)
-		internalLog.Info("prod mode")
-		return
+	environments := map[string]Environment{
+		"prod":        PROD,
+		"production":  PROD,
+		"stage":       STAGE,
+		"staging":     STAGE,
+		"dev":         DEV,
+		"development": DEV,
 	}
-	if len(genv) > 0 {
-		return
+	for envName, envType := range environments {
+		if isEnvEquals(envName) {
+			SetEnv(envType)
+			internalLog.Infof("%s mode", envType)
+			return
+		}
 	}
-	if strings.HasPrefix(strings.ToLower(os.Getenv("ENV")), "prod") {
-		SetEnv(PROD)
-		internalLog.Info("prod mode")
-	}
+}
+
+func isEnvEquals(rawEnv string) bool {
+	grameEnv := strings.ToLower(os.Getenv("GRAMEWORK_ENV"))
+	env := strings.ToLower(os.Getenv("ENV"))
+	return strings.HasPrefix(grameEnv, rawEnv) || strings.HasPrefix(env, rawEnv)
 }
 
 // SetEnv sets gramework's environment
