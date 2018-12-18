@@ -2,8 +2,8 @@ package metrics
 
 import (
 	"bytes"
-	"fmt"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/gramework/gramework"
@@ -21,6 +21,10 @@ type Middleware struct {
 const (
 	typeHTTPS = "https"
 	typeHTTP  = "http"
+
+	millisecond = float64(time.Millisecond)
+
+	uvKey = "gramework.metrics.startTime"
 )
 
 var metricsPath = []byte("/metrics")
@@ -69,7 +73,7 @@ func Register(app *gramework.App, serviceName ...string) error {
 		return err
 	}
 
-	app.GET("/metrics", gramework.NewGrameHandler(promhttp.Handler()))
+	app.GET(string(metricsPath), gramework.NewGrameHandler(promhttp.Handler()))
 
 	if err = app.UsePre(m.startReq); err != nil {
 		return err
@@ -82,7 +86,7 @@ func (m *Middleware) startReq(ctx *gramework.Context) {
 	if bytes.Equal(ctx.Path(), metricsPath) {
 		return
 	}
-	ctx.SetUserValue("gramework.metrics.startTime", time.Now())
+	ctx.SetUserValue(uvKey, gramework.Nanotime())
 }
 
 func (m *Middleware) endReq(ctx *gramework.Context) {
@@ -91,25 +95,20 @@ func (m *Middleware) endReq(ctx *gramework.Context) {
 	}
 
 	opts := []string{
-		fmt.Sprintf("%d", ctx.Response.StatusCode()),
-		gramework.BytesToString(ctx.Method()),
-		gramework.BytesToString(ctx.Path()),
-		"",
+		strconv.FormatInt(int64(ctx.Response.StatusCode()), 10),
+		string(ctx.Method()),
+		string(ctx.Path()),
+		typeHTTP,
 	}
 
 	if ctx.IsTLS() {
 		opts[3] = typeHTTPS
-	} else {
-		opts[3] = typeHTTP
 	}
 
 	m.httpReqCounter.WithLabelValues(opts...).Add(1)
 
-	startTime := float64(
-		time.Since(
-			*(*time.Time)(runtimer.GetEfaceDataPtr(ctx.UserValue("gramework.metrics.startTime"))),
-		).Nanoseconds(),
-	) / float64(time.Millisecond)
+	startTime := *(*int64)(runtimer.GetEfaceDataPtr(ctx.UserValue(uvKey)))
+	duration := float64(gramework.Nanotime()-startTime) / millisecond
 
-	m.reqDuration.WithLabelValues(opts...).Observe(startTime)
+	m.reqDuration.WithLabelValues(opts...).Observe(duration)
 }

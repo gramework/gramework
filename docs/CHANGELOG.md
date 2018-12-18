@@ -1,3 +1,6 @@
+# Patch release: 1.5.3
+- `metrics` middleware refactored and fixed (#61)
+
 # Patch release: 1.5.2
 - Gramework Environments refactored. You can find the list of supported environment names below:
 ```
