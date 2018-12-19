@@ -15,12 +15,9 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
-	"strings"
 
 	"github.com/gocarina/gocsv/v2"
 	"github.com/gramework/runtimer"
-	acceptParser "github.com/kirillDanshin/go-accept-headers"
-	"github.com/valyala/fasthttp"
 )
 
 // @TODO: add more
@@ -48,11 +45,6 @@ func (ctx *Context) MWKill() {
 	ctx.middlewareKilledReq = true
 }
 
-// Writef is a fmt.Fprintf(context, format, a...) shortcut
-func (ctx *Context) Writef(format string, a ...interface{}) (int, error) {
-	return fmt.Fprintf(ctx, format, a...)
-}
-
 // SubPrefixes returns list of router's prefixes that was created using .Sub() feature
 func (ctx *Context) SubPrefixes() []string {
 	return ctx.subPrefixes
@@ -75,47 +67,6 @@ func (ctx *Context) ToContext(parentCtx ...context.Context) context.Context {
 	return context.WithValue(context.Background(), ContextKey, ctx)
 }
 
-// DecodeGQL parses GraphQL request and returns data from it
-func (ctx *Context) DecodeGQL() (*GQLRequest, error) {
-	r := &GQLRequest{}
-
-	if string(ctx.Method()) == GET {
-		query := ctx.GETParam("query")
-		if len(query) == 0 {
-			return nil, ErrInvalidGQLRequest
-		}
-		r.Query = query[0]
-
-		if operationName := ctx.GETParam("operationName"); len(operationName) != 0 {
-			r.OperationName = operationName[0]
-		}
-
-		if variables := ctx.GETParam("variables"); len(variables) != 0 {
-			if _, err := ctx.UnJSONBytes([]byte(variables[0]), &r.Variables); err != nil {
-				return nil, ErrInvalidGQLRequest
-			}
-		}
-
-		return r, nil
-	}
-
-	switch ctx.ContentType() {
-	case jsonCT, jsonCTshort:
-		if err := ctx.UnJSON(&r); err != nil {
-			return nil, err
-		}
-	case gqlCT:
-		r.Query = string(ctx.PostBody())
-	}
-
-	return r, nil
-}
-
-// Writeln is a fmt.Fprintln(context, format, a...) shortcut
-func (ctx *Context) Writeln(a ...interface{}) (int, error) {
-	return fmt.Fprintln(ctx, a...)
-}
-
 // RouteArg returns an argument value as a string or empty string
 func (ctx *Context) RouteArg(argName string) string {
 	v, err := ctx.RouteArgErr(argName)
@@ -125,56 +76,9 @@ func (ctx *Context) RouteArg(argName string) string {
 	return v
 }
 
-// Encode automatically determines accepted formats
-// and choose preferred one
-func (ctx *Context) Encode(v interface{}) (string, error) {
-	accept := ctx.Request.Header.Peek(acceptHeader)
-	accepted := acceptParser.Parse(BytesToString(accept))
-
-	sentType, err := accepted.Negotiate(ctypes...)
-	if err != nil {
-		return emptyString, err
-	}
-
-	switch sentType {
-	case jsonCT:
-		err = ctx.JSON(v)
-	case xmlCT:
-		err = ctx.XML(v)
-	case csvCT:
-		err = ctx.CSV(v)
-	}
-
-	return sentType, err
-}
-
-// CSV sends text/csv content type (see rfc4180, sec 3) and csv-encoded value to client
-func (ctx *Context) CSV(v interface{}) error {
-	ctx.SetContentType(csvCT)
-
-	b, err := ctx.ToCSV(v)
-	if err != nil {
-		return err
-	}
-	_, err = ctx.Write(b)
-	return err
-}
-
 // ToCSV encodes csv-encoded value to client
 func (ctx *Context) ToCSV(v interface{}) ([]byte, error) {
 	return gocsv.MarshalBytes(v)
-}
-
-// XML sends text/xml content type (see rfc3023, sec 3) and xml-encoded value to client
-func (ctx *Context) XML(v interface{}) error {
-	ctx.SetContentType(xmlCT)
-	b, err := ctx.ToXML(v)
-	if err != nil {
-		return err
-	}
-
-	_, err = ctx.Write(b)
-	return err
 }
 
 // ToXML encodes xml-encoded value to client
@@ -184,7 +88,7 @@ func (ctx *Context) ToXML(v interface{}) ([]byte, error) {
 	return b.Bytes(), err
 }
 
-// GETKeys returns GET parameters keys
+// GETKeys returns GET parameters keys (query args)
 func (ctx *Context) GETKeys() []string {
 	var res []string
 	ctx.Request.URI().QueryArgs().VisitAll(func(key, value []byte) {
@@ -193,7 +97,7 @@ func (ctx *Context) GETKeys() []string {
 	return res
 }
 
-// GETKeysBytes returns GET parameters keys as []byte
+// GETKeysBytes returns GET parameters keys (query args) as []byte
 func (ctx *Context) GETKeysBytes() [][]byte {
 	var res [][]byte
 	ctx.Request.URI().QueryArgs().VisitAll(func(key, value []byte) {
@@ -202,7 +106,7 @@ func (ctx *Context) GETKeysBytes() [][]byte {
 	return res
 }
 
-// GETParams returns GET parameters
+// GETParams returns GET parameters (query args)
 func (ctx *Context) GETParams() map[string][]string {
 	res := make(map[string][]string)
 	ctx.Request.URI().QueryArgs().VisitAll(func(key, value []byte) {
@@ -211,7 +115,7 @@ func (ctx *Context) GETParams() map[string][]string {
 	return res
 }
 
-// GETParam returns GET parameter by name
+// GETParam returns GET parameter (query arg) by name
 func (ctx *Context) GETParam(argName string) []string {
 	res := ctx.GETParams()
 	if param, ok := res[argName]; ok {
@@ -235,12 +139,6 @@ func (ctx *Context) RouteArgErr(argName string) (string, error) {
 	}
 }
 
-// HTML sets HTML content type
-func (ctx *Context) HTML() *Context {
-	ctx.SetContentType(htmlCT)
-	return ctx
-}
-
 // ToTLS redirects user to HTTPS scheme
 func (ctx *Context) ToTLS() {
 	u := ctx.URI()
@@ -248,40 +146,9 @@ func (ctx *Context) ToTLS() {
 	ctx.Redirect(u.String(), redirectCode)
 }
 
-// CORS enables CORS in the current context
-func (ctx *Context) CORS(domains ...string) *Context {
-	var origins []string
-	if len(domains) > 0 {
-		origins = domains
-	} else if headerOrigin := ctx.Request.Header.Peek(hOrigin); len(headerOrigin) > 0 {
-		origins = append(origins, string(headerOrigin))
-	} else {
-		origins = append(origins, string(ctx.Request.URI().Host()))
-	}
-
-	ctx.Response.Header.Set(corsAccessControlAllowOrigin, strings.Join(origins, " "))
-	ctx.Response.Header.Set(corsAccessControlAllowMethods, methods)
-	ctx.Response.Header.Set(corsAccessControlAllowHeaders, corsCType)
-	ctx.Response.Header.Set(corsAccessControlAllowCredentials, trueStr)
-
-	return ctx
-}
-
 // Forbidden send 403 Forbidden error
 func (ctx *Context) Forbidden() {
 	ctx.Error(forbidden, forbiddenCode)
-}
-
-// JSON serializes and writes a json-formatted response to user
-func (ctx *Context) JSON(v interface{}) error {
-	ctx.SetContentType(jsonCT)
-	b, err := ctx.ToJSON(v)
-	if err != nil {
-		return err
-	}
-
-	_, err = ctx.Write(b)
-	return err
 }
 
 // ToJSON serializes v and returns the result
@@ -312,42 +179,6 @@ func UnJSONBytes(b []byte, v ...interface{}) (interface{}, error) {
 	}
 	err := json.NewDecoder(bytes.NewReader(b)).Decode(&v[0])
 	return v[0], err
-}
-
-// BadRequest sends HTTP/1.1 400 Bad Request
-func (ctx *Context) BadRequest(err ...error) {
-	e := badRequest
-	if len(err) > 0 {
-		e = err[0].Error()
-	}
-
-	ctx.Error(e, fasthttp.StatusBadRequest)
-}
-
-// Err500 sets Internal Server Error status
-func (ctx *Context) Err500(message ...interface{}) *Context {
-	ctx.SetStatusCode(fasthttp.StatusInternalServerError)
-	for k := range message {
-		switch v := message[k].(type) {
-		case string:
-			_, err := ctx.WriteString(v)
-			if err != nil {
-				ctx.Logger.WithError(err).Error("Err500 serving error")
-			}
-		case error:
-			ctx.Writef(fmtS, v)
-		default:
-			ctx.Writef(fmtV, v)
-		}
-	}
-	return ctx
-}
-
-// JSONError sets Internal Server Error status,
-// serializes and writes a json-formatted response to user
-func (ctx *Context) JSONError(v interface{}) error {
-	ctx.Err500()
-	return ctx.JSON(v)
 }
 
 func (ctx *Context) jsonErrorLog(v interface{}) {

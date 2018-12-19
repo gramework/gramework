@@ -1,3 +1,6 @@
+# Patch release: 1.5.4-rc1
+- Refactoring and vendor fixes
+
 # Patch release: 1.5.3
 - `metrics` middleware refactored and fixed (#61)
 

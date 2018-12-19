@@ -47,4 +47,7 @@ vendor/github.com/graph-gophers
 vendor/github.com/apex
 vendor/github.com/opentracing
 vendor/github.com/prometeus
+vendor/github.com/valyala
+vendor/github.com/fasthttp-contrib
+vendor/github.com/gramework
 
