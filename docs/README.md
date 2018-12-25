@@ -206,27 +206,10 @@ The example below will serve a byte slice:
 package main
 
 import (
-	"github.com/gramework/gramework"
-)
+	"fmt"
+	"os"
+	"time"
 
-func main() {
-	app := gramework.New()
-
-	app.GET("/*any", []byte("some data"))
-
-	app.ListenAndServe()
-}
-```
-
-### Using dynamic handlers, example 1.
-This example demonstrates:
-- some ways of serving responses
-- how to use preconfigured loggers etc.
-
-```go
-package main
-
-import (
 	"github.com/gramework/gramework"
 )
 
@@ -240,7 +223,7 @@ func main() {
 
 	d := SomeData{
 		Name: "Grame",
-		Age: 20,
+		Age:  20,
 	}
 
 	// service-wide CORS. you can also instead of using middleware
@@ -291,7 +274,7 @@ func main() {
 
 	// allow Shutdown() to stop the app properly.
 	// ListenAndServe will return before Shutdown(), so we should wait.
-	<- wait
+	<-wait
 }
 ```
 

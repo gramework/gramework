@@ -1,3 +1,8 @@
+# Minor release: 1.6.0
+- `grypto` package rewritten and will use scrypt instead of bcrypt by default, allowing you to still verify both
+  hashes with MCF. This closes the bcrypt vulnerability of long passwords (>56 characters).
+- Refactoring and vendor fixes (1.5.4-rc1)
+
 # Patch release: 1.5.4-rc1
 - Refactoring and vendor fixes
 

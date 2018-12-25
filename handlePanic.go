@@ -49,7 +49,7 @@ const handledPanic = `<!doctype html>
 html {
 	position: relative;
 	font-family: sans-serif;
-	-webkit-font-smoothing: antialiased;
+	-webkit-font-smoothing: subpixel-antialiased;
 	text-rendering: optimizeLegibility;
 }
 body, html,
