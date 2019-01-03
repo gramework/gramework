@@ -1,3 +1,6 @@
+# Patch release: 1.6.1
+- Copy logger level from Logger.Level in `New()` by default
+
 # Minor release: 1.6.0
 - `grypto` package rewritten and will use scrypt instead of bcrypt by default, allowing you to still verify both
   hashes with MCF. This closes the bcrypt vulnerability of long passwords (>56 characters).

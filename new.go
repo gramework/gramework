@@ -24,7 +24,7 @@ var defaultMaxHackAttempts int32 = 5
 // New App
 func New(opts ...func(*App)) *App {
 	logger := &log.Logger{
-		Level:   log.DebugLevel,
+		Level:   Logger.Level,
 		Handler: cli.New(os.Stdout),
 	}
 	flags := &Flags{
