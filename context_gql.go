@@ -28,7 +28,8 @@ func (ctx *Context) DecodeGQL() (*GQLRequest, error) {
 		return r, nil
 	}
 
-	if strings.HasPrefix(ctx.ContentType(), jsonCTshort) {
+	ctSplitParams := strings.Split(ctx.ContentType(), delimiterCTParams)
+	if len(ctSplitParams) > 0 && ctSplitParams[0] == jsonCTshort {
 		if err := ctx.UnJSON(&r); err != nil {
 			return nil, err
 		}

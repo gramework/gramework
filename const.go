@@ -50,6 +50,7 @@ const (
 	https                             = "https"
 	jsonCT                            = "application/json;charset=utf8"
 	jsonCTshort                       = "application/json"
+	delimiterCTParams                 = ";"
 	gqlCT                             = "application/graphql"
 	methods                           = "GET,PUT,POST,DELETE"
 	trueStr                           = "true"
