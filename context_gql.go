@@ -1,5 +1,9 @@
 package gramework
 
+import (
+	"strings"
+)
+
 // DecodeGQL parses GraphQL request and returns data from it
 func (ctx *Context) DecodeGQL() (*GQLRequest, error) {
 	r := &GQLRequest{}
@@ -24,11 +28,13 @@ func (ctx *Context) DecodeGQL() (*GQLRequest, error) {
 		return r, nil
 	}
 
-	switch ctx.ContentType() {
-	case jsonCT, jsonCTSpace, jsonCTshort:
+	if strings.HasPrefix(ctx.ContentType(), jsonCTshort) {
 		if err := ctx.UnJSON(&r); err != nil {
 			return nil, err
 		}
+	}
+
+	switch ctx.ContentType() {
 	case gqlCT:
 		r.Query = string(ctx.PostBody())
 	}

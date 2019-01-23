@@ -20,7 +20,7 @@ func (ctx *Context) Encode(v interface{}) (string, error) {
 	}
 
 	switch sentType {
-	case jsonCT, jsonCTSpace:
+	case jsonCT:
 		err = ctx.JSON(v)
 	case xmlCT:
 		err = ctx.XML(v)
