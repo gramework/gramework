@@ -29,13 +29,12 @@ func (ctx *Context) DecodeGQL() (*GQLRequest, error) {
 	}
 
 	ctSplitParams := strings.Split(ctx.ContentType(), delimiterCTParams)
-	if len(ctSplitParams) > 0 && ctSplitParams[0] == jsonCTshort {
+
+	switch ctSplitParams[0] {
+	case jsonCTshort:
 		if err := ctx.UnJSON(&r); err != nil {
 			return nil, err
 		}
-	}
-
-	switch ctx.ContentType() {
 	case gqlCT:
 		r.Query = string(ctx.PostBody())
 	}
