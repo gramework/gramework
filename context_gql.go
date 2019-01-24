@@ -1,5 +1,9 @@
 package gramework
 
+import (
+	"strings"
+)
+
 // DecodeGQL parses GraphQL request and returns data from it
 func (ctx *Context) DecodeGQL() (*GQLRequest, error) {
 	r := &GQLRequest{}
@@ -24,8 +28,10 @@ func (ctx *Context) DecodeGQL() (*GQLRequest, error) {
 		return r, nil
 	}
 
-	switch ctx.ContentType() {
-	case jsonCT, jsonCTshort:
+	ctSplitParams := strings.Split(ctx.ContentType(), delimiterCTParams)
+
+	switch ctSplitParams[0] {
+	case jsonCTshort:
 		if err := ctx.UnJSON(&r); err != nil {
 			return nil, err
 		}
