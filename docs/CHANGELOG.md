@@ -2,7 +2,7 @@
 - The `Behind` interface, that should allow proper IP detection as soon as you provide
   proper unwrapper.
 - First `Behind` unwrapper for [Akamai](https://akamai.com/).
-  **NOTE**: they are not provide support for that unwrapper.
+  **NOTE**: they do not provide support for that unwrapper.
   If you have any bugs, please contact our support or open an issue.
 - When registering route, in the handler path `github.com/gramework/gramework/` replaced
   with `#gramework` for short.
