@@ -16,7 +16,7 @@ import (
 	"encoding/xml"
 	"fmt"
 
-	"github.com/gocarina/gocsv/v2"
+	"github.com/gocarina/gocsv"
 	"github.com/gramework/runtimer"
 )
 

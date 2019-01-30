@@ -1,3 +1,7 @@
+# Patch release: 1.5.4
+- Refactoring and vendor fixes
+- Backported 1.6.2 patch: Check JSON content type with space
+
 # Patch release: 1.5.4-rc1
 - Refactoring and vendor fixes
 
