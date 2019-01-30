@@ -83,6 +83,8 @@ type (
 		serverBase       *fasthttp.Server
 		runningServers   []runningServerInfo
 		runningServersMu *sync.Mutex
+
+		behind Behind
 	}
 
 	runningServerInfo struct {

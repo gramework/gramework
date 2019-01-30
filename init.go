@@ -38,9 +38,9 @@ func init() {
 	if err == nil {
 		maxLA := float64(runtime.NumCPU() + 2)
 		loadLog := internalLog.WithFields(log.Fields{
-			"one":     la.One,
-			"five":    la.Five,
-			"fifteen": la.Fifteen,
+			"one":     fmt.Sprintf("%.3f", la.One),
+			"five":    fmt.Sprintf("%.3f", la.Five),
+			"fifteen": fmt.Sprintf("%.3f", la.Fifteen),
 		})
 		if la.One >= maxLA || la.Five >= maxLA || la.Fifteen >= maxLA {
 			loadLog.Warn("high load average, performance may be impacted")

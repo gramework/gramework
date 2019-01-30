@@ -11,6 +11,6 @@ package gramework
 
 // Version gives you the gramework version you use now
 const (
-	Version        = "1.6.2"
+	Version        = "1.7.0-rc1"
 	DefaultAppName = "gramework/" + Version
 )

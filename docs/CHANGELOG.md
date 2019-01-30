@@ -1,3 +1,12 @@
+# Minor release candidate: 1.7.0-rc1
+- The `Behind` interface, that should allow proper IP detection as soon as you provide
+  proper unwrapper.
+- First `Behind` unwrapper for [Akamai](https://akamai.com/).
+  **NOTE**: they are not provide support for that unwrapper.
+  If you have any bugs, please contact our support or open an issue.
+- When registering route, in the handler path `github.com/gramework/gramework/` replaced
+  with `#gramework` for short.
+
 # Patch release: 1.6.2
 - Check gql json content type with space
 - Fix minor grypto lint warning
@@ -10,6 +19,10 @@
 - `grypto` package rewritten and will use scrypt instead of bcrypt by default, allowing you to still verify both
   hashes with MCF. This closes the bcrypt vulnerability of long passwords (>56 characters).
 - Refactoring and vendor fixes (1.5.4-rc1)
+
+# Patch release: 1.5.4
+- Refactoring and vendor fixes
+- Backported 1.6.2 patch: Check JSON content type with space
 
 # Patch release: 1.5.4-rc1
 - Refactoring and vendor fixes

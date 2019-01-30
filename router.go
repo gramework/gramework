@@ -143,6 +143,7 @@ func handlerName(h interface{}) string {
 	if strings.Contains(file, "/go/src") && len(file) > pathidx+len("/go/src/") {
 		file = file[strings.Index(file, "/go/src/")+8:]
 	}
+	file = strings.Replace(file, "github.com/gramework/gramework/", "#gramework/", -1)
 	name := fmt.Sprintf("%s@%s:%v", funcDesc.Name(), file, line)
 	return name
 }
