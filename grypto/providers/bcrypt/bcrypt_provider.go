@@ -1,11 +1,8 @@
 package bcrypt
 
 import (
-	"github.com/gramework/gramework"
 	gobcrypt "golang.org/x/crypto/bcrypt"
 )
-
-var log = gramework.Logger.WithField("package", "gramework/grypto/providers/bcrypt")
 
 const (
 	DefaultCost = 13
@@ -13,8 +10,6 @@ const (
 
 var (
 	DefaultProvider = New()
-
-	providerName = []byte("2a")
 )
 
 // Provider handles algorythm parameters
