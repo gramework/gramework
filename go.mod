@@ -6,7 +6,8 @@ require (
 	github.com/cloudfoundry/gosigar v1.1.0
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fasthttp-contrib/websocket v0.0.0-20160511215533-1f3b11f56072
-	github.com/gocarina/gocsv/v2 v2.0.0-20181019111052-71f99b1720d2
+	github.com/gocarina/gocsv v0.0.0-20190129143436-91f6fc13d488
+	github.com/gocarina/gocsv/v2 v2.0.0-20181019111052-71f99b1720d2 // indirect
 	github.com/google/uuid v1.0.0
 	github.com/gramework/runtimer v0.0.0-20171029174549-045ac3154a31
 	github.com/gramework/utils v0.0.0-20180427183540-d82c91416f14

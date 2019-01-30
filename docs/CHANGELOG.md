@@ -1,6 +1,7 @@
 # Patch release: 1.6.2
 - Check gql json content type with space
 - Fix minor grypto lint warning
+- gocsv vendor fix
 
 # Patch release: 1.6.1
 - Copy logger level from Logger.Level in `New()` by default
