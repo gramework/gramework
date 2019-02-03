@@ -1,3 +1,7 @@
+# Minor release candidate: 1.7.0-rc2
+- `ctx.Sanitize()`, `ctx.Sanitizer()` and `app.SetSanitizerPolicy()` introduced thanks to [bluemonday](https://github.com/microcosm-cc/bluemonday).
+  See `third_party_licenses/bluemonday` for bluemonday's license.
+
 # Minor release candidate: 1.7.0-rc1
 - The `Behind` interface, that should allow proper IP detection as soon as you provide
   proper unwrapper.
