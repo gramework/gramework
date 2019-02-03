@@ -16,6 +16,7 @@ import (
 
 	"github.com/apex/log"
 	"github.com/apex/log/handlers/cli"
+	"github.com/microcosm-cc/bluemonday"
 	"github.com/valyala/fasthttp"
 )
 
@@ -59,6 +60,8 @@ func New(opts ...func(*App)) *App {
 		internalLog:               internalLog,
 		cookieExpire:              6 * time.Hour,
 		cookiePath:                defaultCookiePath,
+
+		sanitizerPolicy: bluemonday.StrictPolicy(),
 	}
 
 	app.serverBase = &fasthttp.Server{

@@ -14,6 +14,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/microcosm-cc/bluemonday"
+
 	"github.com/apex/log"
 	"github.com/gramework/utils/nocopy"
 	"github.com/valyala/fasthttp"
@@ -85,6 +87,8 @@ type (
 		runningServersMu *sync.Mutex
 
 		behind Behind
+
+		sanitizerPolicy *bluemonday.Policy
 	}
 
 	runningServerInfo struct {

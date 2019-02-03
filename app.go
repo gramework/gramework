@@ -9,7 +9,11 @@
 
 package gramework
 
-import "time"
+import (
+	"time"
+
+	"github.com/microcosm-cc/bluemonday"
+)
 
 // SetName for the server
 // Deprecated: Use New() with OptAppName option instead
@@ -38,6 +42,13 @@ func (app *App) SetCookiePath(path string) {
 // without additional pain
 func (app *App) SetCookieDomain(domain string) {
 	app.cookieDomain = domain
+}
+
+// SetSanitizerPolicy updates app's sanitizer policy to a new one, if newPolicy is not nil
+func (app *App) SetSanitizerPolicy(newPolicy *bluemonday.Policy) {
+	if newPolicy != nil {
+		app.sanitizerPolicy = newPolicy
+	}
 }
 
 // ToTLSHandler returns handler that redirects user to HTTPS scheme

@@ -16,6 +16,8 @@ import (
 	"encoding/xml"
 	"fmt"
 
+	"github.com/microcosm-cc/bluemonday"
+
 	"github.com/gocarina/gocsv"
 	"github.com/gramework/runtimer"
 )
@@ -43,6 +45,24 @@ func ContextFromValue(ctx context.Context) *Context {
 // This function intented for use in middlewares.
 func (ctx *Context) MWKill() {
 	ctx.middlewareKilledReq = true
+}
+
+// Sanitize returns a sanitized `s`.
+// It use bluemonday to sanitize given parameter.
+//
+// To change sanitizer policy, see (*App).SetSanitizerPolicy.
+func (ctx *Context) Sanitize(s string) string {
+	return ctx.App.sanitizerPolicy.Sanitize(s)
+}
+
+// Sanitizer returns current bluemonday policy.
+//
+// To change sanitizer policy, see (*App).SetSanitizerPolicy.
+//
+// Context must not update the policy at runtime. Instead, please
+// use a new policy.
+func (ctx *Context) Sanitizer() *bluemonday.Policy {
+	return ctx.App.sanitizerPolicy
 }
 
 // SubPrefixes returns list of router's prefixes that was created using .Sub() feature
