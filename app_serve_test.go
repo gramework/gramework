@@ -53,7 +53,7 @@ func TestAppServe(t *testing.T) {
 		func (app *App) (func(string,  interface{}) *App, string) {
 			return app.HEAD, HEAD
 		},
-		// check GET request
+		// check OPTIONS request
 		func (app *App) (func(string,  interface{}) *App, string) {
 			return app.OPTIONS, OPTIONS
 		},
