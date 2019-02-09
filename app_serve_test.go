@@ -72,12 +72,20 @@ func TestAppServe(t *testing.T) {
 
 		reg, method := test(app)
 
-		go app.Serve(ln)
+		go func (){
+			err := app.Serve(ln)
+			if err != nil {
+				t.Fatal(err)
+			}
+		}()
 
 		reg("/", func() {
 			handleOK = true
 		})
-		c.Do(testBuildReqRes(method, uri))
+		err := c.Do(testBuildReqRes(method, uri))
+		if err != nil {
+			t.Fatal(err)
+		}
 		
 		ln.Close()
 
