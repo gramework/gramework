@@ -4,7 +4,7 @@
 
 The Good Framework
 
-[![Gramework Stats Screenshot](https://10357-5.s.cdn13.com/docs/gramework_stats_screenshot.png)](https://grafana.com/dashboards/3422)
+[![Gramework Stats Screenshot](https://github.com/gramework/gramework/raw/dev/docs/gramework_dashboard.png)](https://grafana.com/dashboards/3422)
 
 _Gramework long-term testing stand metrics screenshot made with [Gramework Stats Dashboard](https://grafana.com/dashboards/3422) and [metrics middleware](https://github.com/gramework/gramework/tree/dev/metrics)_
 
