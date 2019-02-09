@@ -73,10 +73,7 @@ func TestAppServe(t *testing.T) {
 		reg, method := test(app)
 
 		go func (){
-			err := app.Serve(ln)
-			if err != nil {
-				t.Fatal(err)
-			}
+			_ = app.Serve(ln)
 		}()
 
 		reg("/", func() {
