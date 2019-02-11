@@ -91,30 +91,3 @@ func TestAppServe(t *testing.T) {
 		}
 	}
 }
-
-type testErrListener struct {
-	fasthttputil.InmemoryListener
-	err error
-}
-
-func (el *testErrListener) Accept() (net.Conn, error) {
-	return nil, el.err
-}
-
-func TestAppServeErr(t *testing.T) {
-
-	errTest := errors.New("test")
-
-	el := &testErrListener{
-		InmemoryListener: *fasthttputil.NewInmemoryListener(),
-		err:              errTest,
-	}
-	app := New()
-	err := app.Serve(el)
-	defer el.Close()
-
-	if err != errTest {
-		t.Errorf("wrong serving error %s, but %s expected", err, errTest)
-	}
-
-}
