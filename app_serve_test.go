@@ -10,7 +10,6 @@
 package gramework
 
 import (
-	"errors"
 	"net"
 	"testing"
 
@@ -28,39 +27,39 @@ func testBuildReqRes(method, uri string) (*fasthttp.Request, *fasthttp.Response)
 func TestAppServe(t *testing.T) {
 	const uri = "http://test.request"
 
-	testCases := []func(*App) (func(string,  interface{}) *App, string){
+	testCases := []func(*App) (func(string, interface{}) *App, string){
 		// check GET request
-		func (app *App) (func(string,  interface{}) *App, string) {
+		func(app *App) (func(string, interface{}) *App, string) {
 			return app.GET, GET
 		},
 		// check POST request
-		func (app *App) (func(string,  interface{}) *App, string) {
+		func(app *App) (func(string, interface{}) *App, string) {
 			return app.POST, POST
 		},
 		// check PUT request
-		func (app *App) (func(string,  interface{}) *App, string) {
+		func(app *App) (func(string, interface{}) *App, string) {
 			return app.PUT, PUT
 		},
 		// check PATCH request
-		func (app *App) (func(string,  interface{}) *App, string) {
+		func(app *App) (func(string, interface{}) *App, string) {
 			return app.PATCH, PATCH
 		},
 		// check DELETE request
-		func (app *App) (func(string,  interface{}) *App, string) {
+		func(app *App) (func(string, interface{}) *App, string) {
 			return app.DELETE, DELETE
 		},
 		// check HEAD request
-		func (app *App) (func(string,  interface{}) *App, string) {
+		func(app *App) (func(string, interface{}) *App, string) {
 			return app.HEAD, HEAD
 		},
 		// check OPTIONS request
-		func (app *App) (func(string,  interface{}) *App, string) {
+		func(app *App) (func(string, interface{}) *App, string) {
 			return app.OPTIONS, OPTIONS
 		},
 	}
 
 	for _, test := range testCases {
-		var handleOK bool 
+		var handleOK bool
 
 		app := New()
 		ln := fasthttputil.NewInmemoryListener()
@@ -72,7 +71,7 @@ func TestAppServe(t *testing.T) {
 
 		reg, method := test(app)
 
-		go func (){
+		go func() {
 			_ = app.Serve(ln)
 		}()
 
@@ -83,7 +82,7 @@ func TestAppServe(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		
+
 		ln.Close()
 
 		if !handleOK {
