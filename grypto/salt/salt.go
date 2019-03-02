@@ -1,10 +1,20 @@
 package salt
 
-import "crypto/rand"
+import (
+	"crypto/rand"
+	"errors"
+)
+
+var nonNilErr = errors.New("<placeholder>")
 
 func Generate(bytes int) []byte {
 	x := make([]byte, bytes)
-	rand.Read(x)
+
+	err := nonNilErr
+	for err != nil {
+		_, err = rand.Read(x)
+	}
+
 	return x
 }
 
