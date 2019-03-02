@@ -191,7 +191,7 @@ func (r *Router) getCachedReflectHandler(h interface{}) (func(*Context), error) 
 
 	funcV := reflect.ValueOf(h)
 
-	handler := r.getEfaceCtxErrEncoder(func(ctx *Context) (v interface{}, err error) {
+	handler := func(ctx *Context) {
 		callParams := make([]reflect.Value, params)
 		if len(decodedBodyRecv) > 0 {
 			unsupportedBodyType := true
@@ -218,6 +218,9 @@ func (r *Router) getCachedReflectHandler(h interface{}) (func(*Context), error) 
 		}
 
 		res := funcV.Call(callParams)
+		shouldProcessErr := false
+		shouldProcessReturn := false
+		var err error
 		if checkForErrorAt >= 0 && !res[checkForErrorAt].IsNil() {
 			resErr, ok := res[checkForErrorAt].Interface().(error)
 			if ok {
@@ -225,13 +228,31 @@ func (r *Router) getCachedReflectHandler(h interface{}) (func(*Context), error) 
 			} else {
 				err = errUnknown
 			}
+			shouldProcessErr = true
 		}
 
+		var v interface{}
 		if encodeDataAt >= 0 {
 			v = res[encodeDataAt].Interface()
+			shouldProcessReturn = true
+		}
+		if shouldProcessErr {
+			if err != nil {
+				ctx.jsonErrorLog(err)
+				return
+			}
+		}
+		if shouldProcessReturn {
+			if v == nil { // err == nil here
+				ctx.SetStatusCode(fasthttp.StatusNoContent)
+				return
+			}
+			if err = ctx.JSON(v); err != nil {
+				ctx.jsonErrorLog(err)
+			}
 		}
 		return
-	})
+	}
 
 	return handler, nil
 }
