@@ -28,7 +28,7 @@ func TestSalt128(t *testing.T) {
 		return
 	}
 	var salt []byte
-	for i := 0; i < 1024; i++ {
+	for i := 0; i < 256; i++ {
 		salt = grypto.Salt128()
 		if len(salt) != 16 {
 			t.Errorf("Salt128 fail to generate 128 bit salt: %02x", salt)
@@ -47,7 +47,7 @@ func TestPasswordSanity(t *testing.T) {
 	pw2 := make([]byte, 12)
 	var hash, hash2 []byte
 
-	for i := 0; i < 32; i++ {
+	for i := 0; i < 8; i++ {
 		grand.Read(pw)
 		grand.Read(pw2)
 		hash = grypto.PasswordHash(pw)
@@ -74,7 +74,7 @@ func TestPasswordStringSanity(t *testing.T) {
 	pw2 := make([]byte, 12)
 	var hash, hash2 []byte
 
-	for i := 0; i < 32; i++ {
+	for i := 0; i < 8; i++ {
 		grand.Read(pw)
 		grand.Read(pw2)
 		hash = grypto.PasswordHashString(string(pw))
@@ -98,7 +98,7 @@ func TestPasswordNeedsRehash(t *testing.T) {
 		return
 	}
 	pw := make([]byte, 12)
-	for i := 0; i < 32; i++ {
+	for i := 0; i < 4; i++ {
 		grand.Read(pw)
 		hash, _ := bcrypt.GenerateFromPassword(pw, cost-1)
 		if !grypto.PasswordNeedsRehash(hash) {
@@ -106,7 +106,7 @@ func TestPasswordNeedsRehash(t *testing.T) {
 			t.FailNow()
 		}
 	}
-	for i := 0; i < 32; i++ {
+	for i := 0; i < 4; i++ {
 		grand.Read(pw)
 		hash, _ := bcrypt.GenerateFromPassword(pw, cost)
 		if grypto.PasswordNeedsRehash(hash) {
@@ -126,7 +126,6 @@ func BenchmarkPassHashAndValidation(b *testing.B) {
 		grand.Read(pws[i])
 	}
 
-	b.SetBytes(0)
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i += 2 {
@@ -149,7 +148,6 @@ func BenchmarkPassHash(b *testing.B) {
 		grand.Read(pws[i])
 	}
 
-	b.SetBytes(0)
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
