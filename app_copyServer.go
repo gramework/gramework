@@ -30,5 +30,6 @@ func (app *App) copyServer() *fasthttp.Server {
 		LogAllErrors:                  app.serverBase.LogAllErrors,
 		DisableHeaderNamesNormalizing: app.serverBase.DisableHeaderNamesNormalizing,
 		Logger:                        app.serverBase.Logger,
+		KeepHijackedConns:             app.serverBase.KeepHijackedConns,
 	}
 }

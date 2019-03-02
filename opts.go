@@ -41,3 +41,14 @@ func OptMaxRequestBodySize(new int) func(*App) {
 		}
 	}
 }
+
+// OptKeepHijackedConns sets new KeepHijackedConns in the server used at the execution time.
+// All OptUseServer will overwrite this setting 'case OptUseServer replaces the whole server instance
+// with a new one.
+func OptKeepHijackedConns(keep bool) func(*App) {
+	return func(a *App) {
+		if a != nil && a.serverBase != nil {
+			a.serverBase.KeepHijackedConns = keep
+		}
+	}
+}
