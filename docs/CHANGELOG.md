@@ -1,3 +1,8 @@
+# Minor release candidate: 1.7.0-rc3
+- Support fasthttp KeepHijackedConns option. See fasthttp docs for more.
+- Fix determineHandler bug for reflect handlers.
+- `grypto/salt` generator now supports retry if crypto.Reader fails
+
 # Minor release candidate: 1.7.0-rc2
 - `ctx.Sanitize()`, `ctx.Sanitizer()` and `app.SetSanitizerPolicy()` introduced thanks to [bluemonday](https://github.com/microcosm-cc/bluemonday).
   See `third_party_licenses/bluemonday` for bluemonday's license.
