@@ -1,11 +1,7 @@
 module github.com/gramework/gramework
 
 require (
-	github.com/apex/log v1.0.0
 	github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973 // indirect
-	github.com/cloudfoundry/gosigar v1.1.0
-	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/fasthttp-contrib/websocket v0.0.0-20160511215533-1f3b11f56072
 	github.com/gocarina/gocsv v0.0.0-20190129143436-91f6fc13d488
 	github.com/gocarina/gocsv/v2 v2.0.0-20181019111052-71f99b1720d2 // indirect
 	github.com/google/uuid v1.0.0
@@ -25,8 +21,6 @@ require (
 	github.com/prometheus/common v0.0.0-20180801064454-c7de2306084e // indirect
 	github.com/prometheus/procfs v0.0.0-20180725123919-05ee40e3a273 // indirect
 	github.com/stretchr/testify v1.2.2
-	github.com/valyala/bytebufferpool v0.0.0-20160817181652-e746df99fe4a
-	github.com/valyala/fasthttp v0.0.0-20180831062205-5f6439b6df1c
 	golang.org/x/crypto v0.0.0-20180830192347-182538f80094
 	golang.org/x/sys v0.0.0-20181023152157-44b849a8bc13 // indirect
 )
