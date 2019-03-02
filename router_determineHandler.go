@@ -251,7 +251,6 @@ func (r *Router) getCachedReflectHandler(h interface{}) (func(*Context), error) 
 				ctx.jsonErrorLog(err)
 			}
 		}
-		return
 	}
 
 	return handler, nil
