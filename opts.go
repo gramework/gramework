@@ -9,36 +9,52 @@
 
 package gramework
 
-import "github.com/valyala/fasthttp"
+import (
+	"errors"
+
+	"github.com/apex/log"
+	"github.com/valyala/fasthttp"
+)
 
 // OptAppName sets app.name and app.serverBase.Name
 func OptAppName(n string) func(*App) {
-	return func(a *App) {
-		if a != nil && a.serverBase != nil {
-			a.name = n
-			a.serverBase.Name = n
-		}
+	return func(app *App) {
+		assertAppNotNill(app)
+		app.name = n
+	}
+}
+
+// OptUseCustomLogger allows use custom preconfigured Apex logger.
+// For exmaple with custom Handler.
+func OptUseCustomLogger(logger *log.Logger) func(*App) {
+	return func(app *App) {
+		assertAppNotNill(app)
+		app.Logger = logger
 	}
 }
 
 // OptUseServer sets fasthttp.Server instance to use
 func OptUseServer(s *fasthttp.Server) func(*App) {
-	return func(a *App) {
-		if a != nil && s != nil {
-			a.serverBase = s
-			a.serverBase.Handler = a.handler()
+	return func(app *App) {
+		assertAppNotNill(app)
+		if s == nil {
+			panic(errors.New("cannot set nil as app server instance"))
 		}
+		app.serverBase = s
+		app.serverBase.Handler = app.handler()
 	}
 }
 
 // OptMaxRequestBodySize sets new MaxRequestBodySize in the server used at the execution time.
 // All OptUseServer will overwrite this setting 'case OptUseServer replaces the whole server instance
 // with a new one.
-func OptMaxRequestBodySize(new int) func(*App) {
-	return func(a *App) {
-		if a != nil && a.serverBase != nil {
-			a.serverBase.MaxRequestBodySize = new
+func OptMaxRequestBodySize(size int) func(*App) {
+	return func(app *App) {
+		assertAppNotNill(app)
+		if app.serverBase == nil {
+			app.serverBase = newDefaultServerBaseFor(app)
 		}
+		app.serverBase.MaxRequestBodySize = size
 	}
 }
 
@@ -46,9 +62,17 @@ func OptMaxRequestBodySize(new int) func(*App) {
 // All OptUseServer will overwrite this setting 'case OptUseServer replaces the whole server instance
 // with a new one.
 func OptKeepHijackedConns(keep bool) func(*App) {
-	return func(a *App) {
-		if a != nil && a.serverBase != nil {
-			a.serverBase.KeepHijackedConns = keep
+	return func(app *App) {
+		assertAppNotNill(app)
+		if app.serverBase == nil {
+			app.serverBase = newDefaultServerBaseFor(app)
 		}
+		app.serverBase.KeepHijackedConns = keep
+	}
+}
+
+func assertAppNotNill(app *App) {
+	if app == nil {
+		panic(errors.New("option can be implemented only to already creaded app object not to nil"))
 	}
 }

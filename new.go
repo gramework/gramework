@@ -64,19 +64,30 @@ func New(opts ...func(*App)) *App {
 		sanitizerPolicy: bluemonday.StrictPolicy(),
 	}
 
-	app.serverBase = &fasthttp.Server{
-		Handler: app.handler(),
-		Logger:  NewFastHTTPLoggerAdapter(&app.Logger),
-		Name:    app.name,
+	for _, opt := range opts {
+		opt(app)
 	}
+
+	if app.serverBase == nil {
+		app.serverBase = newDefaultServerBaseFor(app)
+	}
+	// avoid race condition then OptUseServer becomes before OptAppName
+	// or OptUseCustomLogger becomes before OptUseServer
+	app.serverBase.Name = app.name
+	app.serverBase.Logger = NewFastHTTPLoggerAdapter(&app.Logger)
+
 	app.defaultRouter = &Router{
 		router: newRouter(),
 		app:    app,
 	}
 
-	for _, opt := range opts {
-		opt(app)
-	}
-
 	return app
+}
+
+// Common code used with `gramework.New()` itself and `Opt*` functions.
+func newDefaultServerBaseFor(app *App) *fasthttp.Server {
+	return &fasthttp.Server{
+		Handler: app.handler(),
+		Logger:  NewFastHTTPLoggerAdapter(&app.Logger),
+	}
 }
