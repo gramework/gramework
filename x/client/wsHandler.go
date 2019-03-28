@@ -19,14 +19,15 @@ import (
 
 // WSHandler returns gramework handler
 func (client *Instance) WSHandler() func(*gramework.Context) error {
+	up := websocket.FastHTTPUpgrader{}
 	return func(ctx *gramework.Context) error {
-		if websocket.IsWebSocketUpgrade(ctx.RequestCtx) {
-			return websocket.Upgrade(ctx.RequestCtx, func(conn *websocket.Conn) {
+		if websocket.FastHTTPIsWebSocketUpgrade(ctx.RequestCtx) {
+			return up.Upgrade(ctx.RequestCtx, func(conn *websocket.Conn) {
 				for {
 					v := <-client.watch(ctx)
 					conn.WriteMessage(websocket.TextMessage, v)
 				}
-			}, 0, 0)
+			})
 		}
 
 		return client.handleHTTP(ctx)
