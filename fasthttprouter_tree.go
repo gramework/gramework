@@ -185,7 +185,7 @@ func (n *node) addRoute(path string, handle RequestHandler, r *router, prefixes 
 				}
 
 				// Check if a child with the next path byte exists
-				for i = zero; i < len(n.indices); i++ {
+				for i := zero; i < len(n.indices); i++ {
 					if c == n.indices[i] {
 						i = n.incrementChildPrio(i)
 						n = n.children[i]
@@ -518,7 +518,7 @@ walk: // outer loop for walking the tree
 func (n *node) FindCaseInsensitivePath(path string, fixTrailingSlash bool) ([]byte, bool) {
 	return n.findCaseInsensitivePathRec(
 		path,
-		strings.ToLower(path),
+		toLower(path),
 		make([]byte, zero, len(path)+one), // preallocate enough memory for new path
 		[4]byte{},                         // empty rune buffer
 		fixTrailingSlash,
@@ -543,7 +543,7 @@ func shiftNRuneBytes(rb [4]byte, n int) [4]byte {
 
 // recursive case-insensitive lookup function used by n.findCaseInsensitivePath
 func (n *node) findCaseInsensitivePathRec(path, loPath string, ciPath []byte, rb [4]byte, fixTrailingSlash bool) ([]byte, bool) {
-	loNPath := strings.ToLower(n.path)
+	loNPath := toLower(n.path)
 
 walk: // outer loop for walking the tree
 	for len(loPath) >= len(loNPath) && (len(loNPath) == zero || loPath[one:len(loNPath)] == loNPath[one:]) {
@@ -567,7 +567,7 @@ walk: // outer loop for walking the tree
 						if n.indices[i] == rb[zero] {
 							// continue with child node
 							n = n.children[i]
-							loNPath = strings.ToLower(n.path)
+							loNPath = toLower(n.path)
 							continue walk
 						}
 					}
@@ -617,7 +617,7 @@ walk: // outer loop for walking the tree
 							if n.indices[i] == rb[zero] {
 								// continue with child node
 								n = n.children[i]
-								loNPath = strings.ToLower(n.path)
+								loNPath = toLower(n.path)
 								continue walk
 							}
 						}
@@ -646,7 +646,7 @@ walk: // outer loop for walking the tree
 					if len(n.children) > zero {
 						// continue with child node
 						n = n.children[zero]
-						loNPath = strings.ToLower(n.path)
+						loNPath = toLower(n.path)
 						loPath = loPath[k:]
 						path = path[k:]
 						continue
