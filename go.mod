@@ -5,19 +5,22 @@ require (
 	github.com/apex/log v1.1.0
 	github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973 // indirect
 	github.com/cloudfoundry/gosigar v1.1.0
-	github.com/fasthttp-contrib/websocket v0.0.0-20160511215533-1f3b11f56072
+	github.com/fasthttp/websocket v1.4.0
 	github.com/fatih/color v1.7.0 // indirect
 	github.com/gocarina/gocsv v0.0.0-20190129143436-91f6fc13d488
 	github.com/google/uuid v1.0.0
 	github.com/gramework/runtimer v0.0.0-20171029174549-045ac3154a31
 	github.com/gramework/utils v0.0.0-20180427183540-d82c91416f14
 	github.com/graph-gophers/graphql-go v0.0.0-20180806175703-94da0f0031f9
+	github.com/json-iterator/go v1.1.6
 	github.com/kirillDanshin/go-accept-headers v0.0.0-20130320203746-c78f304b1b09
 	github.com/klauspost/compress v1.4.1 // indirect
 	github.com/klauspost/cpuid v1.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.1 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
 	github.com/microcosm-cc/bluemonday v1.0.2
+	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
+	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/onsi/gomega v1.4.2 // indirect
 	github.com/opentracing/opentracing-go v1.0.2 // indirect
 	github.com/pkg/errors v0.8.0

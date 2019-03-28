@@ -1,4 +1,5 @@
 // Copyright 2017-present Kirill Danshin and Gramework contributors
+// Copyright 2019-present Highload LTD (UK CN: 11893420)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +13,7 @@ package client
 import (
 	"time"
 
-	"github.com/fasthttp-contrib/websocket"
+	"github.com/fasthttp/websocket"
 	"github.com/gramework/gramework"
 )
 

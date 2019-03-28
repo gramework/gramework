@@ -1,4 +1,5 @@
 // Copyright 2017-present Kirill Danshin and Gramework contributors
+// Copyright 2019-present Highload LTD (UK CN: 11893420)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +12,8 @@ package test
 
 import (
 	"testing"
+
+	"github.com/gramework/gramework/grypto/providers/scrypt"
 
 	"github.com/gramework/gramework/grypto"
 	"github.com/gramework/utils/grand"
@@ -109,8 +112,15 @@ func TestPasswordNeedsRehash(t *testing.T) {
 	for i := 0; i < 4; i++ {
 		grand.Read(pw)
 		hash, _ := bcrypt.GenerateFromPassword(pw, cost)
+		if !grypto.PasswordNeedsRehash(hash) {
+			t.Errorf("PasswordNeedsRehash returned false, expected true as of bcrypt -> scrypt migration")
+		}
+	}
+	for i := 0; i < 4; i++ {
+		grand.Read(pw)
+		hash := scrypt.New().Hash(pw)
 		if grypto.PasswordNeedsRehash(hash) {
-			t.Errorf("PasswordNeedsRehash returned true, expected false")
+			t.Errorf("PasswordNeedsRehash returned true, expected false for scrypt hash")
 		}
 	}
 }

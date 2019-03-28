@@ -8,6 +8,10 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
+func (ctx *Context) Write(p []byte) (int, error) {
+	return ctx.writer(p)
+}
+
 // Encode automatically determines accepted formats
 // and choose preferred one
 func (ctx *Context) Encode(v interface{}) (string, error) {

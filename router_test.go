@@ -1,4 +1,5 @@
 // Copyright 2017-present Kirill Danshin and Gramework contributors
+// Copyright 2019-present Highload LTD (UK CN: 11893420)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,10 +12,13 @@ package gramework
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"reflect"
 	"runtime"
 	"testing"
+
+	"github.com/gramework/gramework/x/testutils"
 
 	"github.com/valyala/fasthttp"
 )
@@ -196,8 +200,10 @@ func TestGrameRouter(t *testing.T) {
 	app.HandleMethodNotAllowed(true)
 	app.HandleOPTIONS(true)
 
-	go app.ListenAndServe(":65023")
-	http.Get("http://127.0.0.1:65023") // just should not panic
+	port := testutils.Port().NonRoot().Unused().Acquire()
+	bindAddr := fmt.Sprintf(":%d", port)
+	go app.ListenAndServe(bindAddr)
+	http.Get("http://127.0.0.1" + bindAddr) // just should not panic
 }
 
 func TestSubRouter(t *testing.T) {
@@ -393,8 +399,10 @@ func TestDomainRouter(t *testing.T) {
 		t.FailNow()
 	}
 
-	go app.ListenAndServe(":65024")
-	http.Get("http://127.0.0.1:65024") // just should not panic
+	port := testutils.Port().NonRoot().Unused().Acquire()
+	bindAddr := fmt.Sprintf(":%d", port)
+	go app.ListenAndServe(bindAddr)
+	http.Get("http://127.0.0.1" + bindAddr) // just should not panic
 }
 
 func TestDomainHTTPRouter(t *testing.T) {
@@ -744,9 +752,11 @@ func TestDomainHTTPSRouter(t *testing.T) {
 		t.FailNow()
 	}
 
-	go app.ListenAndServe(":65027")
-	http.Get("http://127.0.0.1:65027") // just should not panic
-	http.Get("http://127.0.0.1:65027") // just should not panic, twice
+	port := testutils.Port().NonRoot().Unused().Acquire()
+	bindAddr := fmt.Sprintf(":%d", port)
+	go app.ListenAndServe(bindAddr)
+	http.Get("http://127.0.0.1" + bindAddr) // just should not panic
+	http.Get("http://127.0.0.1" + bindAddr) // just should not panic, twice
 }
 
 func TestHTTPRouter(t *testing.T) {
@@ -1096,7 +1106,9 @@ func TestHTTPSRouter(t *testing.T) {
 		t.FailNow()
 	}
 
-	go app.ListenAndServe(":65033")
-	http.Get("http://127.0.0.1:65033") // just should not panic
-	http.Get("http://127.0.0.1:65033") // just should not panic, twice
+	port := testutils.Port().NonRoot().Unused().Acquire()
+	bindAddr := fmt.Sprintf(":%d", port)
+	go app.ListenAndServe(bindAddr)
+	http.Get("http://127.0.0.1" + bindAddr) // just should not panic
+	http.Get("http://127.0.0.1" + bindAddr) // just should not panic, twice
 }

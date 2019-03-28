@@ -1,4 +1,5 @@
 // Copyright 2017-present Kirill Danshin and Gramework contributors
+// Copyright 2019-present Highload LTD (UK CN: 11893420)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +12,7 @@ package test
 
 import (
 	"crypto/tls"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"reflect"
@@ -18,6 +20,7 @@ import (
 	"time"
 
 	"github.com/gramework/gramework"
+	"github.com/gramework/gramework/x/testutils"
 )
 
 func TestGrameworkHTTP(t *testing.T) {
@@ -104,14 +107,16 @@ func TestGrameworkHTTP(t *testing.T) {
 	})
 	errCheck(t, err)
 
+	port := testutils.Port().NonRoot().Unused().Acquire()
+	bindAddr := fmt.Sprintf(":%d", port)
 	go func() {
-		listenErr := app.ListenAndServe(":9977")
+		listenErr := app.ListenAndServe(bindAddr)
 		errCheck(t, listenErr)
 	}()
 
 	time.Sleep(2 * time.Second)
 
-	resp, err := http.Get("http://127.0.0.1:9977")
+	resp, err := http.Get("http://127.0.0.1" + bindAddr)
 	if err != nil {
 		t.Fatalf("Gramework isn't working! Got error: %s", err)
 		t.FailNow()
@@ -135,7 +140,7 @@ func TestGrameworkHTTP(t *testing.T) {
 		t.FailNow()
 	}
 
-	resp, err = http.Get("http://127.0.0.1:9977/json")
+	resp, err = http.Get("http://127.0.0.1" + bindAddr + "/json")
 	if err != nil {
 		t.Fatalf("Gramework isn't working! Got error: %s", err)
 		t.FailNow()
@@ -166,7 +171,10 @@ func TestGrameworkHTTP(t *testing.T) {
 func TestGrameworkDomainHTTP(t *testing.T) {
 	app := gramework.New()
 	const text = "test one two three"
-	app.Domain("127.0.0.1:9978").GET("/", text)
+	port := testutils.Port().NonRoot().Unused().Acquire()
+	bindAddr := fmt.Sprintf(":%d", port)
+
+	app.Domain("127.0.0.1"+bindAddr).GET("/", text)
 	var preCalled, mwCalled, postCalled bool
 	var err = app.UsePre(func() {
 		preCalled = true
@@ -184,13 +192,13 @@ func TestGrameworkDomainHTTP(t *testing.T) {
 	errCheck(t, err)
 
 	go func() {
-		listenErr := app.ListenAndServe(":9978")
+		listenErr := app.ListenAndServe(bindAddr)
 		errCheck(t, listenErr)
 	}()
 
 	time.Sleep(1 * time.Second)
 
-	resp, err := http.Get("http://127.0.0.1:9978")
+	resp, err := http.Get("http://127.0.0.1" + bindAddr)
 	if err != nil {
 		t.Fatalf("Gramework isn't working! Got error: %s", err)
 	}
@@ -228,8 +236,11 @@ func TestGrameworkHTTPS(t *testing.T) {
 	app.GET("/", text)
 	app.TLSEmails = []string{"k@guava.by"}
 
+	port := testutils.Port().NonRoot().Unused().Acquire()
+	bindAddr := fmt.Sprintf(":%d", port)
+
 	go func() {
-		err := app.ListenAndServeAutoTLS(":9443")
+		err := app.ListenAndServeAutoTLS(bindAddr)
 		errCheck(t, err)
 	}()
 
@@ -240,7 +251,7 @@ func TestGrameworkHTTPS(t *testing.T) {
 	}
 	client := &http.Client{Transport: tr}
 
-	resp, err := client.Get("https://127.0.0.1:9443")
+	resp, err := client.Get("https://127.0.0.1" + bindAddr)
 	if err != nil {
 		t.Fatalf("Gramework isn't working! Got error: %s", err)
 	}
@@ -268,8 +279,13 @@ func TestGrameworkListenAll(t *testing.T) {
 	app.GET("/", text)
 	app.TLSEmails = []string{"k@guava.by"}
 
+	port := testutils.Port().NonRoot().Unused().Acquire()
+	bindAddr := fmt.Sprintf(":%d", port)
+	tlsPort := testutils.Port().NonRoot().Unused().Acquire()
+	tlsBindAddr := fmt.Sprintf(":%d", tlsPort)
+	app.TLSPort = uint16(tlsPort)
 	go func() {
-		app.ListenAndServeAll(":9449")
+		app.ListenAndServeAll(bindAddr)
 	}()
 
 	time.Sleep(3 * time.Second)
@@ -279,7 +295,7 @@ func TestGrameworkListenAll(t *testing.T) {
 	}
 	client := &http.Client{Transport: tr}
 
-	resp, err := client.Get("http://127.0.0.1:9449")
+	resp, err := client.Get("http://127.0.0.1" + bindAddr)
 	if err != nil {
 		t.Fatalf("Gramework isn't working! Got error: %s", err)
 	}
@@ -300,7 +316,7 @@ func TestGrameworkListenAll(t *testing.T) {
 		)
 	}
 
-	resp, err = client.Get("https://127.0.0.1:443")
+	resp, err = client.Get("https://127.0.0.1" + tlsBindAddr)
 	if err != nil {
 		t.Fatalf("Gramework isn't working! Got error: %s", err)
 	}
@@ -335,14 +351,16 @@ func TestSPAIndexHandler(t *testing.T) {
 		}
 	})
 
+	port := testutils.Port().NonRoot().Unused().Acquire()
+	bindAddr := fmt.Sprintf(":%d", port)
 	go func() {
-		listenErr := app.ListenAndServe(":9988")
+		listenErr := app.ListenAndServe(bindAddr)
 		errCheck(t, listenErr)
 	}()
 
 	time.Sleep(2 * time.Second)
 
-	resp, err := http.Get("http://127.0.0.1:9988")
+	resp, err := http.Get("http://127.0.0.1" + bindAddr)
 	if err != nil {
 		t.Fatalf("Gramework isn't working! Got error: %s", err)
 		t.FailNow()

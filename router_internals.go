@@ -1,4 +1,5 @@
 // Copyright 2017-present Kirill Danshin and Gramework contributors
+// Copyright 2019-present Highload LTD (UK CN: 11893420)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -57,11 +58,13 @@ func (r *Router) getGrameErrorHandler(h func(*fasthttp.RequestCtx) error) func(*
 }
 
 func (r *Router) initGrameCtx(ctx *fasthttp.RequestCtx) *Context {
-	return &Context{
+	gctx := &Context{
 		Logger:     r.app.Logger,
 		RequestCtx: ctx,
 		App:        r.app,
 	}
+	gctx.writer = ctx.Write
+	return gctx
 }
 
 func (r *Router) initRouter() {

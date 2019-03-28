@@ -1,4 +1,5 @@
 // Copyright 2017-present Kirill Danshin and Gramework contributors
+// Copyright 2019-present Highload LTD (UK CN: 11893420)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -49,6 +50,7 @@ type (
 		name                      string
 		Settings                  Settings
 		TLSEmails                 []string
+		TLSPort                   uint16
 		middlewares               []func(*Context)
 		middlewaresAfterRequest   []func(*Context)
 		preMiddlewares            []func(*Context)
@@ -89,6 +91,8 @@ type (
 		behind Behind
 
 		sanitizerPolicy *bluemonday.Policy
+
+		DefaultCacheOptions *CacheOptions
 	}
 
 	runningServerInfo struct {
@@ -111,6 +115,7 @@ type (
 		middlewaresShouldStopProcessing bool
 		subPrefixes                     []string
 		middlewareKilledReq             bool
+		writer                          func(p []byte) (int, error)
 	}
 
 	// GQLRequest is a GraphQL request structure

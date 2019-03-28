@@ -28,7 +28,7 @@ We're always glad to see your feature requests and PRs.
 - You can directly contact the [maintainer](https://github.com/kirillDanshin) and [donate](https://opencollective.com/gramework) for high priority feature.
 - You can be sure that all license questions are OK with gramework.
 
-**Go >= 1.9.6 is the oldest continously tested and supported version.**
+**Go >= 1.10.8 is the oldest continously tested and supported version.**
 
 
 ### Useful links and info
@@ -51,8 +51,6 @@ If you encounter any vulnerabilities then please feel free to submit them via k@
 | CII Best Practices | [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/1203/badge)](https://bestpractices.coreinfrastructure.org/projects/1203) |
 | Gramework Stats Dashboard for Grafana | https://grafana.com/dashboards/3422 |
 | **Support contacts** | Via email:   k@gramework.win |
-| | Via phone (**urgent support only**): +1 484-666-0990 |
-| | Via Telegram: [@gramework_support](https://t.me/gramework_support) |
 | | Via Telegram community: [@gramework](https://t.me/gramework) |
 
 # Table of Contents

@@ -1,4 +1,5 @@
 // Copyright 2017-present Kirill Danshin and Gramework contributors
+// Copyright 2019-present Highload LTD (UK CN: 11893420)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,15 +13,17 @@ package gramework
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"encoding/xml"
 	"fmt"
 
+	jsoniter "github.com/json-iterator/go"
 	"github.com/microcosm-cc/bluemonday"
 
 	"github.com/gocarina/gocsv"
 	"github.com/gramework/runtimer"
 )
+
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 // @TODO: add more
 var ctypes = []string{

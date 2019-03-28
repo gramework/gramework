@@ -8,13 +8,8 @@ os:
   - osx
 
 env:
-  - TRAVIS_GO_VERSION=1.9.6 GRAMEWORK_SHORT=1
-  - TRAVIS_GO_VERSION=1.9.x GRAMEWORK_SHORT=0
-  - TRAVIS_GO_VERSION=1.10.2 GRAMEWORK_SHORT=1
-  - TRAVIS_GO_VERSION=1.10.3 GRAMEWORK_SHORT=1
   - TRAVIS_GO_VERSION=1.10.x GRAMEWORK_SHORT=0
-  - TRAVIS_GO_VERSION=1.11 GRAMEWORK_SHORT=1
-  - TRAVIS_GO_VERSION=1.11.1 GRAMEWORK_SHORT=1
+  - TRAVIS_GO_VERSION=1.11.4 GRAMEWORK_SHORT=1
   - TRAVIS_GO_VERSION=1.11.x GRAMEWORK_SHORT=0
   - TRAVIS_GO_VERSION=1.12.x GRAMEWORK_SHORT=0
   - TRAVIS_GO_VERSION=tip GRAMEWORK_SHORT=1 TRAVIS_ALLOW_FAILURE=1
@@ -26,23 +21,22 @@ before_install:
   - GO_FILES=$(find . -iname '*.go' -type f | grep -v /vendor/)
   - go get -t -v ./...
   - go get -v golang.org/x/lint/golint
-  - go get -v honnef.co/go/tools/cmd/megacheck
   - go get -v github.com/fzipp/gocyclo
   - go get -v golang.org/x/tools/cmd/goimports
+  - go install -mod vendor github.com/golangci/golangci-lint/cmd/golangci-lint
 
 script:
   # fail if a .go file hasn't been formatted with goimports
-  # - test -z $(goimports -l $GO_FILES)s
+  - test -z $(goimports -l $GO_FILES)
   # check if it even compiles
   - go build
   # run the official Go static analyzer
   - go vet .
-  # run all our tests with race detector and coverage analyzer enabled
-  - ./.test.sh
-  # "go vet on steroids" + linter
-  - megacheck ./...
+  - golangci-lint run
   # forbid code with huge functions
   - gocyclo -over 55 $GO_FILES
+  # run all our tests with race detector and coverage analyzer enabled
+  - ./.test.sh
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
