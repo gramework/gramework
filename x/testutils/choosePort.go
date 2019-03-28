@@ -18,32 +18,38 @@ type PortChooser struct {
 	unused  *bool
 }
 
+// Port creates a chaining API structure
 func Port() *PortChooser {
 	return &PortChooser{}
 }
 
+// NonRoot enables the non-root port requirement: min port will be 1025 to ensure anything is ok.
 func (pc *PortChooser) NonRoot() *PortChooser {
 	pc.nonRoot = new(bool)
 	*pc.nonRoot = true
 	return pc
 }
 
+// Unused enables a check that port is free.
 func (pc *PortChooser) Unused() *PortChooser {
 	pc.unused = new(bool)
 	*pc.unused = true
 	return pc
 }
 
+// Root enables root-only port requirement: max port will be 1024.
 func (pc *PortChooser) Root() *PortChooser {
 	pc.nonRoot = new(bool)
 	return pc
 }
 
+// Used enables a check that port is not free.
 func (pc *PortChooser) Used() *PortChooser {
 	pc.nonRoot = new(bool)
 	return pc
 }
 
+// Acquire applies all filters defined before and returns a port number.
 func (pc *PortChooser) Acquire() int {
 	port := pc.determinePort()
 
