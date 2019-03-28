@@ -95,6 +95,34 @@ type (
 		DefaultCacheOptions *CacheOptions
 	}
 
+	// CacheOptions is a handler cache configuration structure.
+	CacheOptions struct {
+		// TTL is the time that cached response is valid
+		TTL time.Duration
+		// Cacheable function returns if current request is cacheable.
+		// By deafult, any request with Authentication header or any Cookies will not be cached for security reasons.
+		// If you want to cache responses for authorized users, please replace both Cacheable and CacheKey functions
+		// to make sure that CacheKey includes something like session id.
+		Cacheable func(ctx *Context) bool
+		// CacheKey function returns the cache key for current request
+		CacheKey func(ctx *Context) []byte
+
+		// ReadCache allows for cache engine replacement. By default, gramework uses github.com/VictoriaMetrics/fastcache.
+		// ReadCache returns the value and boolean if the value was found and still valid.
+		ReadCache func(ctx *Context, key []byte) ([]byte, bool)
+		// StoreCache allows for cache engine replacement. By default, gramework uses github.com/VictoriaMetrics/fastcache.
+		StoreCache func(ctx *Context, key, value []byte, ttl time.Duration)
+
+		// CacheableHeaders is a list of headers that gramework can cache.
+		// Note, that if X-ABC is present both in cacheable and noncacheable header lists,
+		// it will not be cached.
+		CacheableHeaders []string // slice of canonical header names
+		// NonCacheableHeaders is a list of headers that gramework can not cache.
+		// Note, that if X-ABC is present both in cacheable and noncacheable header lists,
+		// it will not be cached.
+		NonCacheableHeaders []string
+	}
+
 	runningServerInfo struct {
 		bind string
 		srv  *fasthttp.Server
