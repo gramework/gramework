@@ -81,9 +81,9 @@ func TestAppServeDirNoCache(t *testing.T) {
 		t.Errorf("failed on directory serve (no cache) %d", ctx.Response.StatusCode())
 	}
 
-	hdrList := []struct{
+	hdrList := []struct {
 		name string
-		exp string
+		exp  string
 	}{
 		{"Cache-Control", hdrCacheControl},
 		{"Pragma", hdrPragma},

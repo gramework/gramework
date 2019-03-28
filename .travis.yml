@@ -27,12 +27,12 @@ before_install:
 
 script:
   # fail if a .go file hasn't been formatted with goimports
-  - test -z $(goimports -l $GO_FILES)
+  - goimports -d $(find . -type f -name '*.go' -not -path "./vendor/*")
   # check if it even compiles
   - go build
   # run the official Go static analyzer
   - go vet .
-  - golangci-lint run
+  - ./bin/golangci-lint run
   # forbid code with huge functions
   - gocyclo -over 55 $GO_FILES
   # run all our tests with race detector and coverage analyzer enabled
