@@ -32,7 +32,7 @@ script:
   - go build
   # run the official Go static analyzer
   - go vet .
-  - ./.run-lint.sh
+  # - ./.run-lint.sh
   # forbid code with huge functions
   - gocyclo -over 55 $GO_FILES
   # run all our tests with race detector and coverage analyzer enabled
