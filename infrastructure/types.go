@@ -1,3 +1,4 @@
+// Deprecated: will be moved into another package.
 package infrastructure
 
 import (

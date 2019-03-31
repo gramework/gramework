@@ -205,6 +205,8 @@ type (
 		root        *Router
 		app         *App
 		mu          sync.RWMutex
+
+		rootHandler []staticHandler
 	}
 
 	// SubRouter handles subs registration

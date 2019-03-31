@@ -25,7 +25,10 @@ func (client *Instance) WSHandler() func(*gramework.Context) error {
 			return up.Upgrade(ctx.RequestCtx, func(conn *websocket.Conn) {
 				for {
 					v := <-client.watch(ctx)
-					conn.WriteMessage(websocket.TextMessage, v)
+					err := conn.WriteMessage(websocket.TextMessage, v)
+					if err != nil {
+						break
+					}
 				}
 			})
 		}

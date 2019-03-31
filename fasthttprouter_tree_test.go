@@ -60,7 +60,7 @@ func acquireContext(path string) *Context {
 func checkRequests(t *testing.T, tree *node, requests testRequests) {
 	for _, request := range requests {
 		requestCtx := acquireContext(request.path)
-		handler, _ := tree.GetValue(request.path, requestCtx, "")
+		handler, _, _ := tree.GetValue(request.path, requestCtx, "")
 
 		if handler == nil {
 			if !request.nilHandler {
@@ -452,7 +452,7 @@ func TestTreeTrailingSlashRedirect(t *testing.T) {
 		"/doc/",
 	}
 	for _, route := range tsrRoutes {
-		handler, tsr := tree.GetValue(route, ctx, "")
+		handler, _, tsr := tree.GetValue(route, ctx, "")
 		if handler != nil {
 			t.Fatalf("non-nil handler for TSR route '%s", route)
 		} else if !tsr {
@@ -469,7 +469,7 @@ func TestTreeTrailingSlashRedirect(t *testing.T) {
 		"/api/world/abc",
 	}
 	for _, route := range noTsrRoutes {
-		handler, tsr := tree.GetValue(route, ctx, "")
+		handler, _, tsr := tree.GetValue(route, ctx, "")
 		if handler != nil {
 			t.Fatalf("non-nil handler for No-TSR route '%s", route)
 		} else if tsr {
@@ -488,7 +488,7 @@ func TestTreeRootTrailingSlashRedirect(t *testing.T) {
 		t.Fatalf("panic inserting test route: %v", recv)
 	}
 
-	handler, tsr := tree.GetValue("/", nil, "")
+	handler, _, tsr := tree.GetValue("/", nil, "")
 	if handler != nil {
 		t.Fatalf("non-nil handler")
 	} else if tsr {

@@ -348,7 +348,7 @@ func (n *node) insertChild(numParams uint8, path, fullPath string, handle Reques
 // If no handle can be found, a TSR (trailing slash redirect) recommendation is
 // made if a handle exists with an extra (without the) trailing slash for the
 // given path.
-func (n *node) GetValue(reqPath string, ctx *Context, method string) (handle RequestHandler, tsr bool) { //nolint: golint
+func (n *node) GetValue(reqPath string, ctx *Context, method string) (handle RequestHandler, prefixes []string, tsr bool) { //nolint: golint
 	if n.router == nil {
 		panic("no router!")
 	}
@@ -364,7 +364,7 @@ func (n *node) GetValue(reqPath string, ctx *Context, method string) (handle Req
 				if ctx != nil {
 					ctx.subPrefixes = record.n.prefixes
 				}
-				return record.n.handle, record.tsr
+				return record.n.handle, record.n.prefixes, record.tsr
 			}
 		}
 		ctx.subPrefixes = n.prefixes
@@ -432,6 +432,7 @@ walk: // outer loop for walking the tree
 						if n.hits > 32 {
 							n.router.cache.PutWild(reqPath, n, tsr, map[string]string{n.path[one:]: path[:end]}, method)
 						}
+						prefixes = n.prefixes
 						return
 					} else if len(n.children) == one {
 						// No handle found. Check if a handle for this path + a

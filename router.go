@@ -12,6 +12,7 @@ package gramework
 
 import (
 	"fmt"
+	"path"
 	"reflect"
 	"runtime"
 	"strings"
@@ -124,12 +125,21 @@ func (r *Router) handleReg(method, route string, handler interface{}, prefixes [
 			break
 		}
 	}
+	if path.Clean(route) == "/" {
+		ok := r.setRootFastpath(method, staticHandler{
+			handle:   typedHandler,
+			prefixes: prefixes,
+		})
+		if ok {
+			return
+		}
+	}
 	r.router.Handle(method, route, typedHandler, prefixes)
 }
 
 func (r *Router) getEFuncStrHandler(h func() string) func(*Context) {
 	return func(ctx *Context) {
-		ctx.WriteString(h())
+		ctx.Response.SetBodyRaw([]byte(h()))
 	}
 }
 
@@ -166,14 +176,14 @@ func (r *Router) Handle(method, route string, handler interface{}) *Router {
 func (r *Router) getFmtVHandler(v interface{}) func(*Context) {
 	cache := []byte(fmt.Sprintf("%v", v))
 	return func(ctx *Context) {
-		ctx.Write(cache)
+		ctx.Response.SetBodyRaw(cache)
 	}
 }
 
 func (r *Router) getStringServer(str string) func(*Context) {
 	b := []byte(str)
 	return func(ctx *Context) {
-		ctx.Write(b)
+		ctx.Response.SetBodyRaw(b)
 	}
 }
 
@@ -191,27 +201,29 @@ func (r *Router) getJSONServer(str JSON) func(*Context) {
 	b := []byte(str)
 	return func(ctx *Context) {
 		ctx.SetContentType(jsonCTshort)
-		ctx.Write(b)
+		ctx.Response.SetBodyRaw(b)
 	}
 }
 
 func (r *Router) getBytesServer(b []byte) func(*Context) {
 	return func(ctx *Context) {
-		ctx.Write(b)
+		ctx.Response.SetBodyRaw(b)
 	}
 }
 
 func (r *Router) getFmtDHandler(v interface{}) func(*Context) {
 	const fmtD = "%d"
+	res := []byte(fmt.Sprintf(fmtD, v))
 	return func(ctx *Context) {
-		fmt.Fprintf(ctx, fmtD, v)
+		ctx.Response.SetBodyRaw(res)
 	}
 }
 
 func (r *Router) getFmtFHandler(v interface{}) func(*Context) {
 	const fmtF = "%f"
+	res := []byte(fmt.Sprintf(fmtF, v))
 	return func(ctx *Context) {
-		fmt.Fprintf(ctx, fmtF, v)
+		ctx.Response.SetBodyRaw(res)
 	}
 }
 
@@ -297,6 +309,12 @@ func (r *Router) ServeFiles(path string, rootPath string) {
 // values. Otherwise the third return value indicates whether a redirection to
 // the same path with an extra / without the trailing slash should be performed.
 func (r *Router) Lookup(method, path string, ctx *Context) (RequestHandler, bool) {
+	if path == "/" {
+		h, found := r.getRootFastpath(method)
+		if found {
+			return h.handle, true
+		}
+	}
 	return r.router.Lookup(method, path, ctx)
 }
 
@@ -315,89 +333,142 @@ func (r *Router) Handler() func(*Context) {
 	return r.handler
 }
 
-func (r *Router) handler(ctx *Context) {
-	path := string(ctx.Path())
-	method := string(ctx.Method())
+func (r *Router) setRootFastpath(method string, h staticHandler) (ok bool) {
+	methodIdx := r.methodToIdx(method)
+	if methodIdx < 0 {
+		return false
+	}
+	r.mu.Lock()
+	if r.rootHandler == nil {
+		r.rootHandler = make([]staticHandler, 32)
+	}
+	r.rootHandler[methodIdx] = h
+	r.mu.Unlock()
+	return true
+}
 
-	switch ctx.IsTLS() {
-	case true:
-		if r.httpsrouter != nil {
-			handler, rts := r.httpsrouter.router.Lookup(method, path, ctx)
-			if handler != nil && r.httpsrouter.handle(path, method, ctx, handler, rts, false) {
-				return
-			}
-			if r.httpsrouter.router.RedirectFixedPath {
-				if root, ok := r.httpsrouter.router.Trees[method]; ok && root != nil {
-					fixedPath, found := root.FindCaseInsensitivePath(
-						CleanPath(path),
-						r.httpsrouter.router.RedirectTrailingSlash,
-					)
+func (r *Router) getRootFastpath(method string) (h staticHandler, found bool) {
+	if r.rootHandler == nil {
+		return zeroStaticHandler, false
+	}
+	methodIdx := r.methodToIdx(method)
+	if methodIdx < 0 {
+		return zeroStaticHandler, false
+	}
 
-					if found {
-						code := redirectCode
-						if method != GET {
-							code = temporaryRedirectCode
-						}
+	return r.rootHandler[methodIdx], r.rootHandler[methodIdx].handle != nil
+}
 
-						uri := r.pathAppendQueryFromCtx([]byte(fixedPath), ctx)
+var zeroStaticHandler = staticHandler{}
 
-						ctx.SetStatusCode(code)
-						ctx.Response.Header.SetBytesV("Location", uri)
-						return
-					}
+func (r *Router) methodToIdx(method string) int {
+	return methodToIdx(method)
+}
+
+func methodToIdx(method string) int {
+	switch method {
+	case GET:
+		return 0
+	case HEAD:
+		return 1
+	case OPTIONS:
+		return 2
+	case POST:
+		return 3
+	case PUT:
+		return 4
+	case PATCH:
+		return 5
+	case DELETE:
+		return 6
+	case CONNECT:
+		return 7
+	default:
+		return -1
+	}
+}
+
+func methodByIdx(method int) string {
+	switch method {
+	case 0:
+		return GET
+	case 1:
+		return HEAD
+	case 2:
+		return OPTIONS
+	case 3:
+		return POST
+	case 4:
+		return PUT
+	case 5:
+		return PATCH
+	case 6:
+		return DELETE
+	case 7:
+		return CONNECT
+	default:
+		return "<unknown>"
+	}
+}
+
+func (r *Router) handleReq(router *Router, method, path string, ctx *Context) (stop bool) {
+	if supported, shouldStop := router.fastpath(method, path, ctx); supported {
+		return shouldStop
+	}
+
+	return router.defaultHandlingPath(router, method, path, ctx)
+}
+
+func (r *Router) fastpath(method, path string, ctx *Context) (supported, shouldStop bool) {
+	if path == "/" {
+		h, found := r.getRootFastpath(method)
+		if !found {
+			return false, false
+		}
+
+		if h.handle != nil {
+			h.handle(ctx)
+		} else {
+			r.default404(ctx)
+		}
+		return true, true
+	}
+
+	return false, false
+}
+
+func (r *Router) defaultHandlingPath(router *Router, method, path string, ctx *Context) (stop bool) {
+	handler, tsr := router.router.Lookup(method, path, ctx)
+	if handler != nil && router.handle(path, method, ctx, handler, tsr, false) {
+		return true
+	}
+	isStatic := r.router.routeIsStatic(method, path)
+
+	if router.router.RedirectFixedPath {
+		if isStatic {
+			lowerPath := strings.ToLower(path)
+			sh, _, found := router.router.lookupStatic(method, lowerPath)
+			if found {
+				code := redirectCode
+				if method != GET {
+					code = temporaryRedirectCode
 				}
-			}
 
-			if r.httpsrouter.router.NotFound != nil {
-				r.httpsrouter.router.NotFound(ctx)
-				return
+				uri := r.pathAppendQueryFromCtx([]byte(sh.originalRoute), ctx)
+
+				ctx.SetStatusCode(code)
+				ctx.Response.Header.SetBytesV("Location", uri)
+				return true
 			}
 		}
-	case false:
-		if r.httprouter != nil {
-			handler, rts := r.httprouter.router.Lookup(method, path, ctx)
-			if handler != nil && r.httprouter.handle(path, method, ctx, handler, rts, false) {
-				return
-			}
 
-			if r.httprouter.router.RedirectFixedPath {
-				if root, ok := r.httprouter.router.Trees[method]; ok && root != nil {
-					fixedPath, found := root.FindCaseInsensitivePath(
-						CleanPath(path),
-						r.httprouter.router.RedirectTrailingSlash,
-					)
-
-					if found {
-						code := redirectCode
-						if method != GET {
-							code = temporaryRedirectCode
-						}
-						uri := r.pathAppendQueryFromCtx([]byte(fixedPath), ctx)
-
-						ctx.SetStatusCode(code)
-						ctx.Response.Header.SetBytesV("Location", uri)
-						return
-					}
-				}
-			}
-			if r.httprouter.router.NotFound != nil {
-				r.httprouter.router.NotFound(ctx)
-				return
-			}
-		}
-	}
-	handler, rts := r.router.Lookup(method, path, ctx)
-	if r.handle(path, method, ctx, handler, rts, true) {
-		return
-	}
-	if r.router.RedirectFixedPath {
-		if root, ok := r.router.Trees[method]; ok && root != nil {
+		if root, ok := router.router.Trees[method]; ok && root != nil {
 			fixedPath, found := root.FindCaseInsensitivePath(
 				CleanPath(path),
-				r.router.RedirectTrailingSlash,
+				router.router.RedirectTrailingSlash,
 			)
 
-			if found && len(fixedPath) > 0 {
+			if found {
 				code := redirectCode
 				if method != GET {
 					code = temporaryRedirectCode
@@ -407,14 +478,68 @@ func (r *Router) handler(ctx *Context) {
 
 				ctx.SetStatusCode(code)
 				ctx.Response.Header.SetBytesV("Location", uri)
+				return true
+			}
+		}
+	}
+
+	if isStatic {
+		if method == OPTIONS {
+			// Handle OPTIONS requests
+			if r.router.HandleOPTIONS {
+				if allow := r.getStaticAllowed(method, path, ctx); len(allow) > 0 {
+					ctx.Response.Header.Set(HeaderAllow, allow)
+				}
+			}
+		} else {
+			if isStatic {
+				if allow := r.getStaticAllowed(method, path, ctx); len(allow) > 0 {
+					ctx.Response.Header.Set(HeaderAllow, allow)
+					if r.router.MethodNotAllowed != nil {
+						r.router.MethodNotAllowed(ctx)
+					} else {
+						ctx.SetStatusCode(fasthttp.StatusMethodNotAllowed)
+						ctx.SetContentTypeBytes(DefaultContentType)
+						ctx.SetBodyString(fasthttp.StatusMessage(fasthttp.StatusMethodNotAllowed))
+					}
+					return true
+				}
+			}
+		}
+	}
+
+	if router.router.NotFound != nil {
+		router.router.NotFound(ctx)
+		return true
+	}
+	return false
+}
+
+func (r *Router) handler(ctx *Context) {
+	path := string(ctx.Path())
+	method := string(ctx.Method())
+
+	switch ctx.IsTLS() {
+	case true:
+		if r.httpsrouter != nil {
+			if r.handleReq(r.httpsrouter, method, path, ctx) {
+				return
+			}
+		}
+	case false:
+		if r.httprouter != nil {
+			if r.handleReq(r.httprouter, method, path, ctx) {
 				return
 			}
 		}
 	}
-	if r.router.NotFound != nil {
-		r.router.NotFound(ctx)
+	if r.handleReq(r, method, path, ctx) {
 		return
 	}
+	r.default404(ctx)
+}
+
+func (r *Router) default404(ctx *Context) {
 	ctx.Error(fasthttp.StatusMessage(fasthttp.StatusNotFound), fasthttp.StatusNotFound)
 }
 
@@ -438,15 +563,48 @@ func (r *Router) trimTrailingSlash(path string) (string, bool) {
 	return path, false
 }
 
+func (r *Router) getStaticAllowed(method, path string, ctx *Context) string {
+	allowed := ""
+	for m, p := range r.router.StaticHandlers {
+		if m == methodToIdx(OPTIONS) {
+			continue
+		}
+
+		found := false
+		if _, ok := p[path]; ok {
+			found = true
+		} else if _, ok := p[strings.ToLower(path)]; ok {
+			found = true
+		}
+		if found {
+			if len(allowed) > 0 {
+				allowed += ", "
+			}
+			allowed += methodByIdx(m)
+		}
+	}
+	if allowed != "" {
+		allowed += ", OPTIONS"
+	}
+	return allowed
+}
+
 func (r *Router) handle(path, method string, ctx *Context, handler func(ctx *Context), redirectTrailingSlashs bool, isRootRouter bool) (handlerFound bool) {
 	if r.router.PanicHandler != nil {
 		defer r.router.Recv(ctx, nil)
 	}
 
-	if f, ok := r.router.StaticHandlers[method][path]; ok {
-		f(ctx)
-		return true
-	} else if method != CONNECT && path != PathSlash {
+	isStatic := r.router.routeIsStatic(method, path)
+
+	if isStatic {
+		if f, ok := r.router.StaticHandlers[methodToIdx(method)][path]; ok {
+			ctx.subPrefixes = f.prefixes
+			f.handle(ctx)
+			return true
+		}
+	}
+
+	if method != CONNECT && path != PathSlash {
 		code := redirectCode // Permanent redirect, request with GET method
 		if method != GET {
 			// Temporary redirect, request with same method
@@ -456,7 +614,7 @@ func (r *Router) handle(path, method string, ctx *Context, handler func(ctx *Con
 
 		if r.router.RedirectTrailingSlash {
 			if fixedPath, ok := r.trimTrailingSlash(path); ok {
-				if _, ok := r.router.StaticHandlers[method][fixedPath]; ok {
+				if _, ok := r.router.StaticHandlers[methodToIdx(method)][fixedPath]; ok {
 					uri := r.pathAppendQueryFromCtx([]byte(fixedPath), ctx)
 
 					ctx.SetStatusCode(code)
@@ -473,18 +631,21 @@ func (r *Router) handle(path, method string, ctx *Context, handler func(ctx *Con
 				fixedPath, _ = r.trimTrailingSlash(fixedPath)
 			}
 
-			if _, ok := r.router.StaticHandlers[method][fixedPath]; ok {
-				uri := r.pathAppendQueryFromCtx([]byte(fixedPath), ctx)
+			if isStatic {
+				if _, ok := r.router.StaticHandlers[methodToIdx(method)][fixedPath]; ok {
+					uri := r.pathAppendQueryFromCtx([]byte(fixedPath), ctx)
 
-				ctx.SetStatusCode(code)
-				ctx.Response.Header.SetBytesV("Location", uri)
-				return true
+					ctx.SetStatusCode(code)
+					ctx.Response.Header.SetBytesV("Location", uri)
+					return true
+				}
 			}
 		}
 	}
 
 	if root := r.router.Trees[method]; root != nil {
-		if f, tsr := root.GetValue(path, ctx, string(ctx.Method())); f != nil {
+		if f, prefixes, tsr := root.GetValue(path, ctx, string(ctx.Method())); f != nil {
+			ctx.subPrefixes = prefixes
 			f(ctx)
 			return true
 		} else if method != CONNECT && path != PathSlash {
@@ -529,12 +690,30 @@ func (r *Router) handle(path, method string, ctx *Context, handler func(ctx *Con
 	if method == OPTIONS {
 		// Handle OPTIONS requests
 		if r.router.HandleOPTIONS {
+			if isStatic {
+				if allow := r.getStaticAllowed(method, path, ctx); len(allow) > 0 {
+					ctx.Response.Header.Set(HeaderAllow, allow)
+				}
+			}
 			if allow := r.router.Allowed(path, method); len(allow) > zero {
 				ctx.Response.Header.Set(HeaderAllow, allow)
 				return true
 			}
 		}
 	} else {
+		if isStatic {
+			if allow := r.getStaticAllowed(method, path, ctx); len(allow) > 0 {
+				ctx.Response.Header.Set(HeaderAllow, allow)
+				if r.router.MethodNotAllowed != nil {
+					r.router.MethodNotAllowed(ctx)
+				} else {
+					ctx.SetStatusCode(fasthttp.StatusMethodNotAllowed)
+					ctx.SetContentTypeBytes(DefaultContentType)
+					ctx.SetBodyString(fasthttp.StatusMessage(fasthttp.StatusMethodNotAllowed))
+				}
+				return true
+			}
+		}
 		// Handle 405
 		if r.router.HandleMethodNotAllowed {
 			if allow := r.router.Allowed(path, method); len(allow) > zero {

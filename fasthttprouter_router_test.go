@@ -631,7 +631,8 @@ func TestRouterNotAllowed(t *testing.T) {
 	responseText := "custom method"
 	router.MethodNotAllowed(func(ctx *Context) {
 		ctx.SetStatusCode(fasthttp.StatusTeapot)
-		ctx.Write([]byte(responseText))
+		_, e := ctx.Write([]byte(responseText))
+		_ = e
 	})
 	rw.r.WriteString("GET /path HTTP/1.1\r\n\r\n")
 	go func() {
@@ -927,7 +928,10 @@ func TestRouterServeFiles(t *testing.T) {
 		t.Fatal("registering path not ending with '*filepath' did not panic")
 	}
 	body := []byte("fake ico")
-	ioutil.WriteFile(os.TempDir()+"/favicon.ico", body, 0644)
+	err := ioutil.WriteFile(os.TempDir()+"/favicon.ico", body, 0644)
+	if err != nil {
+		panic(err)
+	}
 
 	router.defaultRouter.ServeFiles("/*filepath", os.TempDir())
 

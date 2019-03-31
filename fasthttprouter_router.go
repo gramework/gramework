@@ -13,11 +13,19 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
+type staticHandler struct {
+	handle        RequestHandler
+	prefixes      []string
+	originalRoute string
+}
+
+type methodIndex = int
+
 // Router is a http.Handler which can be used to dispatch requests to different
 // handler functions via configurable routes
 type router struct {
 	Trees          map[string]*node
-	StaticHandlers map[string]map[string]RequestHandler
+	StaticHandlers map[methodIndex]map[string]staticHandler
 
 	// Enables automatic redirection if the current route can't be matched but a
 	// handler for the path with (without) the trailing slash exists.
@@ -143,15 +151,15 @@ func newRouter() *router {
 				},
 			},
 		},
-		StaticHandlers: map[string]map[string]RequestHandler{
-			MethodGET:     make(map[string]RequestHandler),
-			MethodDELETE:  make(map[string]RequestHandler),
-			MethodHEAD:    make(map[string]RequestHandler),
-			MethodOPTIONS: make(map[string]RequestHandler),
-			MethodPATCH:   make(map[string]RequestHandler),
-			MethodPOST:    make(map[string]RequestHandler),
-			MethodPUT:     make(map[string]RequestHandler),
-		},
+	}
+	r.StaticHandlers = map[methodIndex]map[string]staticHandler{
+		methodToIdx(GET):     make(map[string]staticHandler),
+		methodToIdx(DELETE):  make(map[string]staticHandler),
+		methodToIdx(HEAD):    make(map[string]staticHandler),
+		methodToIdx(OPTIONS): make(map[string]staticHandler),
+		methodToIdx(PATCH):   make(map[string]staticHandler),
+		methodToIdx(POST):    make(map[string]staticHandler),
+		methodToIdx(PUT):     make(map[string]staticHandler),
 	}
 	go r.cache.maintain()
 	return r
@@ -192,7 +200,7 @@ func (r *router) DELETE(path string, handle RequestHandler, prefixes []string) {
 	r.Handle(DELETE, path, handle, prefixes)
 }
 
-func (r *router) routeIsStatic(path string) (isStatic bool) {
+func (r *router) routeIsStatic(method, path string) (isStatic bool) {
 	isStatic = false
 	for _, sym := range path {
 		if sym == '*' || sym == ':' {
@@ -219,11 +227,17 @@ func (r *router) Handle(method, path string, handle RequestHandler, prefixes []s
 		path = strings.TrimRight(path, Slash)
 	}
 
-	if r.routeIsStatic(path) {
-		if r.StaticHandlers[method] == nil {
-			r.StaticHandlers[method] = make(map[string]RequestHandler)
+	if r.routeIsStatic(method, path) {
+		if r.StaticHandlers[methodToIdx(method)] == nil {
+			r.StaticHandlers[methodToIdx(method)] = make(map[string]staticHandler)
 		}
-		r.StaticHandlers[method][path] = handle
+		sh := staticHandler{
+			handle:        handle,
+			prefixes:      prefixes,
+			originalRoute: path,
+		}
+		r.StaticHandlers[methodToIdx(method)][path] = sh
+		r.StaticHandlers[methodToIdx(method)][strings.ToLower(path)] = sh
 		return
 	}
 
@@ -279,19 +293,38 @@ func (r *router) Recv(ctx *Context, tracer *log.Entry) {
 	}
 }
 
+func (r *router) lookupStatic(method, path string) (h staticHandler, tsr, found bool) {
+	if paths, ok := r.StaticHandlers[methodToIdx(method)]; ok {
+		if handler, ok := paths[strings.TrimRight(path, "/")]; ok {
+			return handler, false, true
+		}
+		if _, ok := paths[path+"/"]; ok {
+			return zeroStaticHandler, true, true
+		}
+	}
+
+	return zeroStaticHandler, false, false
+}
+
 // Lookup allows the manual lookup of a method + path combo.
 // This is e.g. useful to build a framework around this router.
 // If the path was found, it returns the handle function and the path parameter
 // values. Otherwise the third return value indicates whether a redirection to
 // the same path with an extra / without the trailing slash should be performed.
 func (r *router) Lookup(method, path string, ctx *Context) (RequestHandler, bool) {
-	if paths, ok := r.StaticHandlers[method]; ok {
-		if handler, ok := paths[path]; ok {
-			return handler, false
+	if r.routeIsStatic(method, path) {
+		if sh, tsr, found := r.lookupStatic(method, path); found {
+			return sh.handle, tsr
 		}
 	}
 	if root := r.Trees[method]; root != nil {
-		return root.GetValue(path, ctx, method)
+		node, _, tsr := root.GetValue(path, ctx, method)
+		if node != nil {
+			return node, tsr
+		}
+		if tsr {
+			return nil, tsr
+		}
 	}
 	return nil, false
 }
@@ -300,15 +333,15 @@ func (r *router) Lookup(method, path string, ctx *Context) (RequestHandler, bool
 func (r *router) Allowed(path, reqMethod string) (allow string) {
 	if path == PathAny || path == PathSlashAny { // server-wide
 		for method := range r.StaticHandlers {
-			if method == OPTIONS {
+			if method == methodToIdx(OPTIONS) {
 				continue
 			}
 
 			// add request method to list of allowed methods
 			if len(allow) == 0 {
-				allow = method
+				allow = methodByIdx(method)
 			} else {
-				allow += ", " + method
+				allow += ", " + methodByIdx(method)
 			}
 		}
 
@@ -327,16 +360,16 @@ func (r *router) Allowed(path, reqMethod string) (allow string) {
 	} else { // specific path
 		for method, paths := range r.StaticHandlers {
 			// static methods first
-			if method == reqMethod || method == OPTIONS {
+			if method == methodToIdx(reqMethod) || method == methodToIdx(OPTIONS) {
 				continue
 			}
 
-			if hander, ok := paths[path]; ok && hander != nil {
+			if hander, ok := paths[path]; ok && hander.handle != nil {
 				// add request method to list of allowed methods
 				if len(allow) == 0 {
-					allow = method
+					allow = methodByIdx(method)
 				} else {
-					allow += ", " + method
+					allow += ", " + methodByIdx(method)
 				}
 			}
 		}
@@ -347,7 +380,7 @@ func (r *router) Allowed(path, reqMethod string) (allow string) {
 				continue
 			}
 
-			handle, _ := r.Trees[method].GetValue(path, nil, reqMethod)
+			handle, _, _ := r.Trees[method].GetValue(path, nil, reqMethod)
 			if handle != nil {
 				// add request method to list of allowed methods
 				if len(allow) == 0 {

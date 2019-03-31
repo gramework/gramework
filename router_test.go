@@ -202,8 +202,16 @@ func TestGrameRouter(t *testing.T) {
 
 	port := testutils.Port().NonRoot().Unused().Acquire()
 	bindAddr := fmt.Sprintf(":%d", port)
-	go app.ListenAndServe(bindAddr)
-	http.Get("http://127.0.0.1" + bindAddr) // just should not panic
+	go func() {
+		err := app.ListenAndServe(bindAddr)
+		if err != nil {
+			panic(err)
+		}
+	}()
+	_, err := http.Get("http://127.0.0.1" + bindAddr) // just should not panic
+	if err != nil {
+		t.Error(err)
+	}
 }
 
 func TestSubRouter(t *testing.T) {
@@ -401,8 +409,14 @@ func TestDomainRouter(t *testing.T) {
 
 	port := testutils.Port().NonRoot().Unused().Acquire()
 	bindAddr := fmt.Sprintf(":%d", port)
-	go app.ListenAndServe(bindAddr)
-	http.Get("http://127.0.0.1" + bindAddr) // just should not panic
+	go func() {
+		err := app.ListenAndServe(bindAddr)
+		if err != nil {
+			panic(err)
+		}
+	}()
+	_, err := http.Get("http://127.0.0.1" + bindAddr) // just should not panic
+	_ = err
 }
 
 func TestDomainHTTPRouter(t *testing.T) {
@@ -754,9 +768,16 @@ func TestDomainHTTPSRouter(t *testing.T) {
 
 	port := testutils.Port().NonRoot().Unused().Acquire()
 	bindAddr := fmt.Sprintf(":%d", port)
-	go app.ListenAndServe(bindAddr)
-	http.Get("http://127.0.0.1" + bindAddr) // just should not panic
-	http.Get("http://127.0.0.1" + bindAddr) // just should not panic, twice
+	go func() {
+		err := app.ListenAndServe(bindAddr)
+		if err != nil {
+			panic(err)
+		}
+	}()
+	_, e := http.Get("http://127.0.0.1" + bindAddr) // just should not panic
+	_ = e
+	_, e = http.Get("http://127.0.0.1" + bindAddr) // just should not panic, twice
+	_ = e
 }
 
 func TestHTTPRouter(t *testing.T) {
@@ -1108,7 +1129,14 @@ func TestHTTPSRouter(t *testing.T) {
 
 	port := testutils.Port().NonRoot().Unused().Acquire()
 	bindAddr := fmt.Sprintf(":%d", port)
-	go app.ListenAndServe(bindAddr)
-	http.Get("http://127.0.0.1" + bindAddr) // just should not panic
-	http.Get("http://127.0.0.1" + bindAddr) // just should not panic, twice
+	go func() {
+		err := app.ListenAndServe(bindAddr)
+		if err != nil {
+			panic(err)
+		}
+	}()
+	_, err := http.Get("http://127.0.0.1" + bindAddr) // just should not panic
+	_ = err
+	_, err = http.Get("http://127.0.0.1" + bindAddr) // just should not panic, twice
+	_ = err
 }

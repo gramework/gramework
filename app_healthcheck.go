@@ -19,7 +19,8 @@ func (app *App) HealthHandler(ctx *Context) {
 	var m runtime.MemStats
 	runtime.ReadMemStats(&m)
 
-	ctx.JSON(m)
+	e := ctx.JSON(m)
+	_ = e
 }
 
 // Health registers HealthHandler on /internal/health

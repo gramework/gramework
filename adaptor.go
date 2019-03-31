@@ -112,7 +112,8 @@ func NewGrameHandler(h http.Handler) RequestHandler {
 				ctx.Response.Header.Set(k, v)
 			}
 		}
-		ctx.Write(w.body)
+		_, e := ctx.Write(w.body)
+		_ = e // handled separately, but got a false-positive linter check
 	}
 }
 

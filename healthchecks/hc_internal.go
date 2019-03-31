@@ -41,7 +41,8 @@ type sigarWrapper struct {
 func (s sigarWrapper) swap() ramJSON {
 	swap, err := s.GetSwap()
 	if err != nil {
-		swap.Get()
+		err = swap.Get()
+		_ = err
 	}
 	return ramJSON{
 		Used:  gfmt.Si(swap.Used),
@@ -51,7 +52,8 @@ func (s sigarWrapper) swap() ramJSON {
 func (s sigarWrapper) ram() ramJSON {
 	mem, err := s.GetMem()
 	if err != nil {
-		mem.Get()
+		err = mem.Get()
+		_ = err
 	}
 	return ramJSON{
 		Used:  gfmt.Si(mem.Used),

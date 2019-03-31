@@ -16,14 +16,12 @@ import (
 	"encoding/xml"
 	"fmt"
 
-	jsoniter "github.com/json-iterator/go"
 	"github.com/microcosm-cc/bluemonday"
+	"github.com/pquerna/ffjson/ffjson"
 
 	"github.com/gocarina/gocsv"
 	"github.com/gramework/runtimer"
 )
-
-var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 // @TODO: add more
 var ctypes = []string{
@@ -177,7 +175,8 @@ func (ctx *Context) Forbidden() {
 // ToJSON serializes v and returns the result
 func (ctx *Context) ToJSON(v interface{}) ([]byte, error) {
 	b := bytes.NewBuffer(nil)
-	err := json.NewEncoder(b).Encode(v)
+	enc := ffjson.NewEncoder(b)
+	err := enc.Encode(v)
 	return b.Bytes(), err
 }
 
@@ -189,7 +188,7 @@ func (ctx *Context) UnJSONBytes(b []byte, v ...interface{}) (interface{}, error)
 
 // UnJSON deserializes JSON request body to given variable pointer
 func (ctx *Context) UnJSON(v interface{}) error {
-	return json.NewDecoder(bytes.NewReader(ctx.Request.Body())).Decode(&v)
+	return ffjson.NewDecoder().Decode(ctx.Request.Body(), &v)
 }
 
 // UnJSONBytes deserializes JSON request body to given variable pointer or allocates a new one.
@@ -197,10 +196,10 @@ func (ctx *Context) UnJSON(v interface{}) error {
 func UnJSONBytes(b []byte, v ...interface{}) (interface{}, error) {
 	if len(v) == 0 {
 		var res interface{}
-		err := json.NewDecoder(bytes.NewReader(b)).Decode(&res)
+		err := ffjson.NewDecoder().Decode(b, &res)
 		return res, err
 	}
-	err := json.NewDecoder(bytes.NewReader(b)).Decode(&v[0])
+	err := ffjson.NewDecoder().Decode(b, &v[0])
 	return v[0], err
 }
 

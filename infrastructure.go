@@ -18,12 +18,15 @@ import (
 
 // ServeInfrastructure serves Infrastructure info
 // It's an integration of our module
+//
+// Deprecated: will be moved to another package
 func (app *App) ServeInfrastructure(i *infrastructure.Infrastructure) {
 	app.GET("/infrastructure", func(ctx *Context) {
 		i.Lock.RLock()
 		i.CurrentTimestamp = time.Now().UnixNano()
 		ctx.CORS()
-		ctx.JSON(i)
+		e := ctx.JSON(i)
+		_ = e
 		i.Lock.RUnlock()
 	})
 	app.POST("/infrastructure/register/service", func(ctx *Context) {
@@ -32,10 +35,15 @@ func (app *App) ServeInfrastructure(i *infrastructure.Infrastructure) {
 		}
 		_, err := ctx.UnJSONBytes(ctx.PostBody(), &s)
 		if err != nil {
-			ctx.JSONError(err.Error())
+			if err := ctx.JSONError(err.Error()); err != nil {
+				// things really messed up.
+				// this panic is handled gracefully in the core
+				panic(err)
+			}
 			return
 		}
 		i.MergeService(s.Name, s)
-		ctx.JSON(s)
+		e := ctx.JSON(s)
+		_ = e
 	})
 }

@@ -73,7 +73,8 @@ func (ctx *Context) XML(v interface{}) error {
 func (ctx *Context) HTML(src ...string) *Context {
 	ctx.SetContentType(htmlCT)
 	if len(src) > 0 {
-		ctx.WriteString(src[0])
+		_, e := ctx.WriteString(src[0])
+		_ = e
 	}
 	return ctx
 }
@@ -130,9 +131,11 @@ func (ctx *Context) Err500(message ...interface{}) *Context {
 				ctx.Logger.WithError(err).Error("Err500 serving error")
 			}
 		case error:
-			ctx.Writef(fmtS, v)
+			_, e := ctx.Writef(fmtS, v)
+			_ = e // it's already 500
 		default:
-			ctx.Writef(fmtV, v)
+			_, e := ctx.Writef(fmtV, v)
+			_ = e
 		}
 	}
 	return ctx

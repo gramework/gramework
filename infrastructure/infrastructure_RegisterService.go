@@ -44,7 +44,8 @@ func (i *Infrastructure) RegisterServiceBatch(m map[string]Service) error {
 // Ignores any error if service already exists
 func (i *Infrastructure) RegisterServiceBatchIgnore(m map[string]Service) {
 	for name, s := range m {
-		i.RegisterService(name, s)
+		e := i.RegisterService(name, s)
+		_ = e
 	}
 }
 
