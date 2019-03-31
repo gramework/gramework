@@ -32,7 +32,7 @@ script:
   - go build
   # run the official Go static analyzer
   - go vet .
-  - test -z $(./bin/golangci-lint run | grep -v main.go | grep -v SA1019)
+  - sh -c "test -z $(./bin/golangci-lint run | grep -v main.go | grep -v SA1019)"
   # forbid code with huge functions
   - gocyclo -over 55 $GO_FILES
   # run all our tests with race detector and coverage analyzer enabled
