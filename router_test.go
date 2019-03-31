@@ -17,6 +17,7 @@ import (
 	"reflect"
 	"runtime"
 	"testing"
+	"time"
 
 	"github.com/gramework/gramework/x/testutils"
 
@@ -208,6 +209,7 @@ func TestGrameRouter(t *testing.T) {
 			panic(err)
 		}
 	}()
+	time.Sleep(250 * time.Millisecond)
 	_, err := http.Get("http://127.0.0.1" + bindAddr) // just should not panic
 	if err != nil {
 		t.Error(err)
