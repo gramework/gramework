@@ -28,8 +28,8 @@ github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db h1:woRePGFeVFfLKN/pO
 github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db/go.mod h1:/XxbfmMg8lxefKM7IXC3fBNl/7bRcc72aCRzEWrmP2Q=
 github.com/google/uuid v1.0.0 h1:b4Gk+7WdP/d3HZH8EJsZpvV7EtDOgaZLtnaNGIu1adA=
 github.com/google/uuid v1.0.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
-github.com/gramework/runtimer v0.0.0-20190401011404-9d2b8574a1db h1:SZFAsi3rId47g8H7rOoYfABB0RzQPNWcY5SCb8YFYR4=
-github.com/gramework/runtimer v0.0.0-20190401011404-9d2b8574a1db/go.mod h1:wJlXrZVkOeGRLwODHvQcpRKopvHHsPovXNB9AB1rqwQ=
+github.com/gramework/runtimer v0.0.0-20190401193044-e6c0280ee15a h1:I7mzpDFWliFdeJhmR3reub8hcc0m7DY1PRG1UIDQsAw=
+github.com/gramework/runtimer v0.0.0-20190401193044-e6c0280ee15a/go.mod h1:wJlXrZVkOeGRLwODHvQcpRKopvHHsPovXNB9AB1rqwQ=
 github.com/gramework/utils v0.0.0-20180427183540-d82c91416f14 h1:KBCnx7osefkcnowspN4ChqmMedSUTB9C4r3rhwrVOUk=
 github.com/gramework/utils v0.0.0-20180427183540-d82c91416f14/go.mod h1:62TH8ocqQEUeIL3WbQeqYWNe/jlWnqU3ero9T1WPXsk=
 github.com/graph-gophers/graphql-go v0.0.0-20180806175703-94da0f0031f9 h1:szkPl6mglONCUK9VrQxlzuALNb/JVF5vS/98r+kCDCg=

@@ -9,7 +9,7 @@ require (
 	github.com/fatih/color v1.7.0 // indirect
 	github.com/gocarina/gocsv v0.0.0-20190129143436-91f6fc13d488
 	github.com/google/uuid v1.0.0
-	github.com/gramework/runtimer v0.0.0-20190401011404-9d2b8574a1db
+	github.com/gramework/runtimer v0.0.0-20190401193044-e6c0280ee15a
 	github.com/gramework/utils v0.0.0-20180427183540-d82c91416f14
 	github.com/graph-gophers/graphql-go v0.0.0-20180806175703-94da0f0031f9
 	github.com/kirillDanshin/go-accept-headers v0.0.0-20130320203746-c78f304b1b09
