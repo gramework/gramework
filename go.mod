@@ -28,7 +28,7 @@ require (
 	github.com/prometheus/procfs v0.0.0-20180725123919-05ee40e3a273 // indirect
 	github.com/stretchr/testify v1.3.0
 	github.com/valyala/bytebufferpool v1.0.0
-	github.com/valyala/fasthttp v1.2.0
+	github.com/valyala/fasthttp v1.2.1-0.20190302200148-517df8833274
 	golang.org/x/crypto v0.0.0-20190313024323-a1f597ede03a
 	golang.org/x/net v0.0.0-20190318221613-d196dffd7c2b // indirect
 	golang.org/x/sys v0.0.0-20190318195719-6c81ef8f67ca // indirect
