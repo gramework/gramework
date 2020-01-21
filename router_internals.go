@@ -11,6 +11,8 @@
 package gramework
 
 import (
+	"sync"
+
 	"github.com/valyala/fasthttp"
 )
 
@@ -57,12 +59,31 @@ func (r *Router) getGrameErrorHandler(h func(*fasthttp.RequestCtx) error) func(*
 	}
 }
 
-func (r *Router) initGrameCtx(ctx *fasthttp.RequestCtx) *Context {
-	gctx := &Context{
-		Logger:     r.app.Logger,
-		RequestCtx: ctx,
-		App:        r.app,
+var ctxPool = &sync.Pool{
+	New: func() interface{} {
+		return &Context{}
+	},
+}
+
+func acquireCtx() *Context {
+	return ctxPool.Get().(*Context)
+}
+
+func releaseCtx(ctx *Context) {
+	*ctx = Context{
+		Logger:    nil,
+		App:       nil,
+		auth:      nil,
+		requestID: "",
 	}
+	ctxPool.Put(ctx)
+}
+
+func (r *Router) initGrameCtx(ctx *fasthttp.RequestCtx) *Context {
+	gctx := acquireCtx()
+	gctx.Logger = r.app.Logger
+	gctx.RequestCtx = ctx
+	gctx.App = r.app
 	gctx.writer = ctx.Write
 	return gctx
 }

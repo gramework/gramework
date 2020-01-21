@@ -21,6 +21,7 @@ import (
 // runs flag.Parse() if !flag.Parsed() to support
 // --bind flag.
 func (app *App) ListenAndServe(addr ...string) error {
+	checks()
 	var bind string
 	if len(addr) > 0 {
 		bind = addr[0]

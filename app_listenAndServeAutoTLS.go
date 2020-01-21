@@ -87,6 +87,7 @@ func (app *App) ListenAndServeAutoTLS(addr string, cachePath ...string) error {
 	}
 
 	tlsLn := tls.NewListener(ln, tlsConfig)
+	checks()
 
 	l := app.internalLog.WithField("bind", addr)
 	l.Info("Starting HTTPS")

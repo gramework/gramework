@@ -143,6 +143,11 @@ func (r *Router) getEFuncStrHandler(h func() string) func(*Context) {
 	}
 }
 
+// substring -> full name
+var internalShortcuts = map[string]string{
+	"#g.(*App).ServeDirCustom": "#g.(*App).ServeDirCustom",
+}
+
 func handlerName(h interface{}) string {
 	v := reflect.ValueOf(h)
 	if v.Kind() != reflect.Func {
@@ -154,8 +159,18 @@ func handlerName(h interface{}) string {
 	if strings.Contains(file, "/go/src") && len(file) > pathidx+len("/go/src/") {
 		file = file[strings.Index(file, "/go/src/")+8:]
 	}
-	file = strings.Replace(file, "github.com/gramework/gramework/", "#gramework/", -1)
-	name := fmt.Sprintf("%s@%s:%v", funcDesc.Name(), file, line)
+	file = strings.Replace(file, "github.com/gramework/gramework/", "#g/", -1)
+	file = strings.Replace(file, "github.com/gramework/gramework.", "#g.", -1)
+	fName := funcDesc.Name()
+	fName = strings.Replace(fName, "github.com/gramework/gramework/", "#g/", -1)
+	fName = strings.Replace(fName, "github.com/gramework/gramework.", "#g.", -1)
+	for substr, fullName := range internalShortcuts {
+		if strings.Contains(fName, substr) {
+			fName = fullName
+			break
+		}
+	}
+	name := fmt.Sprintf("%s@%s:%v", fName, file, line)
 	return name
 }
 

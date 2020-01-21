@@ -28,6 +28,7 @@ func (app *App) handler() func(*fasthttp.RequestCtx) {
 		if app.EnableFirewall {
 			if shouldBeBlocked, _ := app.firewall.NewRequest(ctx); shouldBeBlocked {
 				ctx.SetConnectionClose()
+				releaseCtx(ctx)
 				return
 			}
 		}
@@ -67,6 +68,7 @@ func (app *App) handler() func(*fasthttp.RequestCtx) {
 			tracer.
 				WithField("status", ctx.Response.StatusCode()).
 				Debug("middleware stopped processing")
+			releaseCtx(ctx)
 			return
 		}
 		ctx.middlewaresShouldStopProcessing = false
@@ -84,6 +86,7 @@ func (app *App) handler() func(*fasthttp.RequestCtx) {
 			tracer.
 				WithField("status", ctx.Response.StatusCode()).
 				Debug("middleware stopped processing")
+			releaseCtx(ctx)
 			return
 		}
 		if len(app.domains) > 0 {
@@ -107,6 +110,7 @@ func (app *App) handler() func(*fasthttp.RequestCtx) {
 				tracer.
 					WithField("status", ctx.Response.StatusCode()).
 					Debug("request processed")
+				releaseCtx(ctx)
 				return
 			}
 		}
@@ -117,6 +121,7 @@ func (app *App) handler() func(*fasthttp.RequestCtx) {
 		tracer.
 			WithField("status", ctx.Response.StatusCode()).
 			Debug("request processed")
+		releaseCtx(ctx)
 	}
 }
 

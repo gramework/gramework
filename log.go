@@ -145,3 +145,10 @@ var internalLog = func() *log.Entry {
 
 	return Logger.WithField("package", "gramework")
 }()
+
+// SetInternalLogger allows to change internal log used for handler registration logs etc.
+func SetInternalLogger(log log.Interface) {
+	if log != nil {
+		internalLog = log.WithField("package", "gramework")
+	}
+}

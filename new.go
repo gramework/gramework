@@ -11,12 +11,10 @@
 package gramework
 
 import (
-	"os"
 	"sync"
 	"time"
 
 	"github.com/apex/log"
-	"github.com/apex/log/handlers/cli"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/valyala/fasthttp"
 )
@@ -25,10 +23,15 @@ var defaultMaxHackAttempts int32 = 5
 
 // New App
 func New(opts ...func(*App)) *App {
-	logger := &log.Logger{
-		Level:   Logger.Level,
-		Handler: cli.New(os.Stdout),
-	}
+	logger := Logger
+	internalLog = func() *log.Entry {
+		Logger.Level = log.DebugLevel
+		if !enableDebug {
+			Logger.Level = log.InfoLevel
+		}
+
+		return Logger.WithField("package", "gramework")
+	}()
 	flags := &Flags{
 		values: make(map[string]Flag),
 	}
