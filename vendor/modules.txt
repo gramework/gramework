@@ -1,31 +1,56 @@
-# github.com/apex/log v1.0.0
+# github.com/VictoriaMetrics/fastcache v1.4.5
+## explicit
+github.com/VictoriaMetrics/fastcache
+# github.com/apex/log v1.1.1
+## explicit
 github.com/apex/log
 github.com/apex/log/handlers/cli
+# github.com/aymerick/douceur v0.2.0
+github.com/aymerick/douceur/css
 # github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973
+## explicit
 github.com/beorn7/perks/quantile
+# github.com/cespare/xxhash v1.1.0
+github.com/cespare/xxhash
+# github.com/chris-ramon/douceur v0.2.0
+github.com/chris-ramon/douceur/parser
 # github.com/cloudfoundry/gosigar v1.1.0
+## explicit
 github.com/cloudfoundry/gosigar
 github.com/cloudfoundry/gosigar/sys/windows
 # github.com/davecgh/go-spew v1.1.1
 github.com/davecgh/go-spew/spew
-# github.com/fasthttp-contrib/websocket v0.0.0-20160511215533-1f3b11f56072
-github.com/fasthttp-contrib/websocket
+# github.com/fasthttp/websocket v1.4.0
+## explicit
+github.com/fasthttp/websocket
+# github.com/fatih/color v1.7.0
+github.com/fatih/color
 # github.com/gocarina/gocsv v0.0.0-20190129143436-91f6fc13d488
+## explicit
 github.com/gocarina/gocsv
 # github.com/golang/protobuf v1.2.0
 github.com/golang/protobuf/proto
-# github.com/google/uuid v1.0.0
+# github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db
+github.com/golang/snappy
+# github.com/google/uuid v1.1.1
+## explicit
 github.com/google/uuid
-# github.com/gramework/runtimer v0.0.0-20171029174549-045ac3154a31
+# github.com/gorilla/css v1.0.0
+github.com/gorilla/css/scanner
+# github.com/gramework/runtimer v0.0.0-20211014201118-d25b6e2ccefd
+## explicit
 github.com/gramework/runtimer
 # github.com/gramework/utils v0.0.0-20180427183540-d82c91416f14
-github.com/gramework/utils/nocopy
+## explicit
 github.com/gramework/utils/grand
+github.com/gramework/utils/nocopy
 # github.com/graph-gophers/graphql-go v0.0.0-20180806175703-94da0f0031f9
+## explicit
 github.com/graph-gophers/graphql-go
 github.com/graph-gophers/graphql-go/errors
 github.com/graph-gophers/graphql-go/internal/common
 github.com/graph-gophers/graphql-go/internal/exec
+github.com/graph-gophers/graphql-go/internal/exec/packer
 github.com/graph-gophers/graphql-go/internal/exec/resolvable
 github.com/graph-gophers/graphql-go/internal/exec/selected
 github.com/graph-gophers/graphql-go/internal/query
@@ -34,55 +59,87 @@ github.com/graph-gophers/graphql-go/internal/validation
 github.com/graph-gophers/graphql-go/introspection
 github.com/graph-gophers/graphql-go/log
 github.com/graph-gophers/graphql-go/trace
-github.com/graph-gophers/graphql-go/internal/exec/packer
 # github.com/kirillDanshin/go-accept-headers v0.0.0-20130320203746-c78f304b1b09
+## explicit
 github.com/kirillDanshin/go-accept-headers
-# github.com/klauspost/compress v1.4.0
+# github.com/klauspost/compress v1.8.2
 github.com/klauspost/compress/flate
 github.com/klauspost/compress/gzip
 github.com/klauspost/compress/zlib
-# github.com/klauspost/cpuid v0.0.0-20180405133222-e7e905edc00e
+# github.com/klauspost/cpuid v1.2.1
 github.com/klauspost/cpuid
+# github.com/mattn/go-colorable v0.1.2
+github.com/mattn/go-colorable
+# github.com/mattn/go-isatty v0.0.8
+github.com/mattn/go-isatty
 # github.com/matttproud/golang_protobuf_extensions v1.0.1
+## explicit
 github.com/matttproud/golang_protobuf_extensions/pbutil
+# github.com/microcosm-cc/bluemonday v1.0.5
+## explicit
+github.com/microcosm-cc/bluemonday
 # github.com/opentracing/opentracing-go v1.0.2
+## explicit
 github.com/opentracing/opentracing-go
 github.com/opentracing/opentracing-go/ext
 github.com/opentracing/opentracing-go/log
-# github.com/pkg/errors v0.8.0
+# github.com/pkg/errors v0.8.1
+## explicit
 github.com/pkg/errors
 # github.com/pmezard/go-difflib v1.0.0
 github.com/pmezard/go-difflib/difflib
+# github.com/pquerna/ffjson v0.0.0-20181028064349-e517b90714f7
+## explicit
+github.com/pquerna/ffjson/ffjson
+github.com/pquerna/ffjson/fflib/v1
+github.com/pquerna/ffjson/fflib/v1/internal
 # github.com/prometheus/client_golang v0.8.0
+## explicit
 github.com/prometheus/client_golang/prometheus
 github.com/prometheus/client_golang/prometheus/promhttp
 # github.com/prometheus/client_model v0.0.0-20180712105110-5c3871d89910
+## explicit
 github.com/prometheus/client_model/go
 # github.com/prometheus/common v0.0.0-20180801064454-c7de2306084e
+## explicit
 github.com/prometheus/common/expfmt
-github.com/prometheus/common/model
 github.com/prometheus/common/internal/bitbucket.org/ww/goautoneg
+github.com/prometheus/common/model
 # github.com/prometheus/procfs v0.0.0-20180725123919-05ee40e3a273
+## explicit
 github.com/prometheus/procfs
+github.com/prometheus/procfs/internal/util
 github.com/prometheus/procfs/nfs
 github.com/prometheus/procfs/xfs
-github.com/prometheus/procfs/internal/util
-# github.com/stretchr/testify v1.2.2
+# github.com/stretchr/testify v1.3.0
+## explicit
 github.com/stretchr/testify/assert
-# github.com/valyala/bytebufferpool v0.0.0-20160817181652-e746df99fe4a
+# github.com/valyala/bytebufferpool v1.0.0
+## explicit
 github.com/valyala/bytebufferpool
-# github.com/valyala/fasthttp v0.0.0-20180831062205-5f6439b6df1c
+# github.com/valyala/fasthttp v1.8.0
+## explicit
 github.com/valyala/fasthttp
 github.com/valyala/fasthttp/fasthttputil
 github.com/valyala/fasthttp/stackless
-# golang.org/x/crypto v0.0.0-20180830192347-182538f80094
+# golang.org/x/crypto v0.0.0-20190426145343-a29dc8fdc734
+## explicit
+golang.org/x/crypto/acme
 golang.org/x/crypto/acme/autocert
 golang.org/x/crypto/bcrypt
-golang.org/x/crypto/scrypt
-golang.org/x/crypto/acme
 golang.org/x/crypto/blowfish
 golang.org/x/crypto/pbkdf2
-# golang.org/x/net v0.0.0-20180906233101-161cd47e91fd
+golang.org/x/crypto/scrypt
+# golang.org/x/net v0.0.0-20190827160401-ba9fcec4b297
 golang.org/x/net/context
-# golang.org/x/sys v0.0.0-20181023152157-44b849a8bc13
+golang.org/x/net/html
+golang.org/x/net/html/atom
+golang.org/x/net/idna
+# golang.org/x/sys v0.0.0-20190412213103-97732733099d
+golang.org/x/sys/unix
 golang.org/x/sys/windows
+# golang.org/x/text v0.3.0
+golang.org/x/text/secure/bidirule
+golang.org/x/text/transform
+golang.org/x/text/unicode/bidi
+golang.org/x/text/unicode/norm

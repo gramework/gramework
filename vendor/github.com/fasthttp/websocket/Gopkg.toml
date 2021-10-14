@@ -1,0 +1,23 @@
+[[constraint]]
+  name = "github.com/valyala/fasthttp"
+  branch = "master"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/valyala/bytebufferpool"
+
+[[override]]
+  name = "github.com/klauspost/compress"
+  branch = "master"
+
+[[override]]
+  name = "github.com/klauspost/cpuid"
+  branch = "master"
+
+[[override]]
+  name = "github.com/klauspost/crc32"
+  branch = "master"
+
+[prune]
+  go-tests = true
+  unused-packages = true
