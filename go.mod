@@ -8,7 +8,7 @@ require (
 	github.com/fasthttp/websocket v1.4.0
 	github.com/gocarina/gocsv v0.0.0-20190129143436-91f6fc13d488
 	github.com/google/uuid v1.1.1
-	github.com/gramework/runtimer v0.0.0-20190401193044-e6c0280ee15a
+	github.com/gramework/runtimer v0.0.0-20211014201118-d25b6e2ccefd
 	github.com/gramework/utils v0.0.0-20180427183540-d82c91416f14
 	github.com/graph-gophers/graphql-go v0.0.0-20180806175703-94da0f0031f9
 	github.com/kirillDanshin/go-accept-headers v0.0.0-20130320203746-c78f304b1b09
@@ -27,4 +27,4 @@ require (
 	golang.org/x/crypto v0.0.0-20190426145343-a29dc8fdc734
 )
 
-go 1.13
+go 1.16
