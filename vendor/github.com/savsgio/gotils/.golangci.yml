@@ -1,0 +1,9 @@
+linters:
+  fast: false
+  enable-all: true
+  disable:
+    - gomnd
+    - gochecknoglobals
+    - testpackage
+    - goerr113
+    - nolintlint

@@ -9,7 +9,9 @@ package scrypt // import "golang.org/x/crypto/scrypt"
 
 import (
 	"crypto/sha256"
+	"encoding/binary"
 	"errors"
+	"math/bits"
 
 	"golang.org/x/crypto/pbkdf2"
 )
@@ -29,7 +31,7 @@ func blockXOR(dst, src []uint32, n int) {
 }
 
 // salsaXOR applies Salsa20/8 to the XOR of 16 numbers from tmp and in,
-// and puts the result into both both tmp and out.
+// and puts the result into both tmp and out.
 func salsaXOR(tmp *[16]uint32, in, out []uint32) {
 	w0 := tmp[0] ^ in[0]
 	w1 := tmp[1] ^ in[1]
@@ -52,77 +54,45 @@ func salsaXOR(tmp *[16]uint32, in, out []uint32) {
 	x9, x10, x11, x12, x13, x14, x15 := w9, w10, w11, w12, w13, w14, w15
 
 	for i := 0; i < 8; i += 2 {
-		u := x0 + x12
-		x4 ^= u<<7 | u>>(32-7)
-		u = x4 + x0
-		x8 ^= u<<9 | u>>(32-9)
-		u = x8 + x4
-		x12 ^= u<<13 | u>>(32-13)
-		u = x12 + x8
-		x0 ^= u<<18 | u>>(32-18)
+		x4 ^= bits.RotateLeft32(x0+x12, 7)
+		x8 ^= bits.RotateLeft32(x4+x0, 9)
+		x12 ^= bits.RotateLeft32(x8+x4, 13)
+		x0 ^= bits.RotateLeft32(x12+x8, 18)
 
-		u = x5 + x1
-		x9 ^= u<<7 | u>>(32-7)
-		u = x9 + x5
-		x13 ^= u<<9 | u>>(32-9)
-		u = x13 + x9
-		x1 ^= u<<13 | u>>(32-13)
-		u = x1 + x13
-		x5 ^= u<<18 | u>>(32-18)
+		x9 ^= bits.RotateLeft32(x5+x1, 7)
+		x13 ^= bits.RotateLeft32(x9+x5, 9)
+		x1 ^= bits.RotateLeft32(x13+x9, 13)
+		x5 ^= bits.RotateLeft32(x1+x13, 18)
 
-		u = x10 + x6
-		x14 ^= u<<7 | u>>(32-7)
-		u = x14 + x10
-		x2 ^= u<<9 | u>>(32-9)
-		u = x2 + x14
-		x6 ^= u<<13 | u>>(32-13)
-		u = x6 + x2
-		x10 ^= u<<18 | u>>(32-18)
+		x14 ^= bits.RotateLeft32(x10+x6, 7)
+		x2 ^= bits.RotateLeft32(x14+x10, 9)
+		x6 ^= bits.RotateLeft32(x2+x14, 13)
+		x10 ^= bits.RotateLeft32(x6+x2, 18)
 
-		u = x15 + x11
-		x3 ^= u<<7 | u>>(32-7)
-		u = x3 + x15
-		x7 ^= u<<9 | u>>(32-9)
-		u = x7 + x3
-		x11 ^= u<<13 | u>>(32-13)
-		u = x11 + x7
-		x15 ^= u<<18 | u>>(32-18)
+		x3 ^= bits.RotateLeft32(x15+x11, 7)
+		x7 ^= bits.RotateLeft32(x3+x15, 9)
+		x11 ^= bits.RotateLeft32(x7+x3, 13)
+		x15 ^= bits.RotateLeft32(x11+x7, 18)
 
-		u = x0 + x3
-		x1 ^= u<<7 | u>>(32-7)
-		u = x1 + x0
-		x2 ^= u<<9 | u>>(32-9)
-		u = x2 + x1
-		x3 ^= u<<13 | u>>(32-13)
-		u = x3 + x2
-		x0 ^= u<<18 | u>>(32-18)
+		x1 ^= bits.RotateLeft32(x0+x3, 7)
+		x2 ^= bits.RotateLeft32(x1+x0, 9)
+		x3 ^= bits.RotateLeft32(x2+x1, 13)
+		x0 ^= bits.RotateLeft32(x3+x2, 18)
 
-		u = x5 + x4
-		x6 ^= u<<7 | u>>(32-7)
-		u = x6 + x5
-		x7 ^= u<<9 | u>>(32-9)
-		u = x7 + x6
-		x4 ^= u<<13 | u>>(32-13)
-		u = x4 + x7
-		x5 ^= u<<18 | u>>(32-18)
+		x6 ^= bits.RotateLeft32(x5+x4, 7)
+		x7 ^= bits.RotateLeft32(x6+x5, 9)
+		x4 ^= bits.RotateLeft32(x7+x6, 13)
+		x5 ^= bits.RotateLeft32(x4+x7, 18)
 
-		u = x10 + x9
-		x11 ^= u<<7 | u>>(32-7)
-		u = x11 + x10
-		x8 ^= u<<9 | u>>(32-9)
-		u = x8 + x11
-		x9 ^= u<<13 | u>>(32-13)
-		u = x9 + x8
-		x10 ^= u<<18 | u>>(32-18)
+		x11 ^= bits.RotateLeft32(x10+x9, 7)
+		x8 ^= bits.RotateLeft32(x11+x10, 9)
+		x9 ^= bits.RotateLeft32(x8+x11, 13)
+		x10 ^= bits.RotateLeft32(x9+x8, 18)
 
-		u = x15 + x14
-		x12 ^= u<<7 | u>>(32-7)
-		u = x12 + x15
-		x13 ^= u<<9 | u>>(32-9)
-		u = x13 + x12
-		x14 ^= u<<13 | u>>(32-13)
-		u = x14 + x13
-		x15 ^= u<<18 | u>>(32-18)
+		x12 ^= bits.RotateLeft32(x15+x14, 7)
+		x13 ^= bits.RotateLeft32(x12+x15, 9)
+		x14 ^= bits.RotateLeft32(x13+x12, 13)
+		x15 ^= bits.RotateLeft32(x14+x13, 18)
 	}
 	x0 += w0
 	x1 += w1
@@ -174,36 +144,34 @@ func integer(b []uint32, r int) uint64 {
 
 func smix(b []byte, r, N int, v, xy []uint32) {
 	var tmp [16]uint32
+	R := 32 * r
 	x := xy
-	y := xy[32*r:]
+	y := xy[R:]
 
 	j := 0
-	for i := 0; i < 32*r; i++ {
-		x[i] = uint32(b[j]) | uint32(b[j+1])<<8 | uint32(b[j+2])<<16 | uint32(b[j+3])<<24
+	for i := 0; i < R; i++ {
+		x[i] = binary.LittleEndian.Uint32(b[j:])
 		j += 4
 	}
 	for i := 0; i < N; i += 2 {
-		blockCopy(v[i*(32*r):], x, 32*r)
+		blockCopy(v[i*R:], x, R)
 		blockMix(&tmp, x, y, r)
 
-		blockCopy(v[(i+1)*(32*r):], y, 32*r)
+		blockCopy(v[(i+1)*R:], y, R)
 		blockMix(&tmp, y, x, r)
 	}
 	for i := 0; i < N; i += 2 {
 		j := int(integer(x, r) & uint64(N-1))
-		blockXOR(x, v[j*(32*r):], 32*r)
+		blockXOR(x, v[j*R:], R)
 		blockMix(&tmp, x, y, r)
 
 		j = int(integer(y, r) & uint64(N-1))
-		blockXOR(y, v[j*(32*r):], 32*r)
+		blockXOR(y, v[j*R:], R)
 		blockMix(&tmp, y, x, r)
 	}
 	j = 0
-	for _, v := range x[:32*r] {
-		b[j+0] = byte(v >> 0)
-		b[j+1] = byte(v >> 8)
-		b[j+2] = byte(v >> 16)
-		b[j+3] = byte(v >> 24)
+	for _, v := range x[:R] {
+		binary.LittleEndian.PutUint32(b[j:], v)
 		j += 4
 	}
 }
