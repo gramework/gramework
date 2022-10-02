@@ -201,10 +201,10 @@ func TestGrameRouter(t *testing.T) {
 	app.HandleMethodNotAllowed(true)
 	app.HandleOPTIONS(true)
 
-	port := testutils.Port().NonRoot().Unused().Acquire()
+	ln, port := testutils.Port().NonRoot().Unused().AcquireListener()
 	bindAddr := fmt.Sprintf(":%d", port)
 	go func() {
-		err := app.ListenAndServe(bindAddr)
+		err := app.Serve(ln)
 		if err != nil {
 			panic(err)
 		}
@@ -409,10 +409,10 @@ func TestDomainRouter(t *testing.T) {
 		t.FailNow()
 	}
 
-	port := testutils.Port().NonRoot().Unused().Acquire()
+	ln, port := testutils.Port().NonRoot().Unused().AcquireListener()
 	bindAddr := fmt.Sprintf(":%d", port)
 	go func() {
-		err := app.ListenAndServe(bindAddr)
+		err := app.Serve(ln)
 		if err != nil {
 			panic(err)
 		}
@@ -768,10 +768,10 @@ func TestDomainHTTPSRouter(t *testing.T) {
 		t.FailNow()
 	}
 
-	port := testutils.Port().NonRoot().Unused().Acquire()
+	ln, port := testutils.Port().NonRoot().Unused().AcquireListener()
 	bindAddr := fmt.Sprintf(":%d", port)
 	go func() {
-		err := app.ListenAndServe(bindAddr)
+		err := app.Serve(ln)
 		if err != nil {
 			panic(err)
 		}
@@ -1129,10 +1129,10 @@ func TestHTTPSRouter(t *testing.T) {
 		t.FailNow()
 	}
 
-	port := testutils.Port().NonRoot().Unused().Acquire()
+	ln, port := testutils.Port().NonRoot().Unused().AcquireListener()
 	bindAddr := fmt.Sprintf(":%d", port)
 	go func() {
-		err := app.ListenAndServe(bindAddr)
+		err := app.Serve(ln)
 		if err != nil {
 			panic(err)
 		}
