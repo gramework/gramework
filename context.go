@@ -20,7 +20,6 @@ import (
 	"github.com/pquerna/ffjson/ffjson"
 
 	"github.com/gocarina/gocsv"
-	"github.com/gramework/runtimer"
 )
 
 // @TODO: add more
@@ -39,7 +38,14 @@ func ContextFromValue(ctx context.Context) *Context {
 		internalLog.Warn("ContextFromValue was called with nil context.Context, returning nil")
 		return nil
 	}
-	return (*Context)(runtimer.GetEfaceDataPtr(ctx.Value(ContextKey)))
+
+	ctxIface := ctx.Value(ContextKey)
+	gctx, ok := ctxIface.(*Context)
+	if !ok {
+		return nil
+	}
+
+	return gctx
 }
 
 // MWKill kills current context and stop any user-defined processing.

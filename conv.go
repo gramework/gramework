@@ -12,8 +12,6 @@ package gramework
 
 import (
 	"unsafe"
-
-	"github.com/gramework/runtimer"
 )
 
 // BytesToString effectively converts bytes to string
@@ -25,10 +23,26 @@ func BytesToString(b []byte) string {
 // StringToBytes effectively converts string to bytes
 // nolint: gas
 func StringToBytes(s string) []byte {
-	strstruct := runtimer.StringStructOf(&s)
-	return *(*[]byte)(unsafe.Pointer(&runtimer.SliceType2{
+	strstruct := stringStructOf(&s)
+	return *(*[]byte)(unsafe.Pointer(&sliceType2{
 		Array: strstruct.Str,
 		Len:   strstruct.Len,
 		Cap:   strstruct.Len,
 	}))
+}
+
+type sliceType2 struct {
+	Array unsafe.Pointer
+	Len   int
+	Cap   int
+}
+
+type stringStruct struct {
+	Str unsafe.Pointer
+	Len int
+}
+
+
+func stringStructOf(sp *string) *stringStruct {
+	return (*stringStruct)(unsafe.Pointer(sp))
 }

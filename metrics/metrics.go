@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/gramework/gramework"
-	"github.com/gramework/runtimer"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
@@ -107,7 +106,7 @@ func (m *Middleware) endReq(ctx *gramework.Context) {
 
 	m.httpReqCounter.WithLabelValues(opts...).Add(1)
 
-	startTime := *(*int64)(runtimer.GetEfaceDataPtr(ctx.UserValue(uvKey)))
+	startTime, _ := ctx.UserValue(uvKey).(int64)
 	duration := float64(gramework.Nanotime()-startTime) / millisecond
 
 	m.reqDuration.WithLabelValues(opts...).Observe(duration)

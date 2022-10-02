@@ -11,10 +11,7 @@ github.com/apex/log/handlers/cli
 github.com/aymerick/douceur/css
 github.com/aymerick/douceur/parser
 # github.com/beorn7/perks v1.0.1
-## explicit
 github.com/beorn7/perks/quantile
-# github.com/cespare/xxhash v1.1.0
-## explicit
 # github.com/cespare/xxhash/v2 v2.1.2
 github.com/cespare/xxhash/v2
 # github.com/cloudfoundry/gosigar v1.3.2
@@ -44,9 +41,6 @@ github.com/golang/snappy
 github.com/google/uuid
 # github.com/gorilla/css v1.0.0
 github.com/gorilla/css/scanner
-# github.com/gramework/runtimer v0.0.0-20211014201118-d25b6e2ccefd
-## explicit
-github.com/gramework/runtimer
 # github.com/gramework/utils v0.0.0-20190202181041-3c30a162ea26
 ## explicit
 github.com/gramework/utils/grand
@@ -75,14 +69,11 @@ github.com/kirillDanshin/go-accept-headers
 github.com/klauspost/compress/flate
 github.com/klauspost/compress/gzip
 github.com/klauspost/compress/zlib
-# github.com/klauspost/cpuid v1.2.1
-## explicit
 # github.com/mattn/go-colorable v0.1.2
 github.com/mattn/go-colorable
 # github.com/mattn/go-isatty v0.0.8
 github.com/mattn/go-isatty
 # github.com/matttproud/golang_protobuf_extensions v1.0.1
-## explicit
 github.com/matttproud/golang_protobuf_extensions/pbutil
 # github.com/microcosm-cc/bluemonday v1.0.15
 ## explicit
@@ -109,7 +100,6 @@ github.com/prometheus/client_golang/prometheus
 github.com/prometheus/client_golang/prometheus/internal
 github.com/prometheus/client_golang/prometheus/promhttp
 # github.com/prometheus/client_model v0.2.0
-## explicit
 github.com/prometheus/client_model/go
 # github.com/prometheus/common v0.31.1
 ## explicit
