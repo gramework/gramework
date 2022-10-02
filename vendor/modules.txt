@@ -1,52 +1,61 @@
-# github.com/VictoriaMetrics/fastcache v1.7.0
-## explicit
+# github.com/VictoriaMetrics/fastcache v1.12.0
+## explicit; go 1.13
 github.com/VictoriaMetrics/fastcache
-# github.com/andybalholm/brotli v1.0.2
+# github.com/andybalholm/brotli v1.0.4
+## explicit; go 1.12
 github.com/andybalholm/brotli
 # github.com/apex/log v1.9.0
-## explicit
+## explicit; go 1.12
 github.com/apex/log
 github.com/apex/log/handlers/cli
 # github.com/aymerick/douceur v0.2.0
+## explicit
 github.com/aymerick/douceur/css
 github.com/aymerick/douceur/parser
 # github.com/beorn7/perks v1.0.1
+## explicit; go 1.11
 github.com/beorn7/perks/quantile
 # github.com/cespare/xxhash/v2 v2.1.2
+## explicit; go 1.11
 github.com/cespare/xxhash/v2
-# github.com/cloudfoundry/gosigar v1.3.2
-## explicit
+# github.com/cloudfoundry/gosigar v1.3.4
+## explicit; go 1.18
 github.com/cloudfoundry/gosigar
 github.com/cloudfoundry/gosigar/sys/windows
 # github.com/davecgh/go-spew v1.1.1
+## explicit
 github.com/davecgh/go-spew/spew
 # github.com/fasthttp/websocket v1.4.3
-## explicit
+## explicit; go 1.11
 github.com/fasthttp/websocket
-# github.com/fatih/color v1.7.0
+# github.com/fatih/color v1.13.0
+## explicit; go 1.13
 github.com/fatih/color
-# github.com/gocarina/gocsv v0.0.0-20210516172204-ca9e8a8ddea8
-## explicit
+# github.com/gocarina/gocsv v0.0.0-20220927221512-ad3251f9fa25
+## explicit; go 1.13
 github.com/gocarina/gocsv
 # github.com/golang/protobuf v1.5.2
+## explicit; go 1.9
 github.com/golang/protobuf/proto
 github.com/golang/protobuf/ptypes
 github.com/golang/protobuf/ptypes/any
 github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/timestamp
 # github.com/golang/snappy v0.0.4
+## explicit
 github.com/golang/snappy
 # github.com/google/uuid v1.3.0
 ## explicit
 github.com/google/uuid
 # github.com/gorilla/css v1.0.0
+## explicit
 github.com/gorilla/css/scanner
 # github.com/gramework/utils v0.0.0-20190202181041-3c30a162ea26
 ## explicit
 github.com/gramework/utils/grand
 github.com/gramework/utils/nocopy
-# github.com/graph-gophers/graphql-go v1.2.0
-## explicit
+# github.com/graph-gophers/graphql-go v1.4.0
+## explicit; go 1.13
 github.com/graph-gophers/graphql-go
 github.com/graph-gophers/graphql-go/decode
 github.com/graph-gophers/graphql-go/errors
@@ -60,34 +69,35 @@ github.com/graph-gophers/graphql-go/internal/schema
 github.com/graph-gophers/graphql-go/internal/validation
 github.com/graph-gophers/graphql-go/introspection
 github.com/graph-gophers/graphql-go/log
-github.com/graph-gophers/graphql-go/trace
+github.com/graph-gophers/graphql-go/trace/noop
+github.com/graph-gophers/graphql-go/trace/tracer
 github.com/graph-gophers/graphql-go/types
 # github.com/kirillDanshin/go-accept-headers v0.0.0-20130320203746-c78f304b1b09
 ## explicit
 github.com/kirillDanshin/go-accept-headers
-# github.com/klauspost/compress v1.13.4
+# github.com/klauspost/compress v1.15.11
+## explicit; go 1.17
 github.com/klauspost/compress/flate
 github.com/klauspost/compress/gzip
 github.com/klauspost/compress/zlib
-# github.com/mattn/go-colorable v0.1.2
+# github.com/mattn/go-colorable v0.1.13
+## explicit; go 1.15
 github.com/mattn/go-colorable
-# github.com/mattn/go-isatty v0.0.8
+# github.com/mattn/go-isatty v0.0.16
+## explicit; go 1.15
 github.com/mattn/go-isatty
 # github.com/matttproud/golang_protobuf_extensions v1.0.1
-github.com/matttproud/golang_protobuf_extensions/pbutil
-# github.com/microcosm-cc/bluemonday v1.0.15
 ## explicit
+github.com/matttproud/golang_protobuf_extensions/pbutil
+# github.com/microcosm-cc/bluemonday v1.0.20
+## explicit; go 1.19
 github.com/microcosm-cc/bluemonday
 github.com/microcosm-cc/bluemonday/css
-# github.com/opentracing/opentracing-go v1.2.0
-## explicit
-github.com/opentracing/opentracing-go
-github.com/opentracing/opentracing-go/ext
-github.com/opentracing/opentracing-go/log
 # github.com/pkg/errors v0.9.1
 ## explicit
 github.com/pkg/errors
 # github.com/pmezard/go-difflib v1.0.0
+## explicit
 github.com/pmezard/go-difflib/difflib
 # github.com/pquerna/ffjson v0.0.0-20190930134022-aa0246cd15f7
 ## explicit
@@ -95,57 +105,63 @@ github.com/pquerna/ffjson/ffjson
 github.com/pquerna/ffjson/fflib/v1
 github.com/pquerna/ffjson/fflib/v1/internal
 # github.com/prometheus/client_golang v1.11.0
-## explicit
+## explicit; go 1.13
 github.com/prometheus/client_golang/prometheus
 github.com/prometheus/client_golang/prometheus/internal
 github.com/prometheus/client_golang/prometheus/promhttp
 # github.com/prometheus/client_model v0.2.0
+## explicit; go 1.9
 github.com/prometheus/client_model/go
 # github.com/prometheus/common v0.31.1
-## explicit
+## explicit; go 1.13
 github.com/prometheus/common/expfmt
 github.com/prometheus/common/internal/bitbucket.org/ww/goautoneg
 github.com/prometheus/common/model
 # github.com/prometheus/procfs v0.7.3
-## explicit
+## explicit; go 1.13
 github.com/prometheus/procfs
 github.com/prometheus/procfs/internal/fs
 github.com/prometheus/procfs/internal/util
 # github.com/savsgio/gotils v0.0.0-20200608150037-a5f6f5aef16c
+## explicit; go 1.11
 github.com/savsgio/gotils
-# github.com/stretchr/testify v1.7.0
-## explicit
+# github.com/stretchr/testify v1.7.1
+## explicit; go 1.13
 github.com/stretchr/testify/assert
 # github.com/valyala/bytebufferpool v1.0.0
 ## explicit
 github.com/valyala/bytebufferpool
-# github.com/valyala/fasthttp v1.31.0
-## explicit
+# github.com/valyala/fasthttp v1.40.0
+## explicit; go 1.15
 github.com/valyala/fasthttp
 github.com/valyala/fasthttp/fasthttputil
 github.com/valyala/fasthttp/stackless
-# golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
-## explicit
+# golang.org/x/crypto v0.0.0-20220926161630-eccd6366d1be
+## explicit; go 1.17
 golang.org/x/crypto/acme
 golang.org/x/crypto/acme/autocert
 golang.org/x/crypto/bcrypt
 golang.org/x/crypto/blowfish
 golang.org/x/crypto/pbkdf2
 golang.org/x/crypto/scrypt
-# golang.org/x/net v0.0.0-20210614182718-04defd469f4e
+# golang.org/x/net v0.0.0-20221002022538-bcab6841153b
+## explicit; go 1.17
 golang.org/x/net/html
 golang.org/x/net/html/atom
 golang.org/x/net/idna
-# golang.org/x/sys v0.0.0-20210910150752-751e447fb3d0
+# golang.org/x/sys v0.0.0-20220928140112-f11e5e49a4ec
+## explicit; go 1.17
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
 golang.org/x/sys/windows
-# golang.org/x/text v0.3.6
+# golang.org/x/text v0.3.7
+## explicit; go 1.17
 golang.org/x/text/secure/bidirule
 golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
 # google.golang.org/protobuf v1.26.0
+## explicit; go 1.9
 google.golang.org/protobuf/encoding/prototext
 google.golang.org/protobuf/encoding/protowire
 google.golang.org/protobuf/internal/descfmt
@@ -177,4 +193,5 @@ google.golang.org/protobuf/types/known/anypb
 google.golang.org/protobuf/types/known/durationpb
 google.golang.org/protobuf/types/known/timestamppb
 # gopkg.in/yaml.v3 v3.0.0-20200605160147-a5ece683394c
+## explicit
 gopkg.in/yaml.v3

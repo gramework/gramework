@@ -117,7 +117,7 @@ var (
 	// This is not exported as it's not useful by itself, and only has value
 	// within the AllowDataURIImages func
 	dataURIImagePrefix = regexp.MustCompile(
-		`^image/(gif|jpeg|png|webp);base64,`,
+		`^image/(gif|jpeg|png|svg\+xml|webp);base64,`,
 	)
 )
 
@@ -294,4 +294,10 @@ func (p *Policy) AllowTables() {
 	p.AllowAttrs("valign").Matching(
 		CellVerticalAlign,
 	).OnElements("tbody", "tfoot")
+}
+
+func (p *Policy) AllowIFrames(vals ...SandboxValue) {
+	p.AllowAttrs("sandbox").OnElements("iframe")
+
+	p.RequireSandboxOnIFrame(vals...)
 }

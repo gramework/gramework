@@ -127,6 +127,15 @@ func MarshalString(in interface{}) (out string, err error) {
 	return bufferString.String(), nil
 }
 
+// MarshalStringWithoutHeaders returns the CSV string from the interface.
+func MarshalStringWithoutHeaders(in interface{}) (out string, err error) {
+	bufferString := bytes.NewBufferString(out)
+	if err := MarshalWithoutHeaders(in, bufferString); err != nil {
+		return "", err
+	}
+	return bufferString.String(), nil
+}
+
 // MarshalBytes returns the CSV bytes from the interface.
 func MarshalBytes(in interface{}) (out []byte, err error) {
 	bufferString := bytes.NewBuffer(out)
@@ -150,7 +159,12 @@ func MarshalWithoutHeaders(in interface{}, out io.Writer) (err error) {
 
 // MarshalChan returns the CSV read from the channel.
 func MarshalChan(c <-chan interface{}, out CSVWriter) error {
-	return writeFromChan(out, c)
+	return writeFromChan(out, c, false)
+}
+
+// MarshalChanWithoutHeaders returns the CSV read from the channel.
+func MarshalChanWithoutHeaders(c <-chan interface{}, out CSVWriter) error {
+	return writeFromChan(out, c, true)
 }
 
 // MarshalCSV returns the CSV in writer from the interface.
@@ -219,7 +233,7 @@ func UnmarshalCSV(in CSVReader, out interface{}) error {
 // UnmarshalCSVToMap parses a CSV of 2 columns into a map.
 func UnmarshalCSVToMap(in CSVReader, out interface{}) error {
 	decoder := NewSimpleDecoderFromCSVReader(in)
-	header, err := decoder.getCSVRow()
+	header, err := decoder.GetCSVRow()
 	if err != nil {
 		return err
 	}
@@ -236,7 +250,7 @@ func UnmarshalCSVToMap(in CSVReader, out interface{}) error {
 	for {
 		key := reflect.New(keyType)
 		value := reflect.New(valueType)
-		line, err := decoder.getCSVRow()
+		line, err := decoder.GetCSVRow()
 		if err == io.EOF {
 			break
 		} else if err != nil {
@@ -315,7 +329,13 @@ func UnmarshalToCallback(in io.Reader, f interface{}) error {
 		if !notClosed || v.Interface() == nil {
 			break
 		}
-		valueFunc.Call([]reflect.Value{v})
+		callResults := valueFunc.Call([]reflect.Value{v})
+		// if last returned value from Call() is an error, return it
+		if len(callResults) > 0 {
+			if err, ok := callResults[len(callResults)-1].Interface().(error); ok {
+				return err
+			}
+		}
 	}
 	return nil
 }
@@ -377,7 +397,7 @@ func UnmarshalToCallbackWithError(in io.Reader, f interface{}) error {
 		return fmt.Errorf("the given function must have exactly one return value")
 	}
 	if !isErrorType(t.Out(0)) {
-		return fmt.Errorf("the given function must only return error.")
+		return fmt.Errorf("the given function must only return error")
 	}
 
 	cerr := make(chan error)
@@ -398,7 +418,7 @@ func UnmarshalToCallbackWithError(in io.Reader, f interface{}) error {
 		}
 		v, notClosed := c.Recv()
 		if !notClosed || v.Interface() == nil {
-			if err := <- cerr; err != nil {
+			if err := <-cerr; err != nil {
 				fErr = err
 			}
 			break
@@ -445,7 +465,7 @@ func UnmarshalStringToCallbackWithError(in string, c interface{}) (err error) {
 // CSVToMap creates a simple map from a CSV of 2 columns.
 func CSVToMap(in io.Reader) (map[string]string, error) {
 	decoder := newSimpleDecoderFromReader(in)
-	header, err := decoder.getCSVRow()
+	header, err := decoder.GetCSVRow()
 	if err != nil {
 		return nil, err
 	}
@@ -454,7 +474,7 @@ func CSVToMap(in io.Reader) (map[string]string, error) {
 	}
 	m := make(map[string]string)
 	for {
-		line, err := decoder.getCSVRow()
+		line, err := decoder.GetCSVRow()
 		if err == io.EOF {
 			break
 		} else if err != nil {

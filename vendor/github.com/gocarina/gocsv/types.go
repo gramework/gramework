@@ -182,6 +182,7 @@ func toFloat(in interface{}) (float64, error) {
 		if s == "" {
 			return 0, nil
 		}
+		s = strings.Replace(s, ",", ".", -1)
 		return strconv.ParseFloat(s, 64)
 	case reflect.Bool:
 		if inValue.Bool() {
@@ -279,6 +280,10 @@ func setField(field reflect.Value, value string, omitEmpty bool) error {
 				}
 				field.SetFloat(f)
 			case reflect.Slice, reflect.Struct:
+				if value == "" {
+					return nil
+				}
+
 				err := json.Unmarshal([]byte(value), field.Addr().Interface())
 				if err != nil {
 					return err
@@ -361,6 +366,15 @@ func getFieldAsString(field reflect.Value) (str string, err error) {
 					if err != nil {
 						return str, err
 					}
+				case reflect.Slice:
+					fallthrough
+				case reflect.Array:
+					b, err := json.Marshal(field.Addr().Interface())
+					if err != nil {
+						return str, err
+					}
+
+					str = string(b)
 				}
 			} else {
 				return str, nil
@@ -374,11 +388,13 @@ func getFieldAsString(field reflect.Value) (str string, err error) {
 // Un/serializations helpers
 
 func canMarshal(t reflect.Type) bool {
-	// unless it implements marshalText or marshalCSV. Structs that implement this
+	// Structs that implement any of the text or CSV marshaling methods
 	// should result in one value and not have their fields exposed
 	_, canMarshalText := t.MethodByName("MarshalText")
 	_, canMarshalCSV := t.MethodByName("MarshalCSV")
-	return canMarshalCSV || canMarshalText
+	_, canUnmarshalText := t.MethodByName("UnmarshalText")
+	_, canUnmarshalCSV := t.MethodByName("UnmarshalCSV")
+	return canMarshalCSV || canMarshalText || canUnmarshalText || canUnmarshalCSV
 }
 
 func unmarshall(field reflect.Value, value string) error {

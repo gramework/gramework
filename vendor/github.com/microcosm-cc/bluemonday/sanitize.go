@@ -130,7 +130,7 @@ func escapeUrlComponent(w stringWriterWriter, val string) error {
 	return err
 }
 
-// Query represents a single part of the query string, a query param 
+// Query represents a single part of the query string, a query param
 type Query struct {
 	Key      string
 	Value    string
@@ -240,7 +240,7 @@ func (p *Policy) sanitize(r io.Reader, w io.Writer) error {
 	// rather than:
 	//   p := bluemonday.NewPolicy()
 	// If this is the case, and if they haven't yet triggered an action that
-	// would initiliaze the maps, then we need to do that.
+	// would initialize the maps, then we need to do that.
 	p.init()
 
 	buff, ok := w.(stringWriterWriter)
@@ -293,6 +293,17 @@ func (p *Policy) sanitize(r io.Reader, w io.Writer) error {
 
 			mostRecentlyStartedToken = normaliseElementName(token.Data)
 
+			switch normaliseElementName(token.Data) {
+			case `script`:
+				if !p.allowUnsafe {
+					continue
+				}
+			case `style`:
+				if !p.allowUnsafe {
+					continue
+				}
+			}
+
 			aps, ok := p.elsAndAttrs[token.Data]
 			if !ok {
 				aa, matched := p.matchRegex(token.Data)
@@ -311,9 +322,7 @@ func (p *Policy) sanitize(r io.Reader, w io.Writer) error {
 				aps = aa
 			}
 			if len(token.Attr) != 0 {
-				token.Attr = escapeAttributes(
-					p.sanitizeAttrs(token.Data, token.Attr, aps),
-				)
+				token.Attr = p.sanitizeAttrs(token.Data, token.Attr, aps)
 			}
 
 			if len(token.Attr) == 0 {
@@ -339,6 +348,17 @@ func (p *Policy) sanitize(r io.Reader, w io.Writer) error {
 
 			if mostRecentlyStartedToken == normaliseElementName(token.Data) {
 				mostRecentlyStartedToken = ""
+			}
+
+			switch normaliseElementName(token.Data) {
+			case `script`:
+				if !p.allowUnsafe {
+					continue
+				}
+			case `style`:
+				if !p.allowUnsafe {
+					continue
+				}
 			}
 
 			if skipClosingTag && closingTagToSkipStack[len(closingTagToSkipStack)-1] == token.Data {
@@ -386,6 +406,17 @@ func (p *Policy) sanitize(r io.Reader, w io.Writer) error {
 
 		case html.SelfClosingTagToken:
 
+			switch normaliseElementName(token.Data) {
+			case `script`:
+				if !p.allowUnsafe {
+					continue
+				}
+			case `style`:
+				if !p.allowUnsafe {
+					continue
+				}
+			}
+
 			aps, ok := p.elsAndAttrs[token.Data]
 			if !ok {
 				aa, matched := p.matchRegex(token.Data)
@@ -401,7 +432,7 @@ func (p *Policy) sanitize(r io.Reader, w io.Writer) error {
 			}
 
 			if len(token.Attr) != 0 {
-				token.Attr = escapeAttributes(p.sanitizeAttrs(token.Data, token.Attr, aps))
+				token.Attr = p.sanitizeAttrs(token.Data, token.Attr, aps)
 			}
 
 			if len(token.Attr) == 0 && !p.allowNoAttrs(token.Data) {
@@ -425,14 +456,22 @@ func (p *Policy) sanitize(r io.Reader, w io.Writer) error {
 				case `script`:
 					// not encouraged, but if a policy allows JavaScript we
 					// should not HTML escape it as that would break the output
-					if _, err := buff.WriteString(token.Data); err != nil {
-						return err
+					//
+					// requires p.AllowUnsafe()
+					if p.allowUnsafe {
+						if _, err := buff.WriteString(token.Data); err != nil {
+							return err
+						}
 					}
 				case "style":
 					// not encouraged, but if a policy allows CSS styles we
 					// should not HTML escape it as that would break the output
-					if _, err := buff.WriteString(token.Data); err != nil {
-						return err
+					//
+					// requires p.AllowUnsafe()
+					if p.allowUnsafe {
+						if _, err := buff.WriteString(token.Data); err != nil {
+							return err
+						}
 					}
 				default:
 					// HTML escape the text
@@ -524,11 +563,9 @@ attrsLoop:
 			for _, ap := range apl {
 				if ap.regexp != nil {
 					if ap.regexp.MatchString(htmlAttr.Val) {
-				htmlAttr.Val = escapeAttribute(htmlAttr.Val)
 						cleanAttrs = append(cleanAttrs, htmlAttr)
 					}
 				} else {
-				htmlAttr.Val = escapeAttribute(htmlAttr.Val)
 					cleanAttrs = append(cleanAttrs, htmlAttr)
 				}
 			}
@@ -765,6 +802,33 @@ attrsLoop:
 				crossOrigin.Val = "anonymous"
 				cleanAttrs = append(cleanAttrs, crossOrigin)
 			}
+		}
+	}
+
+	if p.requireSandboxOnIFrame != nil && elementName == "iframe" {
+		var sandboxFound bool
+		for i, htmlAttr := range cleanAttrs {
+			if htmlAttr.Key == "sandbox" {
+				sandboxFound = true
+				var cleanVals []string
+				cleanValsSet := make(map[string]bool)
+				for _, val := range strings.Fields(htmlAttr.Val) {
+					if p.requireSandboxOnIFrame[val] {
+						if !cleanValsSet[val] {
+							cleanVals = append(cleanVals, val)
+							cleanValsSet[val] = true
+						}
+					}
+				}
+				cleanAttrs[i].Val = strings.Join(cleanVals, " ")
+			}
+		}
+
+		if !sandboxFound {
+			sandbox := html.Attribute{}
+			sandbox.Key = "sandbox"
+			sandbox.Val = ""
+			cleanAttrs = append(cleanAttrs, sandbox)
 		}
 	}
 
@@ -1043,19 +1107,4 @@ func normaliseElementName(str string) string {
 			`"`),
 		`"`,
 	)
-}
-
-func escapeAttributes(attrs []html.Attribute) []html.Attribute {
-	escapedAttrs := []html.Attribute{}
-	for _, attr := range attrs {
-		attr.Val = escapeAttribute(attr.Val)
-		escapedAttrs = append(escapedAttrs, attr)
-	}
-	return escapedAttrs
-}
-
-func escapeAttribute(val string) string {
-	val = strings.Replace(val, string([]rune{'\u00A0'}), `&nbsp;`, -1)
-	val = strings.Replace(val, `"`, `&quot;`, -1)
-	return val
 }

@@ -25,12 +25,13 @@ var defaultMaxHackAttempts int32 = 5
 func New(opts ...func(*App)) *App {
 	logger := Logger
 	internalLog = func() *log.Entry {
-		Logger.Level = log.DebugLevel
+		glogger := Logger.WithField("package", "gramework")
+		glogger.Level = log.DebugLevel
 		if !enableDebug {
-			Logger.Level = log.InfoLevel
+			glogger.Level = log.InfoLevel
 		}
 
-		return Logger.WithField("package", "gramework")
+		return glogger
 	}()
 	flags := &Flags{
 		values: make(map[string]Flag),

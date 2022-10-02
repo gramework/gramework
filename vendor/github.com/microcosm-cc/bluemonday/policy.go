@@ -74,6 +74,9 @@ type Policy struct {
 	// When true, add crossorigin="anonymous" to HTML audio, img, link, script, and video tags
 	requireCrossOriginAnonymous bool
 
+	// When true, add and filter sandbox attribute on iframe tags
+	requireSandboxOnIFrame map[string]bool
+
 	// When true add target="_blank" to fully qualified links
 	// Will add for href="http://foo"
 	// Will skip for href="/foo" or href="foo"
@@ -134,6 +137,19 @@ type Policy struct {
 	setOfElementsMatchingAllowedWithoutAttrs []*regexp.Regexp
 
 	setOfElementsToSkipContent map[string]struct{}
+
+	// Permits fundamentally unsafe elements.
+	//
+	// If false (default) then elements such as `style` and `script` will not be
+	// permitted even if declared in a policy. These elements when combined with
+	// untrusted input cannot be safely handled by bluemonday at this point in
+	// time.
+	//
+	// If true then `style` and `script` would be permitted by bluemonday if a
+	// policy declares them. However this is not recommended under any circumstance
+	// and can lead to XSS being rendered thus defeating the purpose of using a
+	// HTML sanitizer.
+	allowUnsafe bool
 }
 
 type attrPolicy struct {
@@ -175,6 +191,25 @@ type stylePolicyBuilder struct {
 }
 
 type urlPolicy func(url *url.URL) (allowUrl bool)
+
+type SandboxValue int64
+
+const (
+	SandboxAllowDownloads SandboxValue = iota
+	SandboxAllowDownloadsWithoutUserActivation
+	SandboxAllowForms
+	SandboxAllowModals
+	SandboxAllowOrientationLock
+	SandboxAllowPointerLock
+	SandboxAllowPopups
+	SandboxAllowPopupsToEscapeSandbox
+	SandboxAllowPresentation
+	SandboxAllowSameOrigin
+	SandboxAllowScripts
+	SandboxAllowStorageAccessByUserActivation
+	SandboxAllowTopNavigation
+	SandboxAllowTopNavigationByUserActivation
+)
 
 // init initializes the maps if this has not been done already
 func (p *Policy) init() {
@@ -667,6 +702,58 @@ func (p *Policy) AllowURLSchemeWithCustomPolicy(
 	return p
 }
 
+// RequireSandboxOnIFrame will result in all iframe tags having a sandbox="" tag
+// Any sandbox values not specified here will be filtered from the generated HTML
+func (p *Policy) RequireSandboxOnIFrame(vals ...SandboxValue) {
+	p.requireSandboxOnIFrame = make(map[string]bool)
+
+	for _, val := range vals {
+		switch SandboxValue(val) {
+		case SandboxAllowDownloads:
+			p.requireSandboxOnIFrame["allow-downloads"] = true
+
+		case SandboxAllowDownloadsWithoutUserActivation:
+			p.requireSandboxOnIFrame["allow-downloads-without-user-activation"] = true
+
+		case SandboxAllowForms:
+			p.requireSandboxOnIFrame["allow-forms"] = true
+
+		case SandboxAllowModals:
+			p.requireSandboxOnIFrame["allow-modals"] = true
+
+		case SandboxAllowOrientationLock:
+			p.requireSandboxOnIFrame["allow-orientation-lock"] = true
+
+		case SandboxAllowPointerLock:
+			p.requireSandboxOnIFrame["allow-pointer-lock"] = true
+
+		case SandboxAllowPopups:
+			p.requireSandboxOnIFrame["allow-popups"] = true
+
+		case SandboxAllowPopupsToEscapeSandbox:
+			p.requireSandboxOnIFrame["allow-popups-to-escape-sandbox"] = true
+
+		case SandboxAllowPresentation:
+			p.requireSandboxOnIFrame["allow-presentation"] = true
+
+		case SandboxAllowSameOrigin:
+			p.requireSandboxOnIFrame["allow-same-origin"] = true
+
+		case SandboxAllowScripts:
+			p.requireSandboxOnIFrame["allow-scripts"] = true
+
+		case SandboxAllowStorageAccessByUserActivation:
+			p.requireSandboxOnIFrame["allow-storage-access-by-user-activation"] = true
+
+		case SandboxAllowTopNavigation:
+			p.requireSandboxOnIFrame["allow-top-navigation"] = true
+
+		case SandboxAllowTopNavigationByUserActivation:
+			p.requireSandboxOnIFrame["allow-top-navigation-by-user-activation"] = true
+		}
+	}
+}
+
 // AddSpaceWhenStrippingTag states whether to add a single space " " when
 // removing tags that are not allowed by the policy.
 //
@@ -711,6 +798,23 @@ func (p *Policy) AllowElementsContent(names ...string) *Policy {
 		delete(p.setOfElementsToSkipContent, strings.ToLower(element))
 	}
 
+	return p
+}
+
+// AllowUnsafe permits fundamentally unsafe elements.
+//
+// If false (default) then elements such as `style` and `script` will not be
+// permitted even if declared in a policy. These elements when combined with
+// untrusted input cannot be safely handled by bluemonday at this point in
+// time.
+//
+// If true then `style` and `script` would be permitted by bluemonday if a
+// policy declares them. However this is not recommended under any circumstance
+// and can lead to XSS being rendered thus defeating the purpose of using a
+// HTML sanitizer.
+func (p *Policy) AllowUnsafe(allowUnsafe bool) *Policy {
+	p.init()
+	p.allowUnsafe = allowUnsafe
 	return p
 }
 
