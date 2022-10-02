@@ -5,7 +5,6 @@ import (
 	"math/rand"
 	"net"
 	"sync"
-	"time"
 )
 
 var portsRegister = map[uint16]struct{}{}
@@ -45,13 +44,14 @@ func (pc *PortChooser) Root() *PortChooser {
 
 // Used enables a check that port is not free.
 func (pc *PortChooser) Used() *PortChooser {
-	pc.nonRoot = new(bool)
+	pc.unused = new(bool)
+	*pc.unused = false
 	return pc
 }
 
 // Acquire applies all filters defined before and returns a port number.
 func (pc *PortChooser) Acquire() int {
-	port := pc.determinePort()
+	_, port := pc.determinePort()
 
 	portsRegisterMu.Lock()
 	portsRegister[uint16(port)] = struct{}{}
@@ -59,7 +59,17 @@ func (pc *PortChooser) Acquire() int {
 	return port
 }
 
-func (pc *PortChooser) determinePort() int {
+func (pc *PortChooser) AcquireListener() (net.Listener, int) {
+	ln, port := pc.determinePort()
+
+	portsRegisterMu.Lock()
+	portsRegister[uint16(port)] = struct{}{}
+	portsRegisterMu.Unlock()
+
+	return ln, port
+}
+
+func (pc *PortChooser) determinePort() (net.Listener, int) {
 	minPort := 1
 	maxPort := 65535
 
@@ -71,32 +81,30 @@ func (pc *PortChooser) determinePort() int {
 		}
 	}
 
-	choosenPort := 0
+	chosenPort := 0
 	if pc.unused != nil && !*pc.unused {
 		portsRegisterMu.Lock()
 		for port := range portsRegister {
 			if int(port) > minPort && int(port) < maxPort {
-				choosenPort = int(port)
+				chosenPort = int(port)
 			}
 		}
 		portsRegisterMu.Unlock()
-		if choosenPort != 0 {
-			return choosenPort
+		if chosenPort != 0 {
+			return nil, chosenPort
 		}
 
-		choosenPort = rand.Intn(maxPort-minPort) + minPort
-		_, err := net.Listen("tcp4", fmt.Sprintf(":%d", choosenPort))
+		chosenPort = rand.Intn(maxPort-minPort) + minPort
+		_, err := net.Listen("tcp4", fmt.Sprintf(":%d", chosenPort))
 		_ = err // fixes linter warning
-	} else {
-		for {
-			choosenPort = rand.Intn(maxPort-minPort) + minPort
-			ln, err := net.Listen("tcp4", fmt.Sprintf(":%d", choosenPort))
-			if err == nil {
-				ln.Close()
-				time.Sleep(200 * time.Millisecond)
-				break
-			}
+		return nil, chosenPort
+	}
+
+	for {
+		chosenPort = rand.Intn(maxPort-minPort) + minPort
+		ln, err := net.Listen("tcp4", fmt.Sprintf(":%d", chosenPort))
+		if err == nil {
+			return ln, chosenPort
 		}
 	}
-	return choosenPort
 }
