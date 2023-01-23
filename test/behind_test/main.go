@@ -1,7 +1,7 @@
 package main
 
 import (
-	"io/ioutil"
+	"os"
 
 	"github.com/gramework/gramework"
 	"github.com/gramework/gramework/behind/akamai"
@@ -10,7 +10,7 @@ import (
 func main() {
 	app := gramework.New()
 
-	csv, err := ioutil.ReadFile("./testdata/all-cidr-blocks.csv")
+	csv, err := os.ReadFile("./testdata/all-cidr-blocks.csv")
 	must(err)
 	akamCIDR, err := akamai.ParseCIDRBlocksCSV(csv, true, true)
 	must(err)

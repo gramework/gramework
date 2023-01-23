@@ -10,7 +10,6 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"net"
 	"net/http"
 	"os"
@@ -928,9 +927,9 @@ func TestRouterServeFiles(t *testing.T) {
 		t.Fatal("registering path not ending with '*filepath' did not panic")
 	}
 	body := []byte("fake ico")
-	err := ioutil.WriteFile(os.TempDir()+"/favicon.ico", body, 0644)
+	err := os.WriteFile(os.TempDir()+"/favicon.ico", body, 0644)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 
 	router.defaultRouter.ServeFiles("/*filepath", os.TempDir())
