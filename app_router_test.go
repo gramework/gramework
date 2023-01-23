@@ -10,21 +10,19 @@
 package gramework
 
 import (
-	"io/ioutil"
 	"os"
-	"strings"
+	"path/filepath"
 	"testing"
 
 	"github.com/valyala/fasthttp"
 )
 
 func testProvideTempFile(t *testing.T, action func(file, dir string)) {
-	tmpFile, err := ioutil.TempFile(os.TempDir(), "servedirtmp_")
+	tmpDir := t.TempDir()
+	tmpFile, err := os.CreateTemp(tmpDir, "servedirtmp_")
 	if err != nil {
 		t.Error("cannot create temporary file:", err)
 	}
-
-	defer os.Remove(tmpFile.Name())
 
 	// write some text into file
 	text := []byte("test_file_data")
@@ -36,9 +34,7 @@ func testProvideTempFile(t *testing.T, action func(file, dir string)) {
 		t.Error(err)
 	}
 
-	tempFName := strings.Replace(tmpFile.Name(), os.TempDir(), "", -1)
-
-	action(tempFName, os.TempDir())
+	action(filepath.Base(tmpFile.Name()), tmpDir)
 }
 
 func TestAppServeDir(t *testing.T) {

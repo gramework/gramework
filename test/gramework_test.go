@@ -14,7 +14,6 @@ import (
 	"crypto/tls"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net"
 	"net/http"
 	"reflect"
@@ -389,7 +388,7 @@ func TestSPAIndexHandler(t *testing.T) {
 		t.FailNow()
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		t.Fatalf("Gramework isn't working! Can't read body: %s", err)
 		t.FailNow()
