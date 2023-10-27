@@ -199,7 +199,7 @@ func (app *App) MaxHackAttempts(attempts int32) (oldValue int32) {
 		app.internalLog.
 			WithField("old", oldValue).
 			WithField("new", attempts).
-			Infof("[Gramework Protection] Updated max hack attemts")
+			Infof("[Gramework Protection] Updated max hack attempts")
 	}
 	return
 }
